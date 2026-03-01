@@ -1,0 +1,44 @@
+# ==================== Configuración básica ====================
+# Activar el motor de reescritura
+RewriteEngine On
+
+# ==================== Redirecciones ====================
+# Redirigir páginas antiguas (si las hubiera)
+# Redirect 301 /antigua-pagina.php /nueva-pagina.php (Ejemplo)
+
+# ==================== URLs amigables ====================
+# Solo reescribe si no es un archivo o directorio real
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Recetas: /recetas/123 -> receta.php?id=123
+RewriteRule ^recetas/([0-9]+)$ receta.php?id=$1 [QSA,L]
+
+# Colecciones: /colecciones/45 -> coleccion.php?id=45
+RewriteRule ^colecciones/([0-9]+)$ coleccion.php?id=$1 [QSA,L]
+
+# Usuarios: /usuarios/10 -> usuario.php?id=10
+RewriteRule ^usuarios/([0-9]+)$ usuario.php?id=$1 [QSA,L]
+
+# Todo lo demás a index.php (para manejo genérico, búsqueda, etc.)
+RewriteRule ^(.+)$ index.php?ruta=$1 [QSA,L]
+
+# ==================== Protección de carpetas ====================
+# Bloquear acceso directo a uploads
+RewriteRule ^uploads/ - [F,L]
+
+# Bloquear acceso a backups o config
+<FilesMatch "(config\.php|\.env|db\.sql)">
+    Require all denied
+</FilesMatch>
+
+# Bloquear acceso a archivos ocultos
+<FilesMatch "^\.">
+    Require all denied
+</FilesMatch>
+
+# ==================== Seguridad extra ====================
+# Bloquear acceso a posibles archivos temporales o de copia
+<FilesMatch "(.*\.bak|.*\.tmp|.*~)$">
+    Require all denied
+</FilesMatch>
