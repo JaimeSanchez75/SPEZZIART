@@ -1,0 +1,65 @@
+ :root {
+            --primary: #B0413E;
+            --font-main: 'Averia Serif Libre', serif;
+        }
+        body 
+        {
+            background: #fafafa;
+            font-family: var(--font-main);
+        }
+        .auth-logo 
+        {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-align: center;
+        }
+        .btn-primary 
+        {
+            background-color: var(--primary);
+            border-color: var(--primary);
+            border-radius: 12px;
+        }
+        .btn-primary:hover 
+        {
+            opacity: .9;
+        }
+        .btn-primary:hover 
+        {
+            background-color: var(--primary);
+            border-color: var(--primary);
+        }
+        .auth-card 
+        {
+            border-radius: 14px;
+        }
+        .container
+        {
+            max-width: 820px;
+            height:100vh;
+
+        }
+        .logo
+        {
+            width:180px;
+            height:20vh;
+            max-height: 200px;
+            min-height: 160px;
+            margin-bottom: 1rem;
+            
+        }
+
+@media (min-width: 992px) 
+{
+    .auth-container 
+    {
+        max-width: 450px;
+    }
+}
+@media (min-width: 992px) 
+{
+  .feed-grid 
+  {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}

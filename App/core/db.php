@@ -1,5 +1,6 @@
 <?php
-$config = require __DIR__ . '/config.php';
+$config = require __DIR__ . '/../config/config.php';
+use Firebase\JWT\JWT;
 //Conexión a la base de datos usando PDO 
 //La función es a prueba de fallos y devuelve un mensaje de error genérico en caso de problemas de conexión, mientras que los detalles se registran en el log de errores del servidor.
 //Se usa patrón singleton y solo establece una conexión a la base de datos durante la ejecución del script.
@@ -32,18 +33,41 @@ function db()
     return $pdo;
 }
 //============================Función de Login============================
-function login_usuario($correo, $contra) 
+function login_usuario($login, $contra)
 {
-    $st = db()->prepare("SELECT * FROM Usuario WHERE Email = :e");
-    $st->execute([':e' => $correo]);
-    $u = $st->fetch();
-    //Utiliza método de comprobación segura de PHP para verificar la contraseña.
-    //Devuelve el usuario si la comprobación es exitosa, o false si falla.
-    //Se encarga solo el método de descifrar el passwordhash.
+    // Usamos marcadores por posición '?' para evitar líos con nombres duplicados
+    $sql = "SELECT * FROM Usuario 
+            WHERE Email = ? 
+               OR Nombre = ?
+            LIMIT 1";
+
+    $st = db()->prepare($sql);
+    
+    // Pasamos el mismo valor ($login) para los dos signos de interrogación
+    $st->execute([$login, $login]); 
+    
+    $u = $st->fetch(PDO::FETCH_ASSOC);
+
     if ($u && password_verify($contra, $u['Contrasena'])) 
     {
-        return $u;
+        global $config;
+
+        $payload = [
+            'id'    => $u['ID_Usuario'],
+            'email' => $u['Email'],
+            'role'  => $u['EsAdmin'] ? 'admin' : 'user',
+            'exp'   => time() + ($config['JWT_EXP'] ?? 3600)
+        ];
+
+        // Asegúrate de que la clase JWT esté importada (use Firebase\JWT\JWT;)
+        $token = \Firebase\JWT\JWT::encode($payload, $config['JWT_SECRET'], 'HS256');
+
+        return [
+            'usuario' => $u,
+            'token'   => $token
+        ];
     }
+
     return false;
 }
 //============================Funciones sobre usuarios======================
@@ -68,13 +92,11 @@ function recetas_por_usuario($id_usuario)
 }
 function crear_usuario($nombre, $email, $contra, $telefono = null)
 {
-    $sql = "INSERT INTO Usuario 
-            (Nombre, Email, Contrasena, Telefono) 
-            VALUES (:n, :e, :p, :t)";
-
+    $sql = "INSERT INTO Usuario (Nombre, Email, Contrasena, Telefono) VALUES (:n, :e, :p, :t)";
     try 
     {
-        return db()->prepare($sql)->execute([
+        return db()->prepare($sql)->execute(
+        [
             ':n' => $nombre,
             ':e' => $email,
             ':p' => password_hash($contra, PASSWORD_DEFAULT),
@@ -104,18 +126,18 @@ function actualizar_usuario($id_usuario, $nombre = null, $email = null, $telefon
 
     $sql = "UPDATE Usuario SET " . implode(', ', $campos) . " WHERE ID_Usuario = :id";
 
-    try {
-        return db()->prepare($sql)->execute($params);
-    } catch (PDOException $e) {
+    try {return db()->prepare($sql)->execute($params);} 
+    catch (PDOException $e) 
+    {
         error_log($e->getMessage());
         return false;
     }
 }
 function borrar_usuario($id_usuario)
 {
-    try {
-        return db()->prepare("DELETE FROM Usuario WHERE ID_Usuario = :id")->execute([':id' => $id_usuario]);
-    } catch (PDOException $e) {
+    try {return db()->prepare("DELETE FROM Usuario WHERE ID_Usuario = :id")->execute([':id' => $id_usuario]);} 
+    catch (PDOException $e) 
+    {
         error_log($e->getMessage());
         return false;
     }
@@ -127,8 +149,10 @@ function crear_receta($id_creador, $titulo, $descripcion = null, $imagen = null,
             (ID_Creador, Titulo, Descripcion, Imagen, Tiempo, Porciones, EsFit, EsPublica) 
             VALUES (:idc, :t, :d, :i, :ti, :po, :fit, :pub)";
 
-    try {
-        return db()->prepare($sql)->execute([
+    try 
+    {
+        return db()->prepare($sql)->execute(
+        [
             ':idc' => $id_creador,
             ':t'   => $titulo,
             ':d'   => $descripcion,
@@ -138,7 +162,9 @@ function crear_receta($id_creador, $titulo, $descripcion = null, $imagen = null,
             ':fit' => $es_fit,
             ':pub' => $es_publica
         ]);
-    } catch (PDOException $e) {
+    } 
+    catch (PDOException $e) 
+    {
         error_log($e->getMessage());
         return false;
     }
@@ -160,9 +186,9 @@ function actualizar_receta($id_receta, $titulo = null, $descripcion = null, $ima
 
     $sql = "UPDATE Receta SET " . implode(', ', $campos) . " WHERE ID_Receta = :id";
 
-    try {
-        return db()->prepare($sql)->execute($params);
-    } catch (PDOException $e) {
+    try {return db()->prepare($sql)->execute($params);} 
+    catch (PDOException $e) 
+    {
         error_log($e->getMessage());
         return false;
     }
@@ -170,9 +196,9 @@ function actualizar_receta($id_receta, $titulo = null, $descripcion = null, $ima
 
 function borrar_receta($id_receta)
 {
-    try {
-        return db()->prepare("DELETE FROM Receta WHERE ID_Receta = :id")->execute([':id' => $id_receta]);
-    } catch (PDOException $e) {
+    try {return db()->prepare("DELETE FROM Receta WHERE ID_Receta = :id")->execute([':id' => $id_receta]);} 
+    catch (PDOException $e) 
+    {
         error_log($e->getMessage());
         return false;
     }
@@ -281,10 +307,8 @@ function actualizar_ingrediente($id_ingrediente, $nombre = null, $grasas = null,
 }
 function borrar_ingrediente($id_ingrediente)
 {
-    try 
-    {
-        return db()->prepare("DELETE FROM Ingrediente WHERE ID_Ingrediente = :id")->execute([':id' => $id_ingrediente]);
-    } catch (PDOException $e) 
+    try {return db()->prepare("DELETE FROM Ingrediente WHERE ID_Ingrediente = :id")->execute([':id' => $id_ingrediente]);} 
+    catch (PDOException $e) 
     {
         error_log($e->getMessage());
         return false;
