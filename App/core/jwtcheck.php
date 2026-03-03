@@ -3,10 +3,12 @@ use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 use Firebase\JWT\ExpiredException;
 use Firebase\JWT\SignatureInvalidException;
-
+//============================Autenticación JWT============================
 /*Autenticación JWT para rutas protegidas. 
 Si el token es válido, se guarda la información del usuario en la sesión para su uso posterior (como en permisos.php). 
 Si no es válido, se devuelve un error 401 con un mensaje específico según el tipo de error.*/
+
+//En el Token se guarda el ID, Email, Nombre de Usuario y Rol.
 function JWTcheck(): void
 {
     if (empty($_COOKIE['token'])) 

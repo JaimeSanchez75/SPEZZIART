@@ -35,17 +35,34 @@ class AuthController
     {
         csrf_verify(); 
         $nombre   = trim($_POST['nombre'] ?? '');
+        $username = trim($_POST['username'] ?? '');
         $email    = trim($_POST['email'] ?? '');
         $password = $_POST['contra'] ?? '';
 
-        if (!$nombre || !$email || !$password) {$this->jsonResponse(['error' => 'Todos los campos son obligatorios'], 400);}
-
+        if (!$nombre || !$username || !$email || !$password) {$this->jsonResponse(['error' => 'Todos los campos son obligatorios'], 400);}
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {$this->jsonResponse(['error' => 'Email inválido'], 400);}
 
-        $ok = crear_usuario($nombre, $email, $password);
+        try 
+        {
+            $ok = crear_usuario($nombre, $username, $email, $password);
+            
+            if ($ok) {$this->jsonResponse(['success' => true]);} 
+            else {$this->jsonResponse(['error' => 'No se pudo crear el usuario'], 500);}
+        } 
+        catch (PDOException $e) 
+        {
 
-        if (!$ok) {$this->jsonResponse(['error' => 'El email o nombre de usuario ya existe'], 409);}
-        $this->jsonResponse(['success' => true]);
+            if ($e->getCode() == 23000) 
+            {
+                $msg = $e->getMessage();
+                if (str_contains($msg, 'Nombre')) $err = 'El Apodo ya está en uso.';
+                elseif (str_contains($msg, 'Username')) $err = 'El Nombre de usuario ya existe.';
+                elseif (str_contains($msg, 'Email')) $err = 'El Correo ya está registrado.';
+                else $err = 'Los datos ya existen.';
+                $this->jsonResponse(['error' => $err], 409);
+            }
+            $this->jsonResponse(['error' => 'Error en la base de datos'], 500);
+        }
     }
     public function logout()
     {

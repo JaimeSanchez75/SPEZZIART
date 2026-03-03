@@ -35,45 +35,40 @@ function db()
 //============================Función de Login============================
 function login_usuario($login, $contra)
 {
-    // Usamos marcadores por posición '?' para evitar líos con nombres duplicados
     $sql = "SELECT * FROM Usuario 
             WHERE Email = ? 
-               OR Nombre = ?
+               OR Username = ?
             LIMIT 1";
 
     $st = db()->prepare($sql);
-    
-    // Pasamos el mismo valor ($login) para los dos signos de interrogación
     $st->execute([$login, $login]); 
     
-    $u = $st->fetch(PDO::FETCH_ASSOC);
+    $u = $st->fetch();
 
     if ($u && password_verify($contra, $u['Contrasena'])) 
     {
         global $config;
-
         $payload = [
-            'id'    => $u['ID_Usuario'],
-            'email' => $u['Email'],
-            'role'  => $u['EsAdmin'] ? 'admin' : 'user',
-            'exp'   => time() + ($config['JWT_EXP'] ?? 3600)
+            'id'       => $u['ID_Usuario'],
+            'email'    => $u['Email'],
+            'username' => $u['Username'], 
+            'role'     => $u['EsAdmin'] ? 'admin' : 'user',
+            'exp'      => time() + ($config['JWT_EXP'] ?? 3600)
         ];
 
-        // Asegúrate de que la clase JWT esté importada (use Firebase\JWT\JWT;)
         $token = \Firebase\JWT\JWT::encode($payload, $config['JWT_SECRET'], 'HS256');
 
-        return [
-            'usuario' => $u,
-            'token'   => $token
-        ];
+        return ['usuario' => $u, 'token' => $token];
     }
-
     return false;
 }
 //============================Funciones sobre usuarios======================
 function buscar_usuarios($q) 
 {
-    $st = db()->prepare("SELECT * FROM Usuario WHERE Nombre LIKE :q ");
+    $st = db()->prepare("SELECT ID_Usuario, Nombre, Seguidores 
+                         FROM Usuario 
+                         WHERE Nombre LIKE :q 
+                         LIMIT 20");
     $st->execute([':q' => "%$q%"]);
     return $st->fetchAll();
 }
@@ -90,14 +85,15 @@ function recetas_por_usuario($id_usuario)
     
     return $st->fetchAll();
 }
-function crear_usuario($nombre, $email, $contra, $telefono = null)
+function crear_usuario($nombre, $username, $email, $contra, $telefono = null)
 {
-    $sql = "INSERT INTO Usuario (Nombre, Email, Contrasena, Telefono) VALUES (:n, :e, :p, :t)";
+    $sql = "INSERT INTO Usuario (Nombre, Username, Email, Contrasena, Telefono) 
+            VALUES (:n, :u, :e, :p, :t)";
     try 
     {
-        return db()->prepare($sql)->execute(
-        [
+        return db()->prepare($sql)->execute([
             ':n' => $nombre,
+            ':u' => $username,
             ':e' => $email,
             ':p' => password_hash($contra, PASSWORD_DEFAULT),
             ':t' => $telefono
@@ -106,15 +102,17 @@ function crear_usuario($nombre, $email, $contra, $telefono = null)
     catch (PDOException $e) 
     {
         error_log($e->getMessage());
-        return false;
+        return false; 
     }
+    
 }
-function actualizar_usuario($id_usuario, $nombre = null, $email = null, $telefono = null, $modo_oscuro = null, $modo_fit = null, $notificacion_on = null, $cuenta_publica = null)
+function actualizar_usuario($id_usuario, $nombre = null, $username = null, $email = null, $telefono = null, $modo_oscuro = null, $modo_fit = null, $notificacion_on = null, $cuenta_publica = null)
 {
     $campos = [];
     $params = [':id' => $id_usuario];
 
     if ($nombre !== null) { $campos[] = "Nombre = :n"; $params[':n'] = $nombre; }
+    if ($username !== null) { $campos[] = "Username = :u"; $params[':u'] = $username; }
     if ($email !== null) { $campos[] = "Email = :e"; $params[':e'] = $email; }
     if ($telefono !== null) { $campos[] = "Telefono = :t"; $params[':t'] = $telefono; }
     if ($modo_oscuro !== null) { $campos[] = "ModoOscuro = :mo"; $params[':mo'] = $modo_oscuro; }
@@ -123,15 +121,10 @@ function actualizar_usuario($id_usuario, $nombre = null, $email = null, $telefon
     if ($cuenta_publica !== null) { $campos[] = "CuentaPublica = :cp"; $params[':cp'] = $cuenta_publica; }
 
     if (empty($campos)) return false;
-
     $sql = "UPDATE Usuario SET " . implode(', ', $campos) . " WHERE ID_Usuario = :id";
 
-    try {return db()->prepare($sql)->execute($params);} 
-    catch (PDOException $e) 
-    {
-        error_log($e->getMessage());
-        return false;
-    }
+    try { return db()->prepare($sql)->execute($params); } 
+    catch (PDOException $e) { error_log($e->getMessage()); return false; }
 }
 function borrar_usuario($id_usuario)
 {
