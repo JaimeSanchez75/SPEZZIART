@@ -1,0 +1,119 @@
+:root 
+{
+    --primary: #b1130d;
+    --font-main: 'Averia Serif Libre', serif;
+}
+
+body 
+{
+    font-family: var(--font-main);
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+h1.auth-logo 
+{
+    display: inline-flex;
+    font-family: 'Galada', cursive;
+    letter-spacing: 0.20em;
+    color: var(--primary);
+    font-size: 2.8rem;
+    font-weight: 100;
+    transition: color 0.3s ease-in-out, transform 0.3s ease-in-out;
+}
+
+h1.auth-logo:hover 
+{
+    transform: translateY(-5%);
+    color: #f3b109;
+}
+
+.logo 
+{
+    width: 140px;
+    height: auto;
+    margin-bottom: 1rem;
+}
+
+.auth-card-container
+{
+    border-radius: 15px;
+    background: linear-gradient(163deg, #8a1000 0%, #f0881a 100%);
+    padding: 0px;
+    border: 3px solid transparent;
+    transition: all 0.3s ease-in-out;
+}
+
+.auth-card 
+{
+    background-color: var(--bs-body-bg);
+    color: var(--bs-body-color);
+    border-radius: 10px;
+    padding: 2.5rem;
+    transition: all 0.2s ease-in-out;
+}
+
+.auth-card-container:hover 
+{
+    box-shadow: 0 0 20px 2px rgba(243, 177, 9, 0.6);
+    border: 0px solid transparent;
+}
+
+.auth-card-container:hover .auth-card 
+{
+    transform: scale(0.98);
+    border-radius: 15px;
+}
+
+.field 
+{
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    border-radius: 25px;
+    padding: 0.6em;
+    background-color: var(--bs-tertiary-bg);
+    box-shadow: inset 2px 5px 10px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.input-icon 
+{
+    height: 1.3em;
+    width: 1.3em;
+    fill: rgb(255, 187, 0);
+}
+
+.input-field 
+{
+    background: none;
+    border: none;
+    outline: none;
+    width: 100%;
+    color: rgb(255, 187, 0);
+}
+
+.btn-submit 
+{
+    background-color: var(--primary);
+    border: none;
+    border-radius: 12px;
+    font-weight: 600;
+    color: #fff;
+    padding: 0.8rem 1.5rem;
+    transition: background-image 0.5s ease-in-out;
+}
+
+.btn-submit:hover 
+{
+    background-image: linear-gradient(163deg, #8a1000 0%, #e36c04 100%);
+    color: #fff;
+}
+[data-bs-theme="dark"] body {background-color: #171717;}
+[data-bs-theme="dark"] .auth-card {background-color: #171717;}
+[data-bs-theme="dark"] .auth-card-container {border: 3px solid rgb(20, 20, 20);}
+[data-bs-theme="dark"] .auth-card-container:hover {border: 0px solid rgb(20, 20, 20);}
+[data-bs-theme="dark"] .field {background-color: #171717; box-shadow: inset 2px 5px 10px rgb(5, 5, 5);}
+
+.olvidado {font-size: 12px;}
+
+@media (min-width: 992px) {.auth-card { padding: 3rem; }}
