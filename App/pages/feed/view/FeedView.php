@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -9,7 +10,7 @@
         <nav class="navbar navbar-dark bg-dark">
             <div class="container">
                 <span class="navbar-brand">Spezziart</span>
-                <?php if (isset($_COOKIE['token'])): ?>
+                <?php if ($isLoggedIn): ?>
                     <a href="/App/auth/logout" class="btn btn-outline-danger btn-sm">Cerrar Sesión</a>
                 <?php else: ?>
                     <a href="/App/pages/login" class="btn btn-outline-primary btn-sm">Iniciar Sesión</a>
@@ -18,8 +19,8 @@
         </nav>
         <div class="container mt-5">
             <div class="card p-5 shadow-sm">
-                <?php if (isset($_SESSION['user'])): ?>
-                    <h1>¡Bienvenido, <?php echo htmlspecialchars($_SESSION['user']['nombre'] ?? 'Usuario'); ?>!</h1>
+                <?php if ($isLoggedIn): ?>
+                    <h1>¡Bienvenido, <?php echo htmlspecialchars($username); ?>!</h1>
                     <p class="lead">Has iniciado sesión correctamente. Tu token JWT es válido.</p>
                 <?php else: ?>
                     <h1>¡Hola, Invitado!</h1>
