@@ -2,14 +2,14 @@
 /* Protección CSRF para formularios. */
 function csrf_token(): string
 {
-    if (empty($_COOKIE['csrf_token'])) {setcookie('csrf_token', bin2hex(random_bytes(32)), time() + 3600, '/');}
-    return $_COOKIE['csrf_token'];
+    if (empty($_SESSION['csrf_token'])) {$_SESSION['csrf_token'] = bin2hex(random_bytes(32));}
+    return $_SESSION['csrf_token'];
 }
 
 function csrf_verify(): void
 {
     $postToken = $_POST['csrf_token'] ?? '';
-    $sessionToken = $_COOKIE['csrf_token'] ?? '';
+    $sessionToken = $_SESSION['csrf_token'] ?? '';
 
     if (empty($postToken) || empty($sessionToken) || !hash_equals($sessionToken, $postToken)) 
     {

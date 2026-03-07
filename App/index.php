@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
-$userData = null; 
 require_once __DIR__ . '/vendor/autoload.php';
+session_start();
 
 $config = require __DIR__ . '/config/config.php';
 //Limpieza de rutas.
@@ -23,14 +23,14 @@ $isAdminRoute = str_starts_with($uri, 'pages/administracion');
 if (!in_array($uri, $publicRoutes, true)) 
 {
     require_once __DIR__ . '/core/jwtcheck.php';
-    $userData = JWTcheck();  
+    JWTcheck(); 
 }
 /*PROTECCIÓN ADMIN*/
-if ($isAdminRoute) 
-{
-    require_once __DIR__ . '/core/permisos.php';
-    requireAdmin(); 
-}
+// if ($isAdminRoute) 
+// {
+//     require_once __DIR__ . '/core/permisos.php';
+//     requireAdmin(); 
+// }
 //--------------------------------------------------------------------------------------
 /*ENRUTAMIENTO MANUAL*/
 if ($uri === '') 
@@ -47,6 +47,11 @@ if ($uri === 'auth/login' || $uri === 'auth/register')
     $controller->$method();
     exit;
 }
+if($uri === 'pages/administracion') 
+{
+    require_once __DIR__ . '/pages/administracion/view/dashboard.php';
+    exit;
+}
 // Procesar Logout
 if ($uri === 'auth/logout') 
 {
@@ -59,11 +64,6 @@ if ($uri === 'auth/logout')
 if ($uri === 'pages/login') 
 {
     require_once __DIR__ . '/pages/login/view/LoginView.php';
-    exit;
-}
-if($uri === 'pages/administracion') 
-{
-    require_once __DIR__ . '/pages/administracion/view/dashboard.php';
     exit;
 }
 // Cargar el FEED a través de su Controlador (NUNCA directo a la View)
