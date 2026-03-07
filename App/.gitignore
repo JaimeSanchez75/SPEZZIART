@@ -4,6 +4,8 @@ config/*.php
 # Dependencias instaladas por Composer
 vendor/
 
+composer.lock
+composer.json
 # Archivos temporales de sistema
 *.log
 *.tmp
