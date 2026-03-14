@@ -1,0 +1,208 @@
+/*Estilos de página*/
+body
+{
+  --vino:#8b1e2d;
+  --danger:#8b1e2d;   
+  background:#f4f4f4;
+}
+.text-danger 
+{
+color: var(--danger) !important;
+}
+/* Barra de Header */
+.header-grid {
+    display: flex;
+    flex-wrap: wrap; /* Permite que los elementos salten de línea */
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+}
+
+/* 1. Logo: Siempre a la izquierda */
+.item-logo {
+    order: 1;
+    flex: 0 0 auto; /* No crece, no se encoge */
+    min-width: max-content; /* Asegura que quepa todo el texto */
+}
+
+/* 2. Buscador: En medio en PC, abajo en Tablet/Móvil */
+.item-search {
+    order: 2;
+    flex: 1 1 300px; /* Crece para llenar el espacio, mínimo 300px */
+}
+
+/* 3. Campana: Siempre a la derecha */
+.item-actions {
+    order: 3;
+    flex: 0 1 auto;
+    display: flex;
+    justify-content: flex-end;
+}
+
+/* --- EL TRUCO PARA TABLET (1000px) --- */
+@media (max-width: 1000px) {
+    .item-search {
+        order: 3;      /* Pasa a ser el último visualmente */
+        flex: 1 1 100%; /* Ocupa todo el ancho forzando el salto */
+        margin-top: 10px;
+    }
+    
+    .item-actions {
+        order: 2;      /* La campana sube al hueco del buscador */
+    }
+
+    /* Aseguramos que el logo y la campana se mantengan en los extremos */
+    .item-logo { flex: 1; }
+    .item-actions { flex: 1; }
+}
+
+/* Estilo del input */
+#search-input {
+    background-color: #eee;
+    height: 45px;
+    border: 1px solid transparent;
+}
+
+#search-input:focus {
+    background-color: #fff;
+    border-color: var(--vino);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+/* Tarjeta de cada publicación */
+.feed-card
+{
+  border-radius:20px;
+  border:none;
+  box-shadow:0 5px 15px rgba(0,0,0,0.08);
+}
+.feed-img
+{
+  width:160px;
+  height:120px;
+  object-fit:cover;
+  border-radius:12px;
+}
+.username
+{
+  font-weight:600;
+  font-size:16px;
+}
+.recipe-title
+{
+  color:#8b1e2d;
+  font-weight:700;
+}
+/* Barra de etiquetas*/
+.etiquetas-filtro 
+{
+  background-color: #f1f1f1; 
+  padding: 4px 10px;
+  min-height: 54px;
+  border: 1px solid #e0e0e0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  overflow: hidden; 
+}
+
+/* Botón de añadir (dentro de la barra) */
+.btn-add-tag {
+    background-color: white;
+    border: 1px solid var(--vino);
+    color: var(--vino);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    width: 42px; height: 42px;
+    
+}
+
+.btn-add-tag:hover 
+{
+    transform: scale(1.05);
+    background-color: var(--vino);
+    border:none;
+    
+}
+.btn-add-tag:hover > .material-symbols-outlined {
+    color: white;
+}
+
+/* Chips que aparecen al filtrar */
+.chip-active {
+    background-color: white !important;
+    color: #333 !important;
+    border: 1px solid #ddd !important;
+    padding: 5px 15px !important;
+    font-size: 0.85rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+}
+
+.chip-active .chip-remove {
+    display: flex;
+    align-items: center;
+    color: #999;
+    transition: color 0.2s;
+}
+
+.chip-active .chip-remove:hover {
+    color: var(--vino);
+}
+
+/* Estilo para el badge de "+X" */
+#extra-chips-badge {
+    background-color: #dee2e6 !important;
+    color: #666;
+    font-weight: 600;
+    padding: 6px 10px;
+}
+/* Chips dentro del MODAL (Seleccionables) */
+.chip-selectable 
+{
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    color: #444;
+    transition: all 0.2s ease;
+}
+.chip-selectable:hover 
+{
+    border-color: var(--vino);
+    color: var(--vino);
+}
+.chip-selectable.active 
+{
+    background-color: #ffeef0 !important; 
+    color: #8b1e2d !important;
+    border-color: #8b1e2d !important;
+    opacity: 0.6;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+@media (max-width: 400px) 
+{
+    .container 
+    {
+        padding-left: 8px !important;
+        padding-right: 8px !important;
+    }
+    .etiquetas-filtro 
+    {
+        gap: 4px !important; 
+        padding: 4px;
+    }
+    .chip-active 
+    {
+        max-width: 90px; 
+        padding: 4px 6px !important;
+        font-size: 0.7rem !important;
+    }
+    .chip-active span:first-child 
+    {
+        display: block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+}

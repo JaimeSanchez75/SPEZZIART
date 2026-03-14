@@ -9,10 +9,9 @@ Si el token es válido, se guarda la información del usuario en la sesión para
 Si no es válido, se devuelve un error 401 con un mensaje específico según el tipo de error.*/
 
 //En el Token se guarda el ID, Email, Nombre de Usuario y Rol.
-function JWTcheck(): void
+function JWTcheck(): array
 {
-    if (empty($_COOKIE['token'])) 
-    {
+    if (empty($_COOKIE['token'])) {
         header('Location: /App/pages/login');
         exit;
     }
@@ -20,23 +19,20 @@ function JWTcheck(): void
     $config = require __DIR__ . '/../config/config.php';
     $secret = $config['JWT_SECRET'];
     $token = $_COOKIE['token'];
-    
-    try 
-    {
-        $decoded = JWT::decode($token, new Key($secret, 'HS256'));
 
-        // Guardamos datos del usuario en sesión
-        // Usamos (array) para poder acceder como $_SESSION['user']['id']
-        $_SESSION['user'] = (array) $decoded;
+    try {
 
-    } 
-    catch (ExpiredException | SignatureInvalidException | Exception $e) 
-    {
-        //Si el token falla por cualquier motivo:
-        //Borramos la cookie para limpiar el navegador
+    $decoded = JWT::decode($token, new Key($secret, 'HS256'));
+
+    if (!isset($decoded->id)) {
+        throw new Exception('Invalid payload');
+    }
+
+    return (array) $decoded;
+
+    } catch (Throwable $e) {
+
         setcookie('token', '', time() - 3600, '/');
-        
-        //Redirigimos al login
         header('Location: /App/pages/login');
         exit;
     }

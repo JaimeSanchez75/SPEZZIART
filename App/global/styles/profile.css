@@ -1,0 +1,11 @@
+ body { background: #f8f9fa; color: #333; }
+        .header-perfil { background: linear-gradient(45deg, #2b2d42, #ef233c); color: white; padding: 10px 0; }
+        .vitrina-card { border: none; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); background: white; }
+        .logro-item { text-align: center; padding: 15px; transition: 0.3s; border-radius: 15px; }
+        .logro-item:hover { background: #fff5f5; }
+        .logro-icon { font-size: 40px; margin-bottom: 5px; }
+        .logro-ganado { color: #ffb703; filter: drop-shadow(0 0 5px rgba(255,183,3,0.4)); }
+        .logro-bloqueado { color: #dee2e6; filter: grayscale(1); }
+        .receta-card { border: none; border-radius: 15px; overflow: hidden; transition: 0.3s; height: 100%; }
+        .receta-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+        .receta-img { height: 160px; object-fit: cover; background: #eee; }

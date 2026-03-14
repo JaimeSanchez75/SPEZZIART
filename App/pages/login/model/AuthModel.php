@@ -2,9 +2,8 @@
 require_once __DIR__ . '/../../../core/db.php';
 use Firebase\JWT\JWT;
 
-class Auth extends Conexion
+class AuthModel extends Conexion
 {
-    // Ahora recibe $jwtSecret y $exp para no depender de archivos externos aquí
     public function loginUsuario($login, $contra, $jwtSecret, $exp)
     {
         $db = self::conectar();
@@ -13,8 +12,10 @@ class Auth extends Conexion
         $stmt->execute([$login, $login]);
         $usuario = $stmt->fetch();
 
-        if ($usuario && password_verify($contra, $usuario['Contrasena'])) {
-            $payload = [
+        if ($usuario && password_verify($contra, $usuario['Contrasena'])) 
+        {
+            $payload = 
+            [
                 'id'       => $usuario['ID_Usuario'],
                 'email'    => $usuario['Email'],
                 'username' => $usuario['Username'],

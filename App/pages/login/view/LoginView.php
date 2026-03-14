@@ -7,6 +7,7 @@
     <title>Login | Spezziart</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/App/global/styles/global.css">
+    <link rel="stylesheet" href="/App/global/styles/auth.css">
     <link href="https://fonts.googleapis.com/css2?family=Averia+Serif+Libre:wght@300;400;700&family=Galada&display=swap" rel="stylesheet">
 </head>
 
@@ -38,7 +39,7 @@
                         </div>
 
                         <div class="mt-3">
-                            <p class="btn btn-link p-0 text-decoration-none olvidado text-danger">¿Olvidaste la contraseña?</p>
+                            <a href="#" class="btn btn-link p-0 text-decoration-none olvidado text-danger">¿Olvidaste la contraseña?</a>
                         </div>
                         <div class="d-flex justify-content-center gap-2 mt-3">
                             <button type="submit" class="btn btn-submit py-2 px-4 w-100">Login</button>

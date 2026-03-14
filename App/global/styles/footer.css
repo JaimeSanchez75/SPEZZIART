@@ -1,0 +1,19 @@
+.bottom-nav
+{
+    /*Posición*/
+    position:fixed;
+    bottom:5px;
+    left:50%;
+    transform:translateX(-50%);
+    /*Disposición*/
+    display:flex;
+    /*Estilos de espacio*/
+    padding:12px 40px;
+    border-radius:40px;
+    gap:120px;
+    /*Colores*/
+    background:#8b1e2d;
+    color:white;
+    
+    
+}

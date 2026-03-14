@@ -1,12 +1,21 @@
 <?php
 declare(strict_types=1);
 
+require_once __DIR__ . '/core/auth.php';
 require_once __DIR__ . '/vendor/autoload.php';
 require_once __DIR__ . '/core/jwtcheck.php';
-session_start();
 
 use Phroute\Phroute\RouteCollector;
 use Phroute\Phroute\Dispatcher;
+
+session_start();
+if (isset($_COOKIE['token'])) 
+{
+    $user = JWTcheck();
+    Auth::setUser($user);
+}
+
+
 
 
 $config = require __DIR__ . '/config/config.php';
@@ -14,7 +23,8 @@ $config = require __DIR__ . '/config/config.php';
 // recoger la url
 $URI = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $basePath = '/App';
-if (strpos($URI, $basePath) === 0) {
+if (strpos($URI, $basePath) === 0) 
+{
     $URI = substr($URI, strlen($basePath));
 }
 $uri = trim($URI, '/');
@@ -24,16 +34,23 @@ $router = new RouteCollector();
 
 
 $router->filter('auth', function() {
-    return JWTcheck();
+    $user = JWTcheck();
+    if (!$user) {
+        header('Location: /App/pages/login');
+        exit; // Detenemos la ejecución
+    }
+    Auth::setUser($user);
 });
 
 
-$router->get('/', function() {
+$router->get('/', function() 
+{
     header('Location: /App/pages/feed');
     exit;
 });
 
-$router->get('pages/login', function() {
+$router->get('pages/login', function() 
+{
     require_once __DIR__ . '/pages/login/view/LoginView.php';
 });
 
@@ -60,7 +77,10 @@ $router->get('pages/feed', function() {
     require_once __DIR__ . '/pages/feed/controller/FeedController.php';
     (new FeedController())->index();
 });
-
+$router->post('pages/feed/filtrar', function() {
+    require_once __DIR__ . '/pages/feed/controller/FeedController.php';
+    (new FeedController())->filtrar();
+});
 // rutas protegidas por autenticación
 $router->group(['before' => 'auth'], function($router) {
     
@@ -87,7 +107,18 @@ $router->group(['before' => 'auth'], function($router) {
         $controller = new moderacionController();
         $controller->index();
     });
-
+    $router->get('pages/perfil/{id:i}?', function($id = null) {
+    require_once __DIR__ . '/pages/perfil/controller/PerfilController.php';
+    (new PerfilController())->index($id);
+});
+$router->post('pages/perfil/guardar-vitrina', function() {
+    require_once __DIR__ . '/pages/perfil/controller/PerfilController.php';
+    (new PerfilController())->guardarVitrina();
+});
+$router->post('pages/perfil/seguir/{id:i}', function($id) {
+    require_once __DIR__ . '/pages/perfil/controller/PerfilController.php';
+    (new PerfilController())->seguir($id);
+});
     
 });
 
