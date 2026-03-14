@@ -10,7 +10,7 @@
                     <div class="card-stat d-flex justify-content-between align-items-center">
                         <div>
                             <div class="text-muted small">Usuarios Totales</div>
-                            <div class="stat-value">1,284</div>
+                            <div class="stat-value"><?php echo $usuariosTotales; ?></div>
                             <div class="stat-change-positive">+12.5%</div>
                         </div>
                         <div class="stat-icon bg-soft-primary">
@@ -22,7 +22,7 @@
                     <div class="card-stat d-flex justify-content-between align-items-center">
                         <div>
                             <div class="text-muted small">Recetas Publicadas</div>
-                            <div class="stat-value">452</div>
+                            <div class="stat-value"><?php echo $recetasTotalesSem; ?></div>
                             <div class="stat-change-positive">+8.2%</div>
                         </div>
                         <div class="stat-icon bg-soft-success">
@@ -46,7 +46,7 @@
                     <div class="card-stat d-flex justify-content-between align-items-center">
                         <div>
                             <div class="text-muted small">Pendientes Revisión</div>
-                            <div class="stat-value">24</div>
+                            <div class="stat-value"><?php echo $pendientesRevision; ?></div>
                             <div class="stat-change-negative">-3</div>
                         </div>
                         <div class="stat-icon bg-soft-orange">
@@ -62,7 +62,7 @@
                     <div class="section-card p-3">
                         <h6 class="fw-semibold">Actividad Semanal</h6>
 
-                        <div><canvas id="weeklyChart"></canvas></div>
+                        <div><canvas id="graficaRecetasSemanal"></canvas></div>
 
                     </div>
                 </div>
@@ -72,28 +72,22 @@
                             <h6 class="fw-semibold m-0">Últimas Aprobaciones</h6>
                             <a href="#" class="small text-danger">Ver todas</a>
                         </div>
-                        <div class="approval-item">
-                            <div class="d-flex align-items-center">
-                                <img src="https://picsum.photos/40" class="avatar">
-                                <div>
-                                    <div class="fw-semibold small">Tortilla de Patatas</div>
-                                    <div class="text-muted small">Publicado por @pepito_123</div>
+                        <?php foreach($ultimasRecetasAprobadas as $receta){ ?>
+                            <div class="approval-item">
+                                <div class="d-flex align-items-center">
+
+                                    <img src="https://picsum.photos/40" class="avatar">
+                                    <div>
+                                        <div class="fw-semibold small"><?php echo $receta['Titulo']; ?></div>
+                                        <div class="text-muted small">Publicado por @<?php echo $receta['Autor']; ?></div>
+                                    </div>
                                 </div>
+                                <span class="badge-approved">APROBADA</span>
                             </div>
-                            <span class="badge-approved">APROBADA</span>
-                        </div>
-                        <div class="approval-item">
-                            <div class="d-flex align-items-center">
-                                <img src="https://picsum.photos/41" class="avatar">
-                                <div>
-                                    <div class="fw-semibold small">Tortilla de Patatas</div>
-                                    <div class="text-muted small">Publicado por @pepito_123</div>
-                                </div>
-                            </div>
-                            <span class="badge-approved">APROBADA</span>
-                        </div>
+                        <?php } ?>
                     </div>
                 </div>
             </div>
         </div>
 </section>
+

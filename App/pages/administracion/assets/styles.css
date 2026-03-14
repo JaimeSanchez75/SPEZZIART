@@ -252,4 +252,78 @@ body {
       font-size: .75rem;
     }
 
+
+    /* perfil modal */
+
+    /* MODAL PERFIL */
+
+.profile-modal{
+    border-radius:16px;
+    border:none;
+}
+
+.profile-avatar{
+    width:70px;
+    height:70px;
+    border-radius:50%;
+    object-fit:cover;
+}
+
+.profile-subtitle{
+    font-size:13px;
+    color:var(--text-light);
+}
+
+.profile-stats{
+    font-size:12px;
+}
+
+.stat-number{
+    font-weight:700;
+    color:var(--brand-wine);
+    font-size:16px;
+}
+
+.stat-label{
+    color:var(--text-light);
+    font-size:12px;
+}
+
+.section-title{
+    font-weight:700;
+}
+
+.achievement{
+    width:55px;
+    height:55px;
+    border-radius:50%;
+    object-fit:cover;
+}
+
+/* TARJETAS RECETAS */
+
+.recipe-card{
+    background:white;
+    border-radius:14px;
+    padding:12px;
+    box-shadow:0 2px 6px rgba(0,0,0,0.06);
+    transition:0.2s;
+}
+
+.recipe-card:hover{
+    transform:translateY(-2px);
+}
+
+.recipe-card img{
+    width:100%;
+    border-radius:10px;
+}
+
+.recipe-title{
+    font-size:14px;
+    font-weight:600;
+    margin-top:8px;
+    color:var(--brand-wine);
+}
+ 
     
