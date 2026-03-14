@@ -9,6 +9,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.min.js" integrity="sha384-G/EV+4j2dNv+tEPo3++6LCgdCROaejBqfUeNjuKAiuXbjrxilcCdDz6ZAVfHWe1Y" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <link rel="stylesheet" href="/App/pages/administracion/assets/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <title>Panel de Administración | SPEZZIART</title>
 </head>
 
@@ -27,32 +28,16 @@
             <div class="col-9">
                 <?php
                 require __DIR__ . "/Components/header.php";
-                $page = $_GET['page'] ?? 'principal';
-
-                switch ($page) {
-                    case 'principal':
-                        require __DIR__ . "/principal/principal.php";
-                        break;
-
-                    case 'usuarios':
-                        require __DIR__ . "/usuarios&admin/usuarios.php";
-                        break;
-
-                    case 'recetasIngredientes':
-                        require __DIR__ . "/recetas&ingredientes/recetasIngredientes.php";
-                        break;
-
-                    case 'moderacion':
-                        require __DIR__ . "/moderacion/moderacion.php";
-                        break;
-
-                    default:
-                        require __DIR__ . "/principal/principal.php";
-                }
+                
+                require __DIR__ . "/".$__view;
+                require __DIR__ . "/Components/usuario/modalPerfil.php";
+    
                 ?>
             </div>
         </div>
     </div>
 </body>
+
+<script src="/App/pages/administracion/assets/chart.js"></script>
 
 </html>

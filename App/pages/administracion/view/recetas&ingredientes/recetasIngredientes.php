@@ -1,234 +1,164 @@
-<div class="container-fluid py-4">
-
-    <!-- Header -->
-    <div class="d-flex justify-content-between align-items-center mb-3">
+<section class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center">
         <div>
-            <h2 class="content-title mb-0">Recetas & Ingredientes</h2>
-            <p class="content-welcome mb-0">
-                Crea, edita o elimina el contenido base de la aplicación.
-            </p>
+            <h2>Recetas e Ingredientes</h2>
+            <p>Crea, edita o elimina el contenido base de la aplicación.</p>
         </div>
-
-        <button class="btn text-white px-4 py-2"
-                style="background:#5d0a1a;border-radius:30px;">
-            <i class="bi bi-plus-lg me-2"></i> Nuevo Ingrediente
-        </button>
+        <div>
+            <button class="btn btn-primary"><i class="bi bi-plus"></i> Nueva receta</button>
+        </div>
     </div>
 
-    <!-- Tabs -->
-    <ul class="nav nav-tabs border-0 mb-4">
+    <ul class="nav nav-underline">
         <li class="nav-item">
-            <button class="nav-link text-secondary fw-semibold">
-                Recetas
-            </button>
+            <a href="#" class="nav-link active" data-bs-toggle="tab" data-bs-target="#recetas">Recetas</a>
         </li>
         <li class="nav-item">
-            <button class="nav-link active fw-semibold"
-                    style="color:#5d0a1a;border-bottom:2px solid #5d0a1a;">
-                Ingredientes
-            </button>
+            <a href="#" class="nav-link" data-bs-toggle="tab" data-bs-target="#ingredientes">Ingredientes</a>
         </li>
     </ul>
 
-    <!-- Buscador + filtros -->
-    <div class="d-flex gap-3 mb-4">
-
-        <div class="flex-grow-1">
-            <div class="input-group">
-                <span class="input-group-text bg-white border-end-0">
-                    <i class="bi bi-search text-muted"></i>
-                </span>
-
-                <input type="text"
-                       class="form-control border-start-0"
-                       placeholder="Buscar ingredientes...">
-            </div>
+    <div class="d-flex justify-content-between align-items-center mt-3 gap-2">
+        <div class="input-group search-box">
+            <span class="input-group-text border-0">
+                <i class="bi bi-search"></i>
+            </span>
+            <input type="text" class="form-control border-0" placeholder="Buscar recetas...">
         </div>
 
-        <button class="btn btn-light border px-3">
-            <i class="bi bi-funnel me-2"></i> Filtros
+        <!-- Botón filtros -->
+        <button class="btn btn-light filter-btn">
+            <i class="bi bi-funnel me-1"></i> Filtros
         </button>
-
     </div>
 
-    <!-- Tabla ingredientes -->
-    <div class="card border-0 shadow-sm rounded-4 p-3">
+    <div class="tab-content">
 
-        <table class="table align-middle mb-0">
+        <div class="tab-pane fade show active" id="recetas" role="tabpanel">
 
-            <thead class="text-uppercase text-muted small">
-                <tr>
-                    <th>Ingrediente</th>
-                    <th>Categoría</th>
-                    <th>Calorías (100g)</th>
-                    <th class="text-end">Acciones</th>
-                </tr>
-            </thead>
-
-            <tbody>
-
-                <!-- FILA -->
-                <tr>
-
-                    <td>
-                        <div class="d-flex align-items-center">
-
-                            <img src="https://images.unsplash.com/photo-1582515073490-dc8d2c63f4c0"
-                                 width="40"
-                                 height="40"
-                                 class="rounded-3 me-3"
-                                 style="object-fit:cover;">
-
-                            <strong>Patata</strong>
-
+            <div class="row g-5 mt-4">
+                <div class="col-md-4"> <!-- 12/4 = 3 cards por fila -->
+                    <div class="card border-0 shadow-sm">
+                        <img src="https://media.istockphoto.com/id/1297400965/es/foto/un-primer-plano-de-una-tortilla-espa%C3%B1ola-fresca-y-sabrosa-un-plato-tradicional-de-espa%C3%B1a.jpg?s=612x612&w=0&k=20&c=BIz2CCaqwhCR4Yngx-hV9H9kaK3tiyARz7wqqvA3Ges=" class="card-img-top" alt="Imagen de receta">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="badge bg-primary">ALMUERZO</span>
+                                <small class="text-muted"><i class="bi bi-clock"></i> 30 min</small>
+                            </div>
+                            <h5 class="card-title">Tortilla de patatas con cebolla</h5>
+                            <div class="d-flex align-items-center mt-3">
+                                <i class="bi bi-person-circle me-2"></i>
+                                <small class="text-muted">Por @chef_admin</small>
+                                <a href="#" class="ms-auto text-decoration-none"><i class="bi bi-eye me-1"></i>Ver detalles</a>
+                            </div>
                         </div>
-                    </td>
+                    </div>
+                </div>
 
-                    <td class="text-muted">
-                        Verdura
-                    </td>
-
-                    <td style="color:#ff4d00;font-weight:600;">
-                        <i class="bi bi-fire me-1"></i>
-                        77 kcal
-                    </td>
-
-                    <td class="text-end">
-
-                        <button class="btn btn-light btn-sm me-2">
-                            <i class="bi bi-pencil"></i>
-                        </button>
-
-                        <button class="btn btn-light btn-sm">
-                            <i class="bi bi-trash"></i>
-                        </button>
-
-                    </td>
-
-                </tr>
-
-                <!-- FILA -->
-                <tr>
-
-                    <td>
-                        <div class="d-flex align-items-center">
-
-                            <img src="https://images.unsplash.com/photo-1585238342024-78d387f4a707"
-                                 width="40"
-                                 height="40"
-                                 class="rounded-3 me-3"
-                                 style="object-fit:cover;">
-
-                            <strong>Huevo</strong>
-
+                <!-- Copia este div por cada card -->
+                <div class="col-md-4">
+                    <div class="card border-0 shadow-sm">
+                        <img src="https://media.istockphoto.com/id/1297400965/es/foto/un-primer-plano-de-una-tortilla-espa%C3%B1ola-fresca-y-sabrosa-un-plato-tradicional-de-espa%C3%B1a.jpg?s=612x612&w=0&k=20&c=BIz2CCaqwhCR4Yngx-hV9H9kaK3tiyARz7wqqvA3Ges=" class="card-img-top" alt="Imagen de receta">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="badge bg-primary">ALMUERZO</span>
+                                <small class="text-muted"><i class="bi bi-clock"></i> 30 min</small>
+                            </div>
+                            <h5 class="card-title">Tortilla de patatas con cebolla</h5>
+                            <div class="d-flex align-items-center mt-3">
+                                <i class="bi bi-person-circle me-2"></i>
+                                <small class="text-muted">Por @chef_admin</small>
+                                <a href="#" class="ms-auto text-decoration-none"><i class="bi bi-eye me-1"></i>Ver detalles</a>
+                            </div>
                         </div>
-                    </td>
+                    </div>
+                </div>
 
-                    <td class="text-muted">
-                        Proteína
-                    </td>
-
-                    <td style="color:#ff4d00;font-weight:600;">
-                        <i class="bi bi-fire me-1"></i>
-                        155 kcal
-                    </td>
-
-                    <td class="text-end">
-
-                        <button class="btn btn-light btn-sm me-2">
-                            <i class="bi bi-pencil"></i>
-                        </button>
-
-                        <button class="btn btn-light btn-sm">
-                            <i class="bi bi-trash"></i>
-                        </button>
-
-                    </td>
-
-                </tr>
-
-                <!-- FILA -->
-                <tr>
-
-                    <td>
-                        <div class="d-flex align-items-center">
-
-                            <img src="https://images.unsplash.com/photo-1587049352846-4a222e784d38"
-                                 width="40"
-                                 height="40"
-                                 class="rounded-3 me-3">
-
-                            <strong>Cebolla</strong>
-
+                <div class="col-md-4">
+                    <div class="card border-0 shadow-sm">
+                        <img src="https://media.istockphoto.com/id/1297400965/es/foto/un-primer-plano-de-una-tortilla-espa%C3%B1ola-fresca-y-sabrosa-un-plato-tradicional-de-espa%C3%B1a.jpg?s=612x612&w=0&k=20&c=BIz2CCaqwhCR4Yngx-hV9H9kaK3tiyARz7wqqvA3Ges=" class="card-img-top" alt="Imagen de receta">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="badge bg-primary">ALMUERZO</span>
+                                <small class="text-muted"><i class="bi bi-clock"></i> 30 min</small>
+                            </div>
+                            <h5 class="card-title">Tortilla de patatas con cebolla</h5>
+                            <div class="d-flex align-items-center mt-3">
+                                <i class="bi bi-person-circle me-2"></i>
+                                <small class="text-muted">Por @chef_admin</small>
+                                <a href="#" class="ms-auto text-decoration-none"><i class="bi bi-eye me-1"></i>Ver detalles</a>
+                            </div>
                         </div>
-                    </td>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane fade" id="ingredientes" role="tabpanel">
 
-                    <td class="text-muted">
-                        Verdura
-                    </td>
+            <div class="table-responsive">
+                <table class="table align-middle">
+                    <thead class="text-muted small">
+                        <tr>
+                            <th>INGREDIENTE</th>
+                            <th>CATEGORIA</th>
+                            <th>CALORIAS</th>
+                            <th class="text-end">ACCIONES</th>
+                        </tr>
+                    </thead>
+                    <tbody>
 
-                    <td style="color:#ff4d00;font-weight:600;">
-                        <i class="bi bi-fire me-1"></i>
-                        40 kcal
-                    </td>
+                        <!-- Ingrediente 1 -->
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="user-avatar me-3">PP</div>
+                                    <div>
+                                        <div class="fw-semibold">Patata</div>
+                                        
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                Verdura
+                            </td>
+                            <td class="text-warning">
+                                <i class="bi bi-fire"></i> 77 kcal
+                            </td>
+                            <td class="text-end">
+                                <i class="bi bi-pencil me-3 text-muted"></i>
+                                <i class="bi bi-trash text-muted"></i>
+                            </td>
+                        </tr>
 
-                    <td class="text-end">
-
-                        <button class="btn btn-light btn-sm me-2">
-                            <i class="bi bi-pencil"></i>
-                        </button>
-
-                        <button class="btn btn-light btn-sm">
-                            <i class="bi bi-trash"></i>
-                        </button>
-
-                    </td>
-
-                </tr>
-
-                <!-- FILA -->
-                <tr>
-
-                    <td>
-                        <div class="d-flex align-items-center">
-
-                            <img src="https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5"
-                                 width="40"
-                                 height="40"
-                                 class="rounded-3 me-3">
-
-                            <strong>Aceite de oliva</strong>
-
-                        </div>
-                    </td>
-
-                    <td class="text-muted">
-                        Grasas
-                    </td>
-
-                    <td style="color:#ff4d00;font-weight:600;">
-                        <i class="bi bi-fire me-1"></i>
-                        884 kcal
-                    </td>
-
-                    <td class="text-end">
-
-                        <button class="btn btn-light btn-sm me-2">
-                            <i class="bi bi-pencil"></i>
-                        </button>
-
-                        <button class="btn btn-light btn-sm">
-                            <i class="bi bi-trash"></i>
-                        </button>
-
-                    </td>
-
-                </tr>
-
-            </tbody>
-
-        </table>
-
+                        <!-- Ingrediente 2 -->
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="user-avatar me-3">CE</div>
+                                    <div>
+                                        <div class="fw-semibold">Cebolla</div>
+                                        
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                Verdura
+                            </td>
+                            <td class="text-warning">
+                                <i class="bi bi-fire"></i> 40 kcal
+                            </td>
+                            <td class="text-end">
+                                <i class="bi bi-pencil me-3 text-muted"></i>
+                                <i class="bi bi-trash text-muted"></i>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
     </div>
 
-</div>
+
+
+</section>

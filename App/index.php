@@ -1,105 +1,108 @@
 <?php
 declare(strict_types=1);
+
 require_once __DIR__ . '/vendor/autoload.php';
+require_once __DIR__ . '/core/jwtcheck.php';
 session_start();
 
+use Phroute\Phroute\RouteCollector;
+use Phroute\Phroute\Dispatcher;
+
+
 $config = require __DIR__ . '/config/config.php';
-//Limpieza de rutas.
-$rawUri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-$basePath = '/App'; 
 
-if (strpos($rawUri, $basePath) === 0) {
-    $rawUri = substr($rawUri, strlen($basePath));
+// recoger la url
+$URI = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+$basePath = '/App';
+if (strpos($URI, $basePath) === 0) {
+    $URI = substr($URI, strlen($basePath));
 }
-$uri = trim($rawUri, '/');
-//--------------------------------------------------------------------------------------
-/*DEFINICIÓN DE RUTAS PÚBLICAS*/
-$publicRoutes = ['', 'pages/login', 'auth/login', 'auth/register', 'pages/feed', 'auth/logout'];
+$uri = trim($URI, '/');
+$method = $_SERVER['REQUEST_METHOD'];
 
-$isAdminRoute = str_starts_with($uri, 'pages/administracion');
+$router = new RouteCollector();
 
-//--------------------------------------------------------------------------------------
-/*PROTECCIÓN JWT*/
-if (!in_array($uri, $publicRoutes, true)) 
-{
-    require_once __DIR__ . '/core/jwtcheck.php';
-    JWTcheck(); 
-}
-/*PROTECCIÓN ADMIN*/
-// if ($isAdminRoute) 
-// {
-//     require_once __DIR__ . '/core/permisos.php';
-//     requireAdmin(); 
-// }
-//--------------------------------------------------------------------------------------
-/*ENRUTAMIENTO MANUAL*/
-if ($uri === '') 
-{
+
+$router->filter('auth', function() {
+    return JWTcheck();
+});
+
+
+$router->get('/', function() {
     header('Location: /App/pages/feed');
     exit;
-}
-// Procesar Login y Registro
-if ($uri === 'auth/login' || $uri === 'auth/register') 
-{
-    require_once __DIR__ . '/pages/login/controller/AuthController.php';
-    $controller = new AuthController();
-    $method = ($uri === 'auth/login') ? 'login' : 'register';
-    $controller->$method();
-    exit;
-}
-if($uri === 'pages/administracion') 
-{
-    require_once __DIR__ . '/pages/administracion/view/dashboard.php';
-    exit;
-}
-// Procesar Logout
-if ($uri === 'auth/logout') 
-{
-    require_once __DIR__ . '/pages/login/controller/AuthController.php';
-    $controller = new AuthController();
-    $controller->logout();
-    exit;
-}
-// Cargar la Vista de Login
-if ($uri === 'pages/login') 
-{
+});
+
+$router->get('pages/login', function() {
     require_once __DIR__ . '/pages/login/view/LoginView.php';
-    exit;
-}
-// Cargar el FEED a través de su Controlador (NUNCA directo a la View)
-if ($uri === 'pages/feed') 
-{
+});
+
+
+$router->post('auth/login', function() {
+    require_once __DIR__ . '/pages/login/controller/AuthController.php';
+    (new AuthController())->login();
+});
+
+
+$router->post('auth/register', function() {
+    require_once __DIR__ . '/pages/login/controller/AuthController.php';
+    (new AuthController())->register();
+});
+
+
+$router->get('auth/logout', function() {
+    require_once __DIR__ . '/pages/login/controller/AuthController.php';
+    (new AuthController())->logout();
+});
+
+
+$router->get('pages/feed', function() {
     require_once __DIR__ . '/pages/feed/controller/FeedController.php';
-    $controller = new FeedController();
-    $controller->index();
-    exit;
-}
-//--------------------------------------------------------------------------------------
-/*ENRUTAMIENTO DINÁMICO (Para el resto de páginas)*/
-$segments = explode('/', $uri);
+    (new FeedController())->index();
+});
 
-if ($segments[0] === 'pages' && isset($segments[1])) 
-{
-    $pageName = $segments[1];
-    $controllerName = ucfirst($pageName) . 'Controller';
-    $methodName = $segments[2] ?? 'index';
+// rutas protegidas por autenticación
+$router->group(['before' => 'auth'], function($router) {
+    
+    // Administración
+    $router->get('pages/administracion', function() {
+        require_once __DIR__ . '/pages/administracion/controller/principalController.php';
+        (new PrincipalController())->index();
+    });
 
-    $controllerFile = __DIR__ . "/pages/$pageName/controller/$controllerName.php";
+    $router->get('pages/administracion/principal/recetasPorDia', function() {
+        require_once __DIR__ . '/pages/administracion/controller/principalController.php';
+        $controller = new PrincipalController();
+        $controller->ajax(); // devuelve JSON
+    });
 
-    if (file_exists($controllerFile)) 
-    {
-        require_once $controllerFile;
-        if (class_exists($controllerName)) 
-        {
-            $controller = new $controllerName();
-            if (method_exists($controller, $methodName)) 
-            {
-                $controller->$methodName();
-                exit;
-            }
-        }
+    $router->get('pages/administracion/usuarios', function() {
+        require_once __DIR__ . '/pages/administracion/controller/usuariosController.php';
+        $controller = new UsuariosController();
+        $controller->index();
+    });
+
+    $router->get('pages/administracion/moderacion', function() {
+        require_once __DIR__ . '/pages/administracion/controller/moderacionController.php';
+        $controller = new moderacionController();
+        $controller->index();
+    });
+
+    
+});
+
+
+$dispatcher = new Dispatcher($router->getData());
+
+try {
+    $response = $dispatcher->dispatch($method, $uri);
+    if ($response !== null) {
+        echo $response;
     }
+} catch (Phroute\Phroute\Exception\HttpRouteNotFoundException $e) {
+    http_response_code(404);
+    echo "404 - Página no encontrada: /$uri";
+} catch (Phroute\Phroute\Exception\HttpMethodNotAllowedException $e) {
+    http_response_code(405);
+    echo "405 - Método no permitido";
 }
-//Si nada coincide
-http_response_code(404);
-echo "404 - La página [ $uri ] no existe en este servidor.";

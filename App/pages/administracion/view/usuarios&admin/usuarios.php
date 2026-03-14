@@ -41,7 +41,6 @@
                 <tr>
                     <th>USUARIO</th>
                     <th>ROL</th>
-                    <th>ESTADO</th>
                     <th class="text-end">ACCIONES</th>
                 </tr>
             </thead>
@@ -62,15 +61,41 @@
                         <i class="bi bi-shield me-2 text-danger"></i>
                         Administrador
                     </td>
-                    <td>
-                        <span class="badge rounded-pill px-3 py-2"
-                            style="background:#e6f7ee; color:#16a34a;">
-                            Activo
-                        </span>
-                    </td>
                     <td class="text-end">
                         <i class="bi bi-pencil me-3 text-muted"></i>
-                        <i class="bi bi-trash text-muted"></i>
+                        <i class="bi bi-trash text-muted me-3"></i>
+                        <i class="bi bi-three-dots-vertical text-muted" data-bs-toggle="dropdown"></i>
+                        <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 rounded-3">
+
+                            <li>
+                                <a class="dropdown-item"  data-bs-toggle="modal" data-bs-target="#perfilModal">
+                                    👤 Ver perfil
+                                </a>
+                            </li>
+
+                            <li>
+                                <a class="dropdown-item" href="editar_usuario.php?id=1">
+                                    👁️ Ver datos
+                                </a>
+                            </li>
+
+                            <li>
+                                <a class="dropdown-item" href="reset_password.php?id=1">
+                                    🔑 Resetear contraseña
+                                </a>
+                            </li>
+
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+
+                            <li>
+                                <a class="dropdown-item text-danger" href="deshabilitar_usuario.php?id=1">
+                                    🚫 Deshabilitar usuario
+                                </a>
+                            </li>
+
+                        </ul>
                     </td>
                 </tr>
 
@@ -89,15 +114,10 @@
                         <i class="bi bi-person me-2 text-secondary"></i>
                         Moderador
                     </td>
-                    <td>
-                        <span class="badge rounded-pill px-3 py-2"
-                            style="background:#e6f7ee; color:#16a34a;">
-                            Activo
-                        </span>
-                    </td>
                     <td class="text-end">
                         <i class="bi bi-pencil me-3 text-muted"></i>
-                        <i class="bi bi-trash text-muted"></i>
+                        <i class="bi bi-trash text-muted me-3"></i>
+                        <i class="bi bi-three-dots-vertical text-muted"></i>
                     </td>
                 </tr>
 
@@ -116,15 +136,10 @@
                         <i class="bi bi-person me-2 text-secondary"></i>
                         Usuario
                     </td>
-                    <td>
-                        <span class="badge rounded-pill px-3 py-2"
-                            style="background:#f1f1f1; color:#666;">
-                            Inactivo
-                        </span>
-                    </td>
                     <td class="text-end">
                         <i class="bi bi-pencil me-3 text-muted"></i>
-                        <i class="bi bi-trash text-muted"></i>
+                        <i class="bi bi-trash text-muted me-3"></i>
+                        <i class="bi bi-three-dots-vertical text-muted"></i>
                     </td>
                 </tr>
 
