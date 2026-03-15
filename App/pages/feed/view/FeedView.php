@@ -3,7 +3,7 @@ require_once __DIR__ . '/../../../core/auth.php';
 
 class FeedView 
 {
-    public function render($recetas, $etiquetas, $catActiva = null) 
+    public function render($recetas, $etiquetas, $catActiva = null, $config = null)
     {
         ?>
         <!DOCTYPE html>
@@ -17,13 +17,13 @@ class FeedView
             <link rel="stylesheet" href="/App/global/styles/global.css">
             <link rel="stylesheet" href="/App/global/styles/feed.css">
         </head>
-        <body>
+        <body data-bs-theme="<?php echo ($config && $config['ModoOscuro']) ? 'dark' : 'light'; ?>">
             <div class="container mt-4">
                 <div class="header-grid mb-4">
                     <div class="header-item item-logo">
                         <h3 class="fw-bold d-flex align-items-center m-0 text-nowrap">
                             <span class="text-danger" style="letter-spacing: 0.3em;">SPEZZIART</span>
-                            <span class="ms-2 d-none d-sm-inline text-dark">| Social</span>
+                            <span class="ms-2 d-none d-sm-inline text-dark social">| Social</span>
                         </h3>
                     </div>
 
@@ -78,7 +78,7 @@ class FeedView
                                 <div class="mb-2">
                                     <?php if(!empty($receta['EtiquetasNombres'])): 
                                         foreach(explode(',', $receta['EtiquetasNombres']) as $tag): ?>
-                                            <span class="badge badge-tag"><?php echo htmlspecialchars($tag); ?></span>
+                                            <span class="badge badge-tag text-danger">#<?php echo htmlspecialchars($tag); ?></span>
                                         <?php endforeach; 
                                     endif; ?>
                                 </div>

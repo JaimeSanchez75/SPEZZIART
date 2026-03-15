@@ -1,35 +1,39 @@
 .bottom-nav
 {
     --vino: #8b1e2d;
+    
     /*Posición*/
     position:fixed;
     bottom:5px;
     left:50%;
     transform:translateX(-50%);
+
     /*Disposición*/
     display:flex;
+
     /*Estilos de espacio*/
     padding:12px 40px;
     border-radius:40px;
     gap:120px;
     height: 60px;
+
     /*Colores*/
     background:var(--vino);
     color:white;
-    
-    
 }
-.bottom-nav a{
+.bottom-nav a
+{
     color:white;
     text-decoration:none;
 }
 .blanco
 {
-    color:white;
+  color:#ffff;
 }
 /* Iconos */
 
-.material-symbols-outlined {
+.material-symbols-outlined 
+{
   font-variation-settings:
   'FILL' 0,
   'wght' 400,
@@ -39,6 +43,7 @@
   color: #5D0E07;
   font-size: 30px;
 }
-.blanco {
-  color: #fff;
+.blanco
+{
+  color:#ffff;
 }

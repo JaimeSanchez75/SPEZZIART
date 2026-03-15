@@ -151,7 +151,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="text-muted small">${r.FechaCreacion}</div>
                 </div>
                 <div class="mb-2">
-                    ${r.EtiquetasNombres ? r.EtiquetasNombres.split(',').map(tag => `<span class="badge badge-tag">${tag}</span>`).join(' ') : ''}
+                    ${r.EtiquetasNombres ? r.EtiquetasNombres.split(',').map(tag => `<span class="badge badge-tag text-danger">#${tag}</span>`).join(' ') : ''}
                 </div>
                 <div class="row g-3">
                     <div class="col-md-4">

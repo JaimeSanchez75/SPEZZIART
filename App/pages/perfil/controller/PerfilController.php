@@ -44,9 +44,10 @@ class PerfilController
 
         $recetas = $this->model->getRecetasUsuario($idDestino);
         $vitrina = $this->model->getVitrinaLogros($idDestino);
-
+        $config = null; //Tomamos la configuración
+        if (Auth::check()) {$config = $this->model->getUserConfig(Auth::id());}
         // Renderizamos la vista
-        $this->view->render($usuario, $vitrina, $recetas, $idLogueado, $loSigue);
+        $this->view->render($usuario, $vitrina, $recetas, $idLogueado, $loSigue,$config);
     }
 
     public function guardarVitrina() 

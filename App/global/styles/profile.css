@@ -1,11 +1,90 @@
- body { background: #f8f9fa; color: #333; }
-        .header-perfil { background: linear-gradient(45deg, #2b2d42, #ef233c); color: white; padding: 10px 0; }
-        .vitrina-card { border: none; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); background: white; }
-        .logro-item { text-align: center; padding: 15px; transition: 0.3s; border-radius: 15px; }
-        .logro-item:hover { background: #fff5f5; }
-        .logro-icon { font-size: 40px; margin-bottom: 5px; }
-        .logro-ganado { color: #ffb703; filter: drop-shadow(0 0 5px rgba(255,183,3,0.4)); }
-        .logro-bloqueado { color: #dee2e6; filter: grayscale(1); }
-        .receta-card { border: none; border-radius: 15px; overflow: hidden; transition: 0.3s; height: 100%; }
-        .receta-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
-        .receta-img { height: 160px; object-fit: cover; background: #eee; }
+/*Gama de colores*/
+body { background: #f8f9fa; color: #333; }
+.header-perfil { background: linear-gradient(45deg, #2b2d42, #ef233c); color: white; padding: 10px 0; }
+/* Vitrina de Logros*/
+.vitrina-card { border: none; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); background: white; }
+.logro-item { text-align: center; padding: 15px; transition: 0.3s; border-radius: 15px; }
+.logro-item:hover { background: #fff5f5; }
+.logro-icon { font-size: 40px; margin-bottom: 5px; }
+.logro-ganado { color: #ffb703; filter: drop-shadow(0 0 5px rgba(255,183,3,0.4)); }
+.logro-bloqueado { color: #dee2e6; filter: grayscale(1); }
+/*Recetas*/
+.receta-card { border: none; border-radius: 15px; overflow: hidden; transition: 0.3s; height: 100%; }
+.receta-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+.receta-img { height: 160px; object-fit: cover; background: #eee; }
+
+/*Tema Oscuro*/
+/*Gama de colores Tema Oscuro*/
+[data-bs-theme="dark"] 
+{
+    background-color: #121212 !important; 
+
+    --surface-1: #1e1e1e; 
+    --surface-2: #252525;
+    --border-light: #333333;
+    --text-primary: #ffffff;
+    --text-secondary: #b0b0b0;
+}
+[data-bs-theme="dark"] body 
+{
+    background-color: #121212 !important;
+    color: var(--text-primary);
+}
+/* Encabezado Tema Oscuro*/
+[data-bs-theme="dark"] .header-perfil 
+{
+    background: linear-gradient(45deg, #1e1e1e, #a52a3a) !important;
+}
+/* Vitrina de Logros Tema Oscuro */
+[data-bs-theme="dark"] .vitrina-card 
+{
+    background: var(--surface-1) !important;
+    border: 1px solid var(--border-light) !important;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
+}
+[data-bs-theme="dark"] .logro-item 
+{
+    background-color: var(--surface-2) !important;
+    border: 1px solid var(--border-light) !important;
+    box-shadow: none;
+}
+[data-bs-theme="dark"] .logro-item .small 
+{
+    color: var(--text-primary) !important;
+}
+
+/* Logros bloqueados Tema Oscuro */
+[data-bs-theme="dark"] .logro-bloqueado 
+{
+    color: #4a4a4a !important;
+    opacity: 0.6;
+}
+/* Tarjetas de Recetas Tema Oscuro*/
+[data-bs-theme="dark"] .receta-card 
+{
+    background-color: var(--surface-1) !important;
+    border: 1px solid var(--border-light) !important;
+}
+[data-bs-theme="dark"] .receta-card .card-body 
+{
+    background-color: transparent;
+}
+[data-bs-theme="dark"] .receta-card h6 
+{
+    color: var(--text-primary) !important;
+}
+
+/* Ajuste de textos secundarios */
+[data-bs-theme="dark"] .text-muted, 
+[data-bs-theme="dark"] p.text-muted,
+[data-bs-theme="dark"] small 
+{
+    color: var(--text-secondary) !important;
+}
+
+/* Modal Tema Oscuro*/
+[data-bs-theme="dark"] .modal-content 
+{
+    background-color: var(--surface-1) !important;
+    border: 1px solid var(--border-light);
+}

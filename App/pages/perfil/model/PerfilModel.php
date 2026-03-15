@@ -170,4 +170,24 @@ class PerfilModel
 
         return $resp;
     }
+     public function getUserConfig($userId)
+    {
+        $db = Conexion::conectar();
+
+        $stmt = $db->
+        prepare
+        ("
+            SELECT 
+                ModoOscuro,
+                ModoFit,
+                NotificacionOn,
+                CuentaPublica
+            FROM Usuario
+            WHERE ID_Usuario = ?
+        ");
+
+        $stmt->execute([$userId]);
+
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
 }

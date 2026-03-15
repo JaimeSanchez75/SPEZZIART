@@ -1,6 +1,6 @@
 <?php
 class PerfilView {
-public function render($u, $vitrina, $recetas, $idLogueado, $loSigue = false) { ?>
+public function render($u, $vitrina, $recetas, $idLogueado, $loSigue = false, $config = null) { ?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -11,7 +11,7 @@ public function render($u, $vitrina, $recetas, $idLogueado, $loSigue = false) { 
     <link rel="stylesheet" href="/App/global/styles/global.css">
     <link rel="stylesheet" href="/App/global/styles/profile.css">
 </head>
-<body>
+ <body data-bs-theme="<?php echo ($config && $config['ModoOscuro']) ? 'dark' : 'light'; ?>">
 <div class="header-perfil text-center">
     <div class="container">
         <div class="mb-3">

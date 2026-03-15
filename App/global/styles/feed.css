@@ -7,67 +7,145 @@ body
 }
 .text-danger 
 {
-color: var(--danger) !important;
+    color: var(--danger) !important;
 }
 /* Barra de Header */
-.header-grid {
+.header-grid 
+{
     display: flex;
-    flex-wrap: wrap; /* Permite que los elementos salten de línea */
+    flex-wrap: wrap; 
     align-items: center;
     justify-content: space-between;
     gap: 15px;
 }
-
-/* 1. Logo: Siempre a la izquierda */
-.item-logo {
+.item-logo 
+{
     order: 1;
-    flex: 0 0 auto; /* No crece, no se encoge */
-    min-width: max-content; /* Asegura que quepa todo el texto */
+    flex: 0 0 auto; 
+    min-width: max-content; 
 }
-
-/* 2. Buscador: En medio en PC, abajo en Tablet/Móvil */
-.item-search {
+.item-search 
+{
     order: 2;
-    flex: 1 1 300px; /* Crece para llenar el espacio, mínimo 300px */
+    flex: 1 1 300px; 
 }
 
-/* 3. Campana: Siempre a la derecha */
-.item-actions {
+.item-actions 
+{
     order: 3;
     flex: 0 1 auto;
     display: flex;
     justify-content: flex-end;
 }
 
-/* --- EL TRUCO PARA TABLET (1000px) --- */
-@media (max-width: 1000px) {
-    .item-search {
-        order: 3;      /* Pasa a ser el último visualmente */
-        flex: 1 1 100%; /* Ocupa todo el ancho forzando el salto */
-        margin-top: 10px;
-    }
-    
-    .item-actions {
-        order: 2;      /* La campana sube al hueco del buscador */
-    }
-
-    /* Aseguramos que el logo y la campana se mantengan en los extremos */
-    .item-logo { flex: 1; }
-    .item-actions { flex: 1; }
-}
-
-/* Estilo del input */
-#search-input {
+/* Barra de búsqueda*/
+#search-input 
+{
     background-color: #eee;
     height: 45px;
     border: 1px solid transparent;
 }
 
-#search-input:focus {
+#search-input:focus 
+{
     background-color: #fff;
     border-color: var(--vino);
     box-shadow: 0 4px 12px rgba(0,0,0,0.08);
 }
+
+/* Barra de etiquetas*/
+.etiquetas-filtro 
+{
+  background-color: #f1f1f1; 
+  padding: 4px 10px;
+  min-height: 54px;
+  border: 1px solid #e0e0e0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  overflow: hidden; 
+}
+
+/* Botón de añadir (dentro de la barra) */
+.btn-add-tag {
+    background-color: white;
+    border: 1px solid var(--vino);
+    color: var(--vino);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    width: 42px; height: 42px;
+    
+}
+.btn-add-tag:hover 
+{
+    transform: scale(1.05);
+    background-color: var(--vino);
+    border:none;
+    
+}
+.btn-add-tag:hover > .material-symbols-outlined 
+{
+    color: white;
+}
+
+/* Etiquetas seleccionadas */
+.chip-active 
+{
+    background-color: white !important;
+    color: #333 !important;
+    border: 1px solid #ddd !important;
+    padding: 5px 15px !important;
+    font-size: 0.85rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+}
+/*Su botón de borrar*/
+.chip-active .chip-remove 
+{
+    display: flex;
+    align-items: center;
+    color: #999;
+    transition: color 0.2s;
+}
+.chip-active .chip-remove:hover 
+{
+    color: var(--vino);
+}
+
+/* La Etiqueta de Etiquetas sobrantes*/
+#extra-chips-badge 
+{
+    background-color: #dee2e6 !important;
+    color: #666;
+    font-weight: 600;
+    padding: 6px 10px;
+}
+
+/* Etiquetas (Chips) que se pueden elegir en el Modal*/
+.chip-selectable 
+{
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    color: #444;
+    transition: all 0.2s ease;
+}
+.chip-selectable:hover 
+{
+    border-color: var(--vino);
+    color: var(--vino);
+}
+.chip-selectable.active 
+{
+    background-color: #ffeef0 !important; 
+    color: #8b1e2d !important;
+    border-color: #8b1e2d !important;
+    opacity: 0.6;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
 /* Tarjeta de cada publicación */
 .feed-card
 {
@@ -92,94 +170,108 @@ color: var(--danger) !important;
   color:#8b1e2d;
   font-weight:700;
 }
-/* Barra de etiquetas*/
-.etiquetas-filtro 
+
+/* --- MODO OSCURO --- */
+/*Variables del Tema Oscuro*/
+[data-bs-theme="dark"] 
 {
-  background-color: #f1f1f1; 
-  padding: 4px 10px;
-  min-height: 54px;
-  border: 1px solid #e0e0e0;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  overflow: hidden; 
+    background-color: #171717 !important;
+    --card-bg: #171717;
+    --field-bg: #171717;
+    --border-soft: #282828;
+    --accent-orange: #f3b109; 
 }
 
-/* Botón de añadir (dentro de la barra) */
-.btn-add-tag {
-    background-color: white;
-    border: 1px solid var(--vino);
-    color: var(--vino);
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-    width: 42px; height: 42px;
-    
-}
-
-.btn-add-tag:hover 
+/* Aplicación general */
+[data-bs-theme="dark"] body 
 {
-    transform: scale(1.05);
-    background-color: var(--vino);
-    border:none;
-    
-}
-.btn-add-tag:hover > .material-symbols-outlined {
-    color: white;
+    background-color: #171717 !important;
 }
 
-/* Chips que aparecen al filtrar */
-.chip-active {
-    background-color: white !important;
-    color: #333 !important;
-    border: 1px solid #ddd !important;
-    padding: 5px 15px !important;
-    font-size: 0.85rem;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.03);
-}
-
-.chip-active .chip-remove {
-    display: flex;
-    align-items: center;
-    color: #999;
-    transition: color 0.2s;
-}
-
-.chip-active .chip-remove:hover {
-    color: var(--vino);
-}
-
-/* Estilo para el badge de "+X" */
-#extra-chips-badge {
-    background-color: #dee2e6 !important;
-    color: #666;
-    font-weight: 600;
-    padding: 6px 10px;
-}
-/* Chips dentro del MODAL (Seleccionables) */
-.chip-selectable 
+/* --- BUSCADOR (Estilo .field de Auth) --- */
+[data-bs-theme="dark"] #search-input 
 {
-    background-color: #f8f9fa;
-    border: 1px solid #dee2e6;
-    color: #444;
-    transition: all 0.2s ease;
+    background-color: var(--field-bg) !important;
+    color: var(--accent-orange) !important; 
+    border: none !important;
+    box-shadow: inset 2px 5px 10px rgb(5, 5, 5) !important;
 }
-.chip-selectable:hover 
+[data-bs-theme="dark"] #search-input::placeholder 
 {
-    border-color: var(--vino);
-    color: var(--vino);
+    color: #888888;
 }
-.chip-selectable.active 
+
+/* --- BARRA DE ETIQUETAS --- */
+[data-bs-theme="dark"] .etiquetas-filtro 
 {
-    background-color: #ffeef0 !important; 
-    color: #8b1e2d !important;
-    border-color: #8b1e2d !important;
-    opacity: 0.6;
-    cursor: not-allowed;
-    pointer-events: none;
+    background-color: #1a1a1a !important;
+    border: 1px solid var(--border-soft) !important;
 }
+
+/* Botón Añadir*/
+[data-bs-theme="dark"] .btn-add-tag 
+{
+    background-color: var(--field-bg) !important;
+    border: 1px solid var(--vino) !important;
+    color: var(--vino) !important;
+}
+
+/* Chips Activos */
+[data-bs-theme="dark"] .chip-active 
+{
+    background-color: var(--field-bg) !important;
+    color: var(--bs-body-color) !important;
+    border: 1px solid var(--border-soft) !important;
+    box-shadow: inset 1px 2px 5px rgba(0, 0, 0, 0.5) !important;
+}
+
+/* MODAL Y CHIPS SELECCIONABLES */
+[data-bs-theme="dark"] .modal-content {
+    background-color: var(--card-bg) !important;
+    border: 2px solid var(--border-soft);
+}
+[data-bs-theme="dark"] .chip-selectable 
+{
+    background-color: var(--field-bg) !important;
+    color: #888888 !important;
+    border: 1px solid var(--border-soft) !important;
+    box-shadow: inset 2px 3px 6px rgb(5, 5, 5) !important;
+}
+[data-bs-theme="dark"] .chip-selectable:hover 
+{
+    color: var(--accent-orange) !important;
+    border-color: var(--accent-orange) !important;
+}
+[data-bs-theme="dark"] #extra-chips-badge 
+{
+    background-color: #222 !important;
+    color: #777;
+}
+
+/* --- TARJETAS DEL FEED --- */
+[data-bs-theme="dark"] .feed-card 
+{
+    background-color: var(--card-bg) !important;
+    border: 1px solid var(--border-soft) !important;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* --- ICONOS --- */
+[data-bs-theme="dark"] .material-symbols-outlined 
+{
+    color: var(--bs-body-color);
+}
+[data-bs-theme="dark"] .item-search .material-symbols-outlined 
+{
+    color: var(--accent-orange) !important;
+    opacity: 0.8;
+}
+[data-bs-theme="dark"] .social
+{
+    color:white !important;
+}
+
+/*MediaQueries específicas*/
 @media (max-width: 400px) 
 {
     .container 
@@ -205,4 +297,19 @@ color: var(--danger) !important;
         text-overflow: ellipsis;
         white-space: nowrap;
     }
+}
+@media (max-width: 1000px) 
+{
+    .item-search 
+    {
+        order: 3;    
+        flex: 1 1 100%; 
+        margin-top: 10px;
+    }
+    .item-actions 
+    {
+        order: 2;
+    }
+    .item-logo { flex: 1; }
+    .item-actions { flex: 1; }
 }
