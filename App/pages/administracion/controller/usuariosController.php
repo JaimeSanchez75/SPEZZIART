@@ -11,10 +11,19 @@ class UsuariosController extends AdministracionControllers
         $this->mostrarAdministracion("usuarios&admin/usuarios.php", "Gestión de Usuarios", $datos);
     }
 
+
+
     private function obtenerUsuarios()
     {
         $objUsuario = $this->cargarModelo("usuariosModel");
-        return $objUsuario->obtenerUsuarios();
+        return is_array($objUsuario->obtenerUsuarios()) ? $objUsuario->obtenerUsuarios(): [];
+    }
+
+    private function obtenerTodosDatosUsuario()
+    {
+
+        $objUsuario = $this->cargarModelo("usuariosModel");
+        return is_array($objUsuario->obtenerTodosDatoUsuario()) ? $objUsuario->obtenerTodosLosUsuario(): [];
     }
 
 }

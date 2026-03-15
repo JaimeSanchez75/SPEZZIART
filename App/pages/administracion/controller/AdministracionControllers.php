@@ -20,5 +20,14 @@ class AdministracionControllers
 
         require_once __DIR__ . '/../view/dashboard.php';
     }
+
+    public function mostrarModalConfirmacion($__view, $__titulo, $__parametros = array())
+    {
+        foreach ($__parametros as $clave => $valor) {
+            $$clave = $valor;
+        }
+
+        require_once __DIR__ . '/../view/Components/confirmacionModal.php';
+    }
 }
 ?>

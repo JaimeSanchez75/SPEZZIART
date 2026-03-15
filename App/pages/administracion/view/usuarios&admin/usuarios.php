@@ -10,7 +10,7 @@
 </div>
 
 <!-- Card Principal -->
-<div class="card border-0 shadow-sm rounded-4 p-4">
+<div class="card border-0 rounded-4">
 
     <!-- Filtros -->
     <div class="d-flex justify-content-between align-items-center mb-4">
@@ -20,7 +20,7 @@
             <span class="input-group-text bg-light border-0 rounded-start-pill">
                 <i class="bi bi-search text-muted"></i>
             </span>
-            <input type="text" class="form-control border-0 bg-light rounded-end-pill"
+            <input type="text" class="form-control input border-0 bg-light rounded-end-pill"
                 placeholder="Buscar por nombre o email...">
         </div>
 
@@ -47,102 +47,102 @@
             <tbody>
 
                 <!-- Usuario 1 -->
-                <tr>
-                    <td>
-                        <div class="d-flex align-items-center">
-                            <div class="user-avatar me-3">PP</div>
-                            <div>
-                                <div class="fw-semibold">Pepito Pérez</div>
-                                <small class="text-muted">@pepito_123</small>
+
+                <?php foreach ($usuarios as $usuario) { ?>
+
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div class="user-avatar me-3"><?= substr($usuario['Nombre'], 0, 2) ?></div>
+                                <div>
+                                    <div class="fw-semibold"><?= $usuario['Nombre'] ?></div>
+                                    <small class="text-muted">@<?= $usuario['Username'] ?></small>
+                                </div>
                             </div>
-                        </div>
-                    </td>
-                    <td>
-                        <i class="bi bi-shield me-2 text-danger"></i>
-                        Administrador
-                    </td>
-                    <td class="text-end">
-                        <i class="bi bi-pencil me-3 text-muted"></i>
-                        <i class="bi bi-trash text-muted me-3"></i>
-                        <i class="bi bi-three-dots-vertical text-muted" data-bs-toggle="dropdown"></i>
-                        <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 rounded-3">
+                        </td>
+                        <td>
+                            <?php if ($usuario['EsAdmin']) { ?>
+                                <i class="bi bi-shield me-2 text-danger"></i>
+                                Administrador
+                            <?php } else { ?>
+                                <i class="bi bi-person me-2 text-primary"></i>
+                                Usuario
+                            <?php } ?>
+                        </td>
+                        <td class="text-end">
+                            <i class="bi bi-trash text-muted me-3"></i>
+                            <i class="bi bi-three-dots-vertical text-muted" data-bs-toggle="dropdown"></i>
+                            <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 rounded-3" data-bs-display="static">
 
-                            <li>
-                                <a class="dropdown-item"  data-bs-toggle="modal" data-bs-target="#perfilModal">
-                                    👤 Ver perfil
-                                </a>
-                            </li>
+                                <li>
+                                    <a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#perfilModal">
+                                        👤 Ver perfil
+                                    </a>
+                                </li>
 
-                            <li>
-                                <a class="dropdown-item" href="editar_usuario.php?id=1">
-                                    👁️ Ver datos
-                                </a>
-                            </li>
+                                <li>
+                                    <a class="dropdown-item" href="editar_usuario.php?id=1">
+                                        👁️ Ver datos
+                                    </a>
+                                </li>
 
-                            <li>
-                                <a class="dropdown-item" href="reset_password.php?id=1">
-                                    🔑 Resetear contraseña
-                                </a>
-                            </li>
+                                <li>
+                                    <a class="dropdown-item" href="reset_password.php?id=1">
+                                        🔑 Resetear contraseña
+                                    </a>
+                                </li>
 
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
 
-                            <li>
-                                <a class="dropdown-item text-danger" href="deshabilitar_usuario.php?id=1">
-                                    🚫 Deshabilitar usuario
-                                </a>
-                            </li>
+                                <li>
+                                    <a class="dropdown-item text-danger" href="deshabilitar_usuario.php?id=1">
+                                        🚫 Deshabilitar usuario
+                                    </a>
+                                </li>
 
-                        </ul>
-                    </td>
-                </tr>
+                            </ul>
+                        </td>
+                    </tr>
 
-                <!-- Usuario 2 -->
-                <tr>
-                    <td>
-                        <div class="d-flex align-items-center">
-                            <div class="user-avatar me-3" style="background:#dcdcdc; color:#333;">AG</div>
-                            <div>
-                                <div class="fw-semibold">Ana García</div>
-                                <small class="text-muted">@ana_chef</small>
-                            </div>
-                        </div>
-                    </td>
-                    <td>
-                        <i class="bi bi-person me-2 text-secondary"></i>
-                        Moderador
-                    </td>
-                    <td class="text-end">
-                        <i class="bi bi-pencil me-3 text-muted"></i>
-                        <i class="bi bi-trash text-muted me-3"></i>
-                        <i class="bi bi-three-dots-vertical text-muted"></i>
-                    </td>
-                </tr>
 
-                <!-- Usuario 3 -->
-                <tr>
-                    <td>
-                        <div class="d-flex align-items-center">
-                            <div class="user-avatar me-3" style="background:#dcdcdc; color:#333;">CL</div>
-                            <div>
-                                <div class="fw-semibold">Carlos López</div>
-                                <small class="text-muted">@car_88</small>
-                            </div>
-                        </div>
-                    </td>
-                    <td>
-                        <i class="bi bi-person me-2 text-secondary"></i>
-                        Usuario
-                    </td>
-                    <td class="text-end">
-                        <i class="bi bi-pencil me-3 text-muted"></i>
-                        <i class="bi bi-trash text-muted me-3"></i>
-                        <i class="bi bi-three-dots-vertical text-muted"></i>
-                    </td>
-                </tr>
+                <?php } ?>
 
             </tbody>
         </table>
+
+        <div>
+            <div>
+
+            </div>
+            <nav aria-label="Page navigation example" class="d-flex justify-content-end mt-4">
+
+                <ul class="pagination pagination-sm rounded-pill shadow-sm">
+
+                    <li class="page-item">
+                        <button class="page-link">Anterior</button>
+                    </li>
+
+                    <li class="page-item active" aria-current="page">
+                        <button class="page-link">1</button>
+                    </li>
+
+                    <li class="page-item">
+                        <button class="page-link">2</button>
+                    </li>
+
+                    <li class="page-item">
+                        <button class="page-link">3</button>
+                    </li>
+
+                    <li class="page-item">
+                        <button class="page-link">Siguiente</button>
+                    </li>
+
+                </ul>
+
+            </nav>
+        </div>
+        
     </div>

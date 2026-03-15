@@ -3,7 +3,7 @@
     <p class="brand-subtitle">ADMIN PANEL</p>
 </div>
 
-<nav class="sidebar-nav">
+<nav class="sidebar-nav d-flex flex-column">
     <a href="/App/pages/administracion/" class="nav-item active">
         <i class="bi bi-grid-fill"></i> Dashboard
     </a>
@@ -18,7 +18,7 @@
     </a>
 </nav>
 
-<div class="sidebar-footer">
+<div class="sidebar-footer mt-auto">
     <a href="#" class="nav-item logout">
         <i class="bi bi-box-arrow-left"></i> Cerrar Sesión
     </a>

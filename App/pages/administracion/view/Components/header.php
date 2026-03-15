@@ -1,4 +1,4 @@
-<header class="top-navbar">
+<header class="top-navbar ">
     <div class="search-box">
         <i class="bi bi-search"></i>
         <input type="text" placeholder="Buscar usuarios, recetas, eventos...">
