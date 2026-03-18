@@ -4,7 +4,7 @@
         <p class="text-muted mb-0">Gestiona los accesos y roles de la plataforma.</p>
     </div>
     <button class="btn text-white px-4 py-2 rounded-pill"
-        style="background: var(--brand-wine);">
+        style="background: var(--brand-wine);" data-bs-toggle="modal" data-bs-target="#modalCrearAdmin">
         <i class="bi bi-person-plus me-2"></i>Nuevo Usuario
     </button>
 </div>
@@ -21,22 +21,30 @@
                 <i class="bi bi-search text-muted"></i>
             </span>
             <input type="text" class="form-control input border-0 bg-light rounded-end-pill"
-                placeholder="Buscar por nombre o email...">
+                placeholder="Buscar por nombre o email..." id="buscadorUsuarios">
         </div>
 
         <!-- Select -->
-        <select class="form-select w-auto rounded-pill px-4">
-            <option>Todos los roles</option>
-            <option>Administrador</option>
-            <option>Moderador</option>
-            <option>Usuario</option>
+        <select class="form-select w-auto rounded-pill px-4" id="filtroRoles">
+
+            <option value="todos">Todos los roles</option>
+            <?php foreach ($roles as $rol) { ?>
+                <option value="<?= $rol['EsAdmin'] ?>">
+                    <?php if ($rol['EsAdmin']) { ?>
+                        Administradores
+                    <?php } else { ?>
+                        Usuarios
+                    <?php } ?>
+                </option>
+            <?php } ?>
+
         </select>
 
     </div>
 
     <!-- Tabla -->
     <div class="table-responsive">
-        <table class="table align-middle">
+        <table class="table align-middle" id="tablaUsuarios">
             <thead class="text-muted small">
                 <tr>
                     <th>USUARIO</th>
@@ -70,7 +78,7 @@
                             <?php } ?>
                         </td>
                         <td class="text-end">
-                            <i class="bi bi-trash text-muted me-3"></i>
+                            <i class="bi bi-trash text-muted me-3" data-bs-toggle="modal" data-bs-target="#eliminarUsuario" data-id="<?= $usuario['ID_Usuario'] ?>" data-nombre="<?= $usuario['Nombre'] ?>"></i>
                             <i class="bi bi-three-dots-vertical text-muted" data-bs-toggle="dropdown"></i>
                             <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 rounded-3" data-bs-display="static">
 
@@ -81,13 +89,14 @@
                                 </li>
 
                                 <li>
-                                    <a class="dropdown-item" href="editar_usuario.php?id=1">
+                                    <a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#verDatos" data-nombre="<?php echo $usuario['Nombre'] ?>" data-username="<?php echo $usuario['Username'] ?>" data-email="<?php echo $usuario['Email'] ?>" data-rol="<?php echo ($usuario['EsAdmin']) ? 'Administrador' : 'Usuario'; ?>">
                                         👁️ Ver datos
                                     </a>
                                 </li>
 
                                 <li>
-                                    <a class="dropdown-item" href="reset_password.php?id=1">
+                        
+                                    <a class="dropdown-item botonResetearContraseña" data-id-usuario="<?= $usuario['ID_Usuario'] ?>    ">
                                         🔑 Resetear contraseña
                                     </a>
                                 </li>
@@ -118,7 +127,7 @@
             </div>
             <nav aria-label="Page navigation example" class="d-flex justify-content-end mt-4">
 
-                <ul class="pagination pagination-sm rounded-pill shadow-sm">
+                <ul class="pagination pagination-sm rounded-pill shadow-sm" id="paginacionUsuarios">
 
                     <li class="page-item">
                         <button class="page-link">Anterior</button>
@@ -146,3 +155,6 @@
         </div>
         
     </div>
+    
+    <script src="assets/buscador.js"></script>
+    <script src="assets/resetearContraseña.js"></script>
