@@ -127,6 +127,49 @@ $router->group(['before' => 'auth'], function ($router) {
             $controller = new moderacionController();
             $controller->index();
         });
+
+        $router->get('pages/administracion/recetas', function () {
+            require_once __DIR__ . '/pages/administracion/controller/recetasController.php';
+            $controller = new RecetasController();
+            $controller->index();
+        });
+
+        $router->get('pages/administracion/receta/eliminar/{id:i}', function ($id) {
+            require_once __DIR__ . '/pages/administracion/controller/recetasController.php';
+            $controller = new RecetasController();
+            $controller->eliminarReceta($id);
+        });
+
+        $router->get('pages/administracion/ingredientes', function () {
+            require_once __DIR__ . '/pages/administracion/controller/ingredientesController.php';
+            $controller = new IngredientesController();
+            $controller->index();
+        });
+
+        $router->get('pages/administracion/etiquetas', function () {
+            require_once __DIR__ . '/pages/administracion/controller/etiquetasController.php';
+            $controller = new EtiquetasController();
+            $controller->index();
+        });
+        $router->post('pages/administracion/etiquetas/crear', function () {
+            require_once __DIR__ . '/pages/administracion/controller/etiquetasController.php';
+            $controller = new EtiquetasController();
+            $controller->crearEtiqueta();
+        });
+        $router->post('pages/administracion/etiquetas/editar', function () {
+            require_once __DIR__ . '/pages/administracion/controller/etiquetasController.php';
+            $controller = new EtiquetasController();
+            $controller->editarEtiqueta();
+        });
+
+        $router->get('pages/administracion/etiquetas/eliminar/{id:i}', function ($id) {
+            require_once __DIR__ . '/pages/administracion/controller/etiquetasController.php';
+            $controller = new EtiquetasController();
+            $controller->eliminarEtiqueta($id);
+        });
+
+        
+        
     });
 
     // rutas usuarios autenticados

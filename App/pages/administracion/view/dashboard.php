@@ -39,6 +39,13 @@
                     require __DIR__ . "/Components/usuario/modalCrear.php"; 
                     require __DIR__ . "/Components/usuario/modalConfirmacion.php";
                     require __DIR__ . "/Components/usuario/modalDatos.php";
+                    require __DIR__ . "/Components/etiqueta/modalCrear.php";
+                    require __DIR__ . "/Components/etiqueta/modalEditar.php";
+                    require __DIR__ . "/Components/etiqueta/modalConfirmacionEliminacion.php";
+                    // require __DIR__ . "/Components/receta/modalCrear.php";
+                    // require __DIR__ . "/Components/receta/modalEditar.php";
+                    require __DIR__ . "/Components/receta/modalConfirmacionEliminacion.php";
+
         
                     ?>
 
