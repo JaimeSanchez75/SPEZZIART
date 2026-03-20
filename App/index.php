@@ -51,6 +51,8 @@ $router->filter('admin', function () {
 });
 
 
+
+
 $router->get('/', function () {
     header('Location: /App/pages/feed');
     exit;
@@ -188,6 +190,23 @@ $router->group(['before' => 'auth'], function ($router) {
         (new PerfilController())->seguir($id);
     });
 });
+
+//parte individual
+$router->get('pages/individual', function () {
+    require_once __DIR__ . '/pages/individual/controller/individualController.php';
+    (new individualController())->index();
+});
+
+$router->get('pages/individual/crear', function () {
+    require_once __DIR__ . '/pages/individual/controller/individualController.php';
+    (new individualController())->crear();
+});
+
+$router->post('pages/individual/guardar', function () {
+    require_once __DIR__ . '/pages/individual/controller/individualController.php';
+    (new individualController())->guardar();
+});
+
 
 
 $dispatcher = new Dispatcher($router->getData());
