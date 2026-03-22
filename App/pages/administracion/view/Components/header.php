@@ -10,9 +10,9 @@
             <span class="dot"></span>
         </div>
         <div class="user-details">
-            <span class="user-name">Admin Spezziart</span>
-            <span class="user-rank">Super Administrador</span>
+            <span class="user-name"><?php echo $userLogueado['username']; ?></span>
+            <span class="user-rank"><?php echo strtoupper($userLogueado['role']); ?></span>
         </div>
-        <div class="user-avatar">AS</div>
+        <div class="user-avatar"><?php echo strtoupper(substr($userLogueado['username'], 0, 2)) ?></div>
     </div>
 </header>

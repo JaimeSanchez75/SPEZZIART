@@ -18,6 +18,8 @@ class AdministracionControllers
             $$clave = $valor;
         }
 
+        $userLogueado = Auth::user();
+
         require_once __DIR__ . '/../view/dashboard.php';
     }
 

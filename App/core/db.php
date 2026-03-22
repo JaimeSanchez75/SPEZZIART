@@ -12,7 +12,8 @@ class Conexion
 
             if (!self::$db){
                 try {
-                    self::$db = new PDO(
+                    self::$db = new PDO
+                    (
                         "mysql:host={$config['DB_HOST']};dbname={$config['DB_NAME']};charset=utf8mb4",
                         $config['DB_USER'],
                         $config['DB_PASS'],
@@ -32,7 +33,5 @@ class Conexion
         }
         return self::$db;
     }  
-    
-    
 }
         
