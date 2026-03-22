@@ -195,10 +195,12 @@ try
 {
     $response = $dispatcher->dispatch($method, $uri);
     if ($response !== null) {echo $response;}
-} catch (Phroute\Phroute\Exception\HttpRouteNotFoundException $e) {
+} catch (Phroute\Phroute\Exception\HttpRouteNotFoundException $e) 
+{
     http_response_code(404);
     echo "404 - Página no encontrada: /$uri";
-} catch (Phroute\Phroute\Exception\HttpMethodNotAllowedException $e) {
+} catch (Phroute\Phroute\Exception\HttpMethodNotAllowedException $e) 
+{
     http_response_code(405);
     echo "405 - Método no permitido";
 }
