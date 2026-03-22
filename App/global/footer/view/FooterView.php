@@ -3,7 +3,7 @@
 <a href="/App/pages/feed"><span class="material-symbols-outlined blanco">
 home
 </span></a>
-<a href="#"><span class="material-symbols-outlined blanco">
+<a href="/App/pages/individual"><span class="material-symbols-outlined blanco">
 menu_book_2
 </span></a>
 

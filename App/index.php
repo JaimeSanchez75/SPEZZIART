@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 require_once __DIR__ . '/core/auth.php';
@@ -9,8 +10,7 @@ use Phroute\Phroute\RouteCollector;
 use Phroute\Phroute\Dispatcher;
 
 session_start();
-if (isset($_COOKIE['token'])) 
-{
+if (isset($_COOKIE['token'])) {
     $user = JWTcheck();
     Auth::setUser($user);
 }
@@ -20,8 +20,7 @@ $config = require __DIR__ . '/config/config.php';
 
 $URI = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $basePath = '/App';
-if (strpos($URI, $basePath) === 0) 
-{
+if (strpos($URI, $basePath) === 0) {
     $URI = substr($URI, strlen($basePath));
 }
 $uri = trim($URI, '/');
@@ -50,14 +49,15 @@ $router->filter('admin', function ()
     }
 });
 
-$router->get('/', function() 
-{
+
+
+
+$router->get('/', function () {
     header('Location: /App/pages/feed');
     exit;
 });
 
-$router->get('pages/login', function() 
-{
+$router->get('pages/login', function () {
     require_once __DIR__ . '/pages/login/view/LoginView.php';
 });
 
@@ -186,6 +186,7 @@ $router->group(['before' => 'auth'], function($router)
         (new individualController())->guardar();
     });
 });
+
 
 
 $dispatcher = new Dispatcher($router->getData());
