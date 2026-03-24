@@ -146,25 +146,61 @@ $router->group(['before' => 'auth'], function ($router) {
         require_once __DIR__ . '/pages/perfil/controller/PerfilController.php';
         (new PerfilController())->seguir($id);
     });
+
+        // ---------- PARTE INDIVIDUAL ----------
+    $router->get('pages/individual', function () {
+        require_once __DIR__ . '/pages/individual/controller/individualController.php';
+        (new individualController())->index();
+    });
+
+    $router->get('pages/individual/crear', function () {
+        require_once __DIR__ . '/pages/individual/controller/individualController.php';
+        (new individualController())->crear();
+    });
+
+    $router->post('pages/individual/guardar', function () {
+        require_once __DIR__ . '/pages/individual/controller/individualController.php';
+        (new individualController())->guardar();
+    });
+
+    $router->get('pages/individual/ver', function () {
+        require_once __DIR__ . '/pages/individual/controller/individualController.php';
+        (new individualController())->ver();
+    });
+
+    $router->post('pages/individual/eliminar', function () {
+        require_once __DIR__ . '/pages/individual/controller/individualController.php';
+        (new individualController())->eliminar();
+    });
+
+    // Ruta POST para crear colecciones
+    $router->post('pages/individual/crear-coleccion', function () {
+        require_once __DIR__ . '/pages/individual/controller/individualController.php';
+        (new individualController())->crearColeccion();
+    });
+
+    // Ruta GET para ver recetas de una colección
+    $router->get('pages/individual/coleccion', function () {
+        require_once __DIR__ . '/pages/individual/controller/individualController.php';
+        (new individualController())->verColeccion();
+    });
+
+    // Ruta POST para agregar receta a una colección
+    $router->post('pages/individual/coleccion/agregar', function () {
+        require_once __DIR__ . '/pages/individual/controller/individualController.php';
+        (new individualController())->agregarReceta();
+    });
+
+    $router->post('pages/individual/eliminar-coleccion', function () {
+        require_once __DIR__ . '/pages/individual/controller/individualController.php';
+        (new individualController())->eliminarColeccion();
+    });
+
+    $router->post('pages/individual/coleccion/eliminar-receta', function () {
+        require_once __DIR__ . '/pages/individual/controller/individualController.php';
+        (new individualController())->eliminarRecetaDeColeccion();
+    });
 });
-
-//parte individual
-$router->get('pages/individual', function () {
-    require_once __DIR__ . '/pages/individual/controller/individualController.php';
-    (new individualController())->index();
-});
-
-$router->get('pages/individual/crear', function () {
-    require_once __DIR__ . '/pages/individual/controller/individualController.php';
-    (new individualController())->crear();
-});
-
-$router->post('pages/individual/guardar', function () {
-    require_once __DIR__ . '/pages/individual/controller/individualController.php';
-    (new individualController())->guardar();
-});
-
-
 
 $dispatcher = new Dispatcher($router->getData());
 
