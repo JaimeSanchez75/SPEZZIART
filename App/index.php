@@ -15,12 +15,9 @@ if (isset($_COOKIE['token'])) {
     Auth::setUser($user);
 }
 
-
-
-
 $config = require __DIR__ . '/config/config.php';
 
-// recoger la url
+
 $URI = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $basePath = '/App';
 if (strpos($URI, $basePath) === 0) {
@@ -32,19 +29,21 @@ $method = $_SERVER['REQUEST_METHOD'];
 $router = new RouteCollector();
 
 
-$router->filter('auth', function () {
-
+$router->filter('auth', function() 
+{
     $user = JWTcheck();
-    if (!$user) {
+    if (!$user) 
+    {
         header('Location: /App/pages/login');
-        exit; // Detenemos la ejecución
+        exit; 
     }
     Auth::setUser($user);
 });
-
-$router->filter('admin', function () {
+$router->filter('admin', function () 
+{
     require_once __DIR__ . '/core/permisos.php';
-    if (!requireAdmin()) {
+    if (!requireAdmin()) 
+    {
         header('Location: /App/pages/login');
         exit;
     }
@@ -62,37 +61,45 @@ $router->get('pages/login', function () {
     require_once __DIR__ . '/pages/login/view/LoginView.php';
 });
 
-
-$router->post('auth/login', function () {
+$router->post('auth/login', function() 
+{
     require_once __DIR__ . '/pages/login/controller/AuthController.php';
     (new AuthController())->login();
 });
 
 
-$router->post('auth/register', function () {
+$router->post('auth/register', function() 
+{
     require_once __DIR__ . '/pages/login/controller/AuthController.php';
     (new AuthController())->register();
 });
 
 
-$router->get('auth/logout', function () {
+$router->get('auth/logout', function() 
+{
     require_once __DIR__ . '/pages/login/controller/AuthController.php';
     (new AuthController())->logout();
 });
 
 
-$router->get('pages/feed', function () {
+$router->get('pages/feed', function() 
+{
     require_once __DIR__ . '/pages/feed/controller/FeedController.php';
     (new FeedController())->index();
 });
-$router->post('pages/feed/filtrar', function () {
+$router->post('pages/feed/filtrar', function() 
+{
     require_once __DIR__ . '/pages/feed/controller/FeedController.php';
     (new FeedController())->filtrar();
 });
+
 // rutas protegidas por autenticación
-$router->group(['before' => 'auth'], function ($router) {
-    // rutas para usuarios administradores
-    $router->group(['before' => 'admin'], function ($router) {
+$router->group(['before' => 'auth'], function($router) 
+{
+    
+    // Administración
+    $router->group(['before' => 'admin'], function ($router) 
+    {
         // Administración
         $router->get('pages/administracion', function () {
             require_once __DIR__ . '/pages/administracion/controller/principalController.php';
@@ -130,19 +137,23 @@ $router->group(['before' => 'auth'], function ($router) {
             $controller->index();
         });
     });
-
-    // rutas usuarios autenticados
-    $router->get('pages/perfil/{id:i}?', function ($id = null) {
+    $router->get('pages/perfil/{id:i}?', function($id = null) 
+    {
         require_once __DIR__ . '/pages/perfil/controller/PerfilController.php';
         (new PerfilController())->index($id);
     });
-
-    $router->post('pages/perfil/guardar-vitrina', function () {
+    $router->get('pages/feed/comentarios/{id:i}', function($id) 
+    {
+        require_once __DIR__ . '/pages/feed/controller/FeedController.php';
+        (new FeedController())->obtenerComentarios($id);
+    });
+    $router->post('pages/perfil/guardar-vitrina', function() 
+    {
         require_once __DIR__ . '/pages/perfil/controller/PerfilController.php';
         (new PerfilController())->guardarVitrina();
     });
-
-    $router->post('pages/perfil/seguir/{id:i}', function ($id) {
+    $router->post('pages/perfil/seguir/{id:i}', function($id) 
+    {
         require_once __DIR__ . '/pages/perfil/controller/PerfilController.php';
         (new PerfilController())->seguir($id);
     });
@@ -202,17 +213,53 @@ $router->group(['before' => 'auth'], function ($router) {
     });
 });
 
+
+    $router->post('api/receta/like/{id:i}', function($id) 
+    {
+        require_once __DIR__ . '/pages/feed/controller/FeedController.php';
+        (new FeedController())->toggleLike($id);
+    });
+    $router->post('api/receta/comentar', function() 
+    {
+        require_once __DIR__ . '/pages/feed/controller/FeedController.php';
+        (new FeedController())->postearComentario();
+    });
+    $router->get('pages/individual', function () 
+    {
+    require_once __DIR__ . '/pages/individual/controller/individualController.php';
+    (new individualController())->index();
+    });
+
+    $router->get('pages/individual/crear', function () 
+    {
+        require_once __DIR__ . '/pages/individual/controller/individualController.php';
+        (new individualController())->crear();
+    });
+
+    $router->post('pages/individual/guardar', function () 
+    {
+        require_once __DIR__ . '/pages/individual/controller/individualController.php';
+        (new individualController())->guardar();
+    });
+});
+
+
+
 $dispatcher = new Dispatcher($router->getData());
 
-try {
+try 
+{
     $response = $dispatcher->dispatch($method, $uri);
-    if ($response !== null) {
-        echo $response;
-    }
-} catch (Phroute\Phroute\Exception\HttpRouteNotFoundException $e) {
+    if ($response !== null) {echo $response;}
+} catch (Phroute\Phroute\Exception\HttpRouteNotFoundException $e) 
+{
     http_response_code(404);
     echo "404 - Página no encontrada: /$uri";
-} catch (Phroute\Phroute\Exception\HttpMethodNotAllowedException $e) {
+} catch (Phroute\Phroute\Exception\HttpMethodNotAllowedException $e) 
+{
     http_response_code(405);
     echo "405 - Método no permitido";
 }
+
+
+

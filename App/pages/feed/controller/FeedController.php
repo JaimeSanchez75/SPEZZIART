@@ -3,53 +3,124 @@ require_once __DIR__ . '/../model/FeedModel.php';
 require_once __DIR__ . '/../view/FeedView.php';
 require_once __DIR__ . '/../../../core/auth.php';
 
-class FeedController 
-{   
-    public function index() 
+class FeedController
+{
+    private $model;
+    private $view;
+
+    public function __construct()
     {
-        $model = new FeedModel();
-
-        $catFiltro = $_GET['cat'] ?? null;
-        $posts = $model->getPosts($catFiltro);
-        $etiquetas = $model->getEtiquetasDisponibles();
-
-        $config = null; //Tomamos la configuración
-        if (Auth::check()) {$config = $model->getUserConfig(Auth::id());}
-
-        (new FeedView())->render($posts, $etiquetas, $catFiltro, $config); //Renderizamos en la vista
+        $this->model = new FeedModel();
+        $this->view = new FeedView();
     }
 
-    public function filtrar() 
+    /**
+     * Página principal del feed
+     */
+    public function index()
     {
-        error_reporting(0); 
-        
-        $etiquetas = $_POST['etiquetas'] ?? [];
-        $busqueda = $_POST['busqueda'] ?? null;
-        
-        $model = new FeedModel();
-        $posts = $model->getPosts($etiquetas, $busqueda);
-        
-        foreach ($posts as &$post) 
-        {
-            $post['FechaCreacion'] = date('d M', strtotime($post['FechaCreacion']));
-            $post['Descripcion'] = $post['Descripcion'] ?? '';
+        $userId = Auth::check() ? Auth::id() : null;
+        $recetas = $this->model->getPostsFiltrados('', [], 5, 0, $userId);
+        $etiquetas = $this->model->getEtiquetasDisponibles();
+        $config = $userId ? $this->model->getUserConfig($userId) : null;
+
+        $this->view->render($recetas, $etiquetas, $_GET['cat'] ?? null, $config);
+    }
+
+    /**
+     * Endpoint para filtrar (búsqueda, etiquetas) y scroll infinito
+     */
+    public function filtrar()
+    {
+        // Leer JSON si es application/json
+        $input = json_decode(file_get_contents('php://input'), true);
+        if ($input) {
+            $etiquetas = $input['etiquetas'] ?? [];
+            $busqueda = $input['busqueda'] ?? null;
+        } else {
+            $etiquetas = $_POST['etiquetas'] ?? [];
+            $busqueda = $_POST['busqueda'] ?? null;
+        }
+
+        $limit = 5;
+        $offset = isset($_GET['offset']) ? (int)$_GET['offset'] : 0;
+        $userId = Auth::check() ? Auth::id() : null;
+
+        $posts = $this->model->getPostsFiltrados($busqueda, $etiquetas, $limit, $offset, $userId);
+
+        $html = '';
+        foreach ($posts as $receta) {
+            $html .= $this->view->renderRecipeCard($receta);
         }
 
         header('Content-Type: application/json');
-        echo json_encode($posts);
+        echo json_encode([
+            'html' => $html,
+            'count' => count($posts)
+        ]);
         exit;
     }
 
-    public function crearPost() 
+    /**
+     * Endpoint para dar/quitar like
+     */
+    public function toggleLike($id)
     {
-        if (!Auth::check()){header("Location: /App/pages/login"); exit;}
-        $titulo = trim($_POST['titulo'] ?? '');
-        $descripcion = trim($_POST['descripcion'] ?? '');
-        if ($titulo === '' || $descripcion === ''){header("Location: /App/pages/feed?error=campos_vacios"); exit;}
-        
-        $model = new FeedModel();
-        if ($model->crearPost(Auth::id(), $titulo, $descripcion)){header("Location: /App/pages/feed?success=1");} 
-        else{header("Location: /App/pages/feed?error=db");}
-        exit;
+        if (!Auth::check()) {
+            http_response_code(401);
+            echo json_encode(['status' => 'error', 'message' => 'Sesión requerida']);
+            exit;
+        }
+
+        $resultado = $this->model->toggleLike($id, Auth::id());
+        header('Content-Type: application/json');
+        echo json_encode([
+            'status' => 'success',
+            'newLikes' => $resultado['likes'],
+            'action' => $resultado['accion']
+        ]);
+    }
+
+    /**
+     * Endpoint para obtener comentarios de una receta
+     */
+    public function obtenerComentarios($id)
+    {
+        if (!Auth::check()) {
+            http_response_code(401);
+            echo json_encode(['status' => 'error', 'message' => 'Sesión requerida']);
+            exit;
+        }
+
+        $comentarios = $this->model->getComentarios($id);
+        foreach ($comentarios as &$c) {
+            $c['Fecha'] = date('d M, H:i', strtotime($c['Fecha']));
+        }
+        header('Content-Type: application/json');
+        echo json_encode($comentarios);
+    }
+
+    /**
+     * Endpoint para publicar un comentario
+     */
+    public function postearComentario()
+    {
+        if (!Auth::check()) {
+            http_response_code(401);
+            echo json_encode(['status' => 'error', 'message' => 'Sesión requerida']);
+            exit;
+        }
+
+        $idReceta = $_POST['id_receta'] ?? null;
+        $texto = trim($_POST['comentario'] ?? '');
+
+        if ($idReceta && !empty($texto)) {
+            $ok = $this->model->agregarComentario($idReceta, Auth::id(), $texto);
+            if ($ok) {
+                echo json_encode(['status' => 'success']);
+                exit;
+            }
+        }
+        echo json_encode(['status' => 'error']);
     }
 }
