@@ -1,3 +1,4 @@
+
 <?php
 require_once __DIR__ . '/../../../core/auth.php';
 
@@ -6,10 +7,15 @@ class FeedView
     /**
      * Renderiza la página completa del feed
      */
+    
     public function render($recetas, $etiquetas, $catActiva = null, $config = null)
     {
+        
         $modoOscuro = $config && $config['ModoOscuro'] ? 'dark' : 'light';
         ?>
+        <script>
+            window.isLoggedIn = <?php echo Auth::check() ? 'true' : 'false'; ?>;
+        </script>
         <!DOCTYPE html>
         <html lang="es">
         <head>
@@ -42,9 +48,17 @@ class FeedView
 
                     <div class="header-item item-actions">
                         <?php if (Auth::check()): ?>
-                            <div class="notification-icon position-relative">
-                                <span class="material-symbols-outlined cursor-pointer">notifications</span>
-                                <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle"></span>
+                            <div class="dropdown">
+                                <button id="campana" class="btn position-relative" data-bs-toggle="dropdown">
+                                    <span class="material-symbols-outlined cursor-pointer">notifications</span>
+                                    <span id="contadorNotificaciones" 
+                                        class="position-absolute top-0 start-100 translate-middle badge bg-danger">
+                                    </span>
+                                </button>
+
+                                <div id="dropdownNotificaciones" class="dropdown-menu dropdown-menu-end p-2" style="width:300px;">
+                                    <div class="text-muted text-center">Sin notificaciones</div>
+                                </div>
                             </div>
                         <?php else: ?>
                             <a href="/App/pages/login" class="btn btn-danger rounded-pill px-4 shadow-sm">Login</a>
@@ -75,25 +89,24 @@ class FeedView
                 </div>
 
                 <!-- Overlays de comentarios (uno por receta) -->
-                <div id="comments-overlays-container">
-                    <?php foreach ($recetas as $receta): ?>
-                        <div class="comments-overlay d-none" id="comments-<?php echo $receta['ID_Receta']; ?>">
-                            <div class="comments-sheet">
-                                <div class="drag-handle"></div>
-                                <div class="comments-header">
-                                    <span>Comentarios</span>
-                                    <span class="close-btn" onclick="FeedApp.closeComments(<?php echo $receta['ID_Receta']; ?>)">✕</span>
-                                </div>
-                                <div class="comments-body"></div>
-                                <div class="comments-input">
-                                    <form onsubmit="FeedApp.sendInlineComment(event, <?php echo $receta['ID_Receta']; ?>)">
-                                        <input type="text" placeholder="Añade un comentario...">
-                                        <button type="submit">Enviar</button>
-                                    </form>
-                                </div>
-                            </div>
+                <div class="comments-overlay d-none" id="comments-overlay">
+                    <div class="comments-sheet">
+                        <div class="drag-handle"></div>
+
+                        <div class="comments-header">
+                            <span>Comentarios</span>
+                            <span class="close-btn" onclick="FeedApp.closeComments()">✕</span>
                         </div>
-                    <?php endforeach; ?>
+
+                        <div class="comments-body"></div>
+
+                        <div class="comments-input">
+                            <form onsubmit="FeedApp.sendComment(event)">
+                                <input type="text" placeholder="Añade un comentario...">
+                                <button type="submit">Enviar</button>
+                            </form>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -105,7 +118,8 @@ class FeedView
             <!-- Estado global del feed -->
             <script>
                 window.FeedApp = window.FeedApp || {};
-                FeedApp.state = {
+                FeedApp.state = 
+                {
                     offset: <?php echo count($recetas); ?>,
                     limit: 5,
                     loading: false,
@@ -299,5 +313,6 @@ class FeedView
             </div>
         </div>
         <?php
+        
     }
 }

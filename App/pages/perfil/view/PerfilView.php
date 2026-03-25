@@ -1,6 +1,6 @@
 <?php
 class PerfilView {
-public function render($u, $vitrina, $recetas, $idLogueado, $loSigue = false, $config = null) { ?>
+public function render($u,$numSeg, $vitrina, $recetas, $idLogueado, $loSigue = false, $config = null) { ?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -19,7 +19,7 @@ public function render($u, $vitrina, $recetas, $idLogueado, $loSigue = false, $c
         </div>
         <h2 class="fw-bold mb-0 opacity-75">@<?php echo $u['Nombre']; ?></h2>
         <div class="d-flex justify-content-center gap-4 mt-3">
-            <div><b class="d-block fs-5"><?php echo $u['Seguidores']; ?></b> <small>Seguidores</small></div>
+            <div><b class="d-block fs-5"><?php echo $numSeg; ?></b> <small>Seguidores</small></div>
             <div><b class="d-block fs-5"><?php echo count($recetas); ?></b> <small>Recetas</small></div>
         </div>
         <div class="mt-3">

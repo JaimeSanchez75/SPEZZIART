@@ -17,6 +17,7 @@ class individualModel {
     }
 
     // ================== RECETAS ==================
+
     public function getRecetasUsuario($idUsuario) {
         $stmt = $this->pdo->prepare("
             SELECT r.*, u.Username 
@@ -29,128 +30,54 @@ class individualModel {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function getRecetaById($id) {
-        if (!$id) return null;
-
-        $stmt = $this->pdo->prepare("
-            SELECT r.*, u.Username
-            FROM Receta r
-            JOIN Usuario u ON r.ID_Creador = u.ID_Usuario
-            WHERE r.ID_Receta = :id
-        ");
-        $stmt->execute(['id' => $id]);
-        $receta = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        if ($receta) {
-            $stmt = $this->pdo->prepare("
-                SELECT i.Nombre
-                FROM Ingrediente i
-                JOIN Receta_Ingrediente ri ON i.ID_Ingrediente = ri.ID_Ingrediente
-                WHERE ri.ID_Receta = :id
-            ");
-            $stmt->execute(['id' => $id]);
-            $receta['ingredientes'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        }
-
-        return $receta;
-    }
-
     public function crearReceta($idUsuario, $data) {
         $stmt = $this->pdo->prepare("
             INSERT INTO Receta (ID_Creador, Titulo, Descripcion, Imagen, Tiempo, Porciones, EsFit)
             VALUES (:idCreador, :titulo, :descripcion, :imagen, :tiempo, :porciones, :esFit)
         ");
-
         $stmt->execute([
             'idCreador' => $idUsuario,
             'titulo' => $data['titulo'],
             'descripcion' => $data['descripcion'],
-            'imagen' => $data['imagen'] ?? null,
-            'tiempo' => $data['tiempo'] ?? null,
-            'porciones' => $data['porciones'] ?? null,
-            'esFit' => !empty($data['fit']) ? 1 : 0
+            'imagen' => $data['imagen'],
+            'tiempo' => $data['tiempo'],
+            'porciones' => $data['porciones'],
+            'esFit' => $data['fit']
         ]);
-
         return $this->pdo->lastInsertId();
     }
 
-    public function actualizarReceta($id, $data) {
-        if (!$id) return false;
-
-        $stmt = $this->pdo->prepare("
-            UPDATE Receta 
-            SET Titulo = :titulo,
-                Descripcion = :descripcion,
-                Imagen = :imagen,
-                Tiempo = :tiempo,
-                Porciones = :porciones,
-                EsFit = :fit
-            WHERE ID_Receta = :id
-        ");
-
-        return $stmt->execute([
-            'id' => $id,
-            'titulo' => $data['titulo'],
-            'descripcion' => $data['descripcion'],
-            'imagen' => $data['imagen'] ?? null,
-            'tiempo' => $data['tiempo'] ?? null,
-            'porciones' => $data['porciones'] ?? null,
-            'fit' => !empty($data['fit']) ? 1 : 0
-        ]);
-    }
-
-    // Borrar también de colecciones
-    public function eliminarReceta($id) {
-        if (!$id) return false;
-
-        try {
-            $this->pdo->beginTransaction();
-
-            // Eliminar relaciones primero
-            $stmt = $this->pdo->prepare("
-                DELETE FROM Coleccion_Receta WHERE ID_Receta = :id
-            ");
-            $stmt->execute(['id' => $id]);
-
-            // Eliminar receta
-            $stmt = $this->pdo->prepare("
-                DELETE FROM Receta WHERE ID_Receta = :id
-            ");
-            $stmt->execute(['id' => $id]);
-
-            $this->pdo->commit();
-            return true;
-
-        } catch (PDOException $e) {
-            $this->pdo->rollBack();
-            return false;
-        }
-    }
-
     // ================== BUSQUEDA ==================
-    public function buscarRecetasUsuario($idUsuario, $busqueda) {
-        $like = "%" . $busqueda . "%";
 
+    public function buscarRecetasUsuario($idUsuario, $busqueda) {
+        $like = "%$busqueda%";
         $stmt = $this->pdo->prepare("
             SELECT r.*, u.Username
             FROM Receta r
             JOIN Usuario u ON r.ID_Creador = u.ID_Usuario
             WHERE r.ID_Creador = :idUsuario
-              AND (r.Titulo LIKE :like OR r.Descripcion LIKE :like)
+              AND (
+                    r.Titulo LIKE :like 
+                    OR r.Descripcion LIKE :like
+                    OR EXISTS (
+                        SELECT 1
+                        FROM Receta_Ingrediente ri
+                        JOIN Ingrediente i ON ri.ID_Ingrediente = i.ID_Ingrediente
+                        WHERE ri.ID_Receta = r.ID_Receta
+                          AND i.Nombre LIKE :like
+                    )
+              )
             ORDER BY r.FechaCreacion DESC
         ");
-
         $stmt->execute([
             'idUsuario' => $idUsuario,
             'like' => $like
         ]);
-
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function buscarColeccionesUsuario($idUsuario, $busqueda) {
-        $like = "%" . $busqueda . "%";
-
+        $like = "%$busqueda%";
         $stmt = $this->pdo->prepare("
             SELECT * 
             FROM Coleccion
@@ -158,30 +85,26 @@ class individualModel {
               AND Nombre LIKE :like
             ORDER BY ID_Coleccion DESC
         ");
-
         $stmt->execute([
             'idUsuario' => $idUsuario,
             'like' => $like
         ]);
-
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     // ================== COLECCIONES ==================
-    public function crearColeccion($idUsuario, $nombre, $esPublica = true) {
-        $nombre = trim($nombre);
-        if ($nombre === '') return false;
 
+    public function crearColeccion($idUsuario, $nombre, $esPublica = true) {
         $stmt = $this->pdo->prepare("
             INSERT INTO Coleccion (ID_Creador, Nombre, EsPublica)
             VALUES (:idUsuario, :nombre, :esPublica)
         ");
-
-        return $stmt->execute([
+        $stmt->execute([
             'idUsuario' => $idUsuario,
             'nombre' => $nombre,
-            'esPublica' => $esPublica ? 1 : 0
+            'esPublica' => $esPublica
         ]);
+        return $this->pdo->lastInsertId();
     }
 
     public function getColeccionesUsuario($idUsuario) {
@@ -195,83 +118,70 @@ class individualModel {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function agregarRecetaAColeccion($idReceta, $idColeccion) {
-        if (!$idReceta || !$idColeccion) return false;
+    // 🔐 VALIDACIONES (NUEVO - CLAVE)
+    public function coleccionPerteneceAUsuario($idUsuario, $idColeccion) {
+        $stmt = $this->pdo->prepare("
+            SELECT COUNT(*) 
+            FROM Coleccion
+            WHERE ID_Coleccion = :idColeccion
+              AND ID_Creador = :idUsuario
+        ");
+        $stmt->execute([
+            'idColeccion' => $idColeccion,
+            'idUsuario' => $idUsuario
+        ]);
+        return $stmt->fetchColumn() > 0;
+    }
 
-        try {
-            $stmt = $this->pdo->prepare("
-                INSERT IGNORE INTO Coleccion_Receta (ID_Receta, ID_Coleccion)
-                VALUES (:idReceta, :idColeccion)
-            ");
-            return $stmt->execute([
-                'idReceta' => $idReceta,
-                'idColeccion' => $idColeccion
-            ]);
-        } catch (PDOException $e) {
+    public function recetaPerteneceAUsuario($idUsuario, $idReceta) {
+        $stmt = $this->pdo->prepare("
+            SELECT COUNT(*) 
+            FROM Receta
+            WHERE ID_Receta = :idReceta
+              AND ID_Creador = :idUsuario
+        ");
+        $stmt->execute([
+            'idReceta' => $idReceta,
+            'idUsuario' => $idUsuario
+        ]);
+        return $stmt->fetchColumn() > 0;
+    }
+
+    // 🔥 MÉTODO CRÍTICO ARREGLADO
+    public function agregarRecetaAColeccion($idUsuario, $idReceta, $idColeccion) {
+
+        // VALIDAR PROPIEDAD
+        if (!$this->coleccionPerteneceAUsuario($idUsuario, $idColeccion)) {
             return false;
         }
+
+        if (!$this->recetaPerteneceAUsuario($idUsuario, $idReceta)) {
+            return false;
+        }
+
+        $stmt = $this->pdo->prepare("
+            INSERT IGNORE INTO Coleccion_Receta (ID_Receta, ID_Coleccion)
+            VALUES (:idReceta, :idColeccion)
+        ");
+
+        $stmt->execute([
+            'idReceta' => $idReceta,
+            'idColeccion' => $idColeccion
+        ]);
+
+        return true;
     }
 
     public function getRecetasDeColeccion($idColeccion) {
-        if (!$idColeccion) return [];
-
         $stmt = $this->pdo->prepare("
             SELECT r.*, u.Username
             FROM Receta r
-            INNER JOIN Coleccion_Receta cr ON r.ID_Receta = cr.ID_Receta
-            INNER JOIN Usuario u ON r.ID_Creador = u.ID_Usuario
+            JOIN Coleccion_Receta cr ON r.ID_Receta = cr.ID_Receta
+            JOIN Usuario u ON r.ID_Creador = u.ID_Usuario
             WHERE cr.ID_Coleccion = :idColeccion
             ORDER BY r.FechaCreacion DESC
         ");
-
         $stmt->execute(['idColeccion' => $idColeccion]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    // Eliminar receta de una colección 
-    public function eliminarRecetaDeColeccion($idReceta, $idColeccion) {
-        if (!$idReceta || !$idColeccion) return false;
-
-        try {
-            $stmt = $this->pdo->prepare("
-                DELETE FROM Coleccion_Receta 
-                WHERE ID_Receta = :idReceta 
-                AND ID_Coleccion = :idColeccion
-            ");
-
-            return $stmt->execute([
-                'idReceta' => $idReceta,
-                'idColeccion' => $idColeccion
-            ]);
-
-        } catch (PDOException $e) {
-            return false;
-        }
-    }
-
-    // ================== ELIMINAR COLECCIÓN ==================
-    public function eliminarColeccion($idColeccion) {
-        if (!$idColeccion) return false;
-
-        try {
-            $this->pdo->beginTransaction();
-
-            $stmt = $this->pdo->prepare("
-                DELETE FROM Coleccion_Receta WHERE ID_Coleccion = :idColeccion
-            ");
-            $stmt->execute(['idColeccion' => $idColeccion]);
-
-            $stmt = $this->pdo->prepare("
-                DELETE FROM Coleccion WHERE ID_Coleccion = :idColeccion
-            ");
-            $stmt->execute(['idColeccion' => $idColeccion]);
-
-            $this->pdo->commit();
-            return true;
-
-        } catch (PDOException $e) {
-            $this->pdo->rollBack();
-            return false;
-        }
     }
 }

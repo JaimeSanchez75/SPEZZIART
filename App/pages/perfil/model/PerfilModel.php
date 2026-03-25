@@ -11,6 +11,15 @@ class PerfilModel
         $stmt->execute([$id]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
+    public function getNumSeguidores(int $id)
+    {
+        $db = Conexion::conectar();
+        $stmt = $db -> prepare ('SELECT COUNT(*) 
+                                FROM Usuario_Seguidor 
+                                WHERE ID_Usuario = ?');
+        $stmt ->execute([$id]);
+        return $stmt->fetchColumn();
+    }
 
     public function getRecetasUsuario(int $id) 
     {
