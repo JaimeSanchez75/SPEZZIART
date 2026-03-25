@@ -190,11 +190,52 @@ $router->group(['before' => 'auth'], function($router)
         require_once __DIR__ . '/pages/individual/controller/individualController.php';
         (new individualController())->crear();
     });
-
+     $router->post('pages/individual/crear-coleccion', function () 
+    {
+        require_once __DIR__ . '/pages/individual/controller/individualController.php';
+        (new individualController())->crearColeccion();
+    });
     $router->post('pages/individual/guardar', function () 
     {
         require_once __DIR__ . '/pages/individual/controller/individualController.php';
         (new individualController())->guardar();
+    });
+    $router->post('pages/individual/eliminar', function () 
+    {
+        require_once __DIR__ . '/pages/individual/controller/individualController.php';
+        (new individualController())->eliminar();
+    });
+    $router->get('pages/individual/coleccion', function () {
+        require_once __DIR__ . '/pages/individual/controller/individualController.php';
+        (new individualController())->verColeccion();
+    });
+    $router->post('pages/individual/coleccion/agregar', function () {
+        require_once __DIR__ . '/pages/individual/controller/individualController.php';
+        (new individualController())->agregarReceta();
+    });
+
+    $router->post('pages/individual/eliminar-coleccion', function () {
+        require_once __DIR__ . '/pages/individual/controller/individualController.php';
+        (new individualController())->eliminarColeccion();
+    });
+
+    $router->post('pages/individual/coleccion/eliminar-receta', function () {
+        require_once __DIR__ . '/pages/individual/controller/individualController.php';
+        (new individualController())->eliminarRecetaDeColeccion();
+    });
+    $router->post('api/reportar/receta', function () {
+        require_once __DIR__ . '/pages/reporte/controller/ReporteController.php';
+        (new ReporteController())->reportarReceta();
+    });
+
+    $router->post('api/reportar/comentario', function () {
+        require_once __DIR__ . '/pages/reporte/controller/ReporteController.php';
+        (new ReporteController())->reportarComentario();
+    });
+
+    $router->post('api/reportar/usuario', function () {
+        require_once __DIR__ . '/pages/reporte/controller/ReporteController.php';
+        (new ReporteController())->reportarUsuario();
     });
 });
 

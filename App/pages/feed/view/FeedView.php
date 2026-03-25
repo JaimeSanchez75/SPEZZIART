@@ -250,7 +250,13 @@ class FeedView
                                 </span>
                             </div>
                         </div>
-                        <span class="material-symbols-outlined cursor-pointer text-muted">bookmark</span>
+                        <div>
+                        <button class="btn btn-link text-muted"><span class=" material-symbols-outlined cursor-pointer ">bookmark</span></button>
+                        
+                        <button class="btn btn-link  text-muted" data-bs-toggle="modal" data-bs-target="#reportModal" data-report-type="receta" data-id="<?= $receta['ID_Receta'] ?>">
+                            <span class="material-symbols-outlined">flag</span>
+                        </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -312,7 +318,38 @@ class FeedView
                 </div>
             </div>
         </div>
+        <div class="modal fade" id="reportModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="reportModalTitle">Reportar</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="reportForm">
+                            <input type="hidden" name="id" id="reportId">
+                            <input type="hidden" name="type" id="reportType">
+                            <div class="mb-3">
+                                <label class="form-label">Motivo del reporte</label>
+                                <select class="form-select" name="reason" id="reportReason" required>
+                                    <option value="">Selecciona un motivo...</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Detalles adicionales (opcional)</label>
+                                <textarea class="form-control" name="details" rows="2" placeholder="Describe el problema con más detalle..."></textarea>
+                            </div>
+                            <div class="alert alert-danger d-none" id="reportError"></div>
+                            <div class="alert alert-success d-none" id="reportSuccess"></div>
+                            <button type="submit" class="btn btn-danger w-100">Enviar reporte</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="/App/global/report.js"></script>
         <?php
+        
         
     }
 }
