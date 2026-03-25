@@ -110,4 +110,44 @@ class AuthController
         header('Location: /App/pages/feed'); 
         exit;
     }
+
+    public function mostrarFormularioPassword($token) {
+        // 1. Cargar el modelo para verificar el token
+        // Nota: Necesitarás crear 'obtenerUsuarioPorToken' en AuthModel o UsuariosModel
+        $auth = new AuthModel();
+        $usuario = $auth->validarTokenRecuperacion($token);
+
+        if (!$usuario) {
+            // Si el token no existe o expiró, redirigir con error
+            header('Location: /App/pages/login?error=token_invalido');
+            exit;
+        }
+
+        // 2. Si es válido, cargamos la vista pasándole el token
+        // Para que el formulario sepa a quién actualizar
+        $datos['token'] = $token;
+        
+        // Ajusta la ruta a tu archivo de vista real
+        require_once __DIR__ . '/../view/resetearContraseña.php';
+    }
+
+    public function guardarContrasenaEditada(){
+        $datos=$_POST['datos'];
+        var_dump($datos);
+
+        if ($datos['contrasena1'] !== $datos['contrasena']) {
+            echo json_encode(['status' => 'error', 'message' => 'Las contraseñas no coinciden']);
+            exit;
+        }
+
+        $auth = new AuthModel();
+
+        $auth->editarContraseñaUsuario($datos['contrasena'],$datos['email']);
+
+        header('Location: /App/pages/login');
+
+
+    }
+
+    
 }

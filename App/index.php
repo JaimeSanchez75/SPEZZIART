@@ -170,6 +170,25 @@ $router->group(['before' => 'auth'], function ($router) {
             $controller->eliminarEtiqueta($id);
         });
 
+        $router->post('pages/administracion/Ingredientes/crear', function () {
+            require_once __DIR__ . '/pages/administracion/controller/ingredientesController.php';
+            $controller = new IngredientesController();
+            $controller->crearIngrediente();
+        });
+
+        $router->post('pages/administracion/Ingredientes/editar', function () {
+            require_once __DIR__ . '/pages/administracion/controller/ingredientesController.php';
+            $controller = new IngredientesController();
+            $controller->editarIngrediente();
+        });
+
+        $router->post('pages/administracion/usuarios/resetearContrasena', function () {
+            require_once __DIR__ . '/pages/administracion/controller/usuariosController.php';
+            $controller = new UsuariosController();
+            $controller->resetearContrasena(); // Método que crearemos abajo
+        });
+        
+
         
         
     });
@@ -189,37 +208,59 @@ $router->group(['before' => 'auth'], function ($router) {
         require_once __DIR__ . '/pages/perfil/controller/PerfilController.php';
         (new PerfilController())->seguir($id);
     });
+
+    //parte individual
+    $router->get('pages/individual', function () {
+        require_once __DIR__ . '/pages/individual/controller/individualController.php';
+        (new individualController())->index();
+    });
+
+    $router->get('pages/individual/crear', function () {
+        require_once __DIR__ . '/pages/individual/controller/individualController.php';
+        (new individualController())->crear();
+    });
+
+    $router->post('pages/individual/guardar', function () {
+        require_once __DIR__ . '/pages/individual/controller/individualController.php';
+        (new individualController())->guardar();
+    });
+    
 });
 
-//parte individual
-$router->get('pages/individual', function () {
-    require_once __DIR__ . '/pages/individual/controller/individualController.php';
-    (new individualController())->index();
+$router->get('pages/login/resetear/{token}', function ($token) {
+    
+    require_once __DIR__ . '/pages/login/controller/AuthController.php';
+    (new AuthController())->mostrarFormularioPassword($token);
+
 });
 
-$router->get('pages/individual/crear', function () {
-    require_once __DIR__ . '/pages/individual/controller/individualController.php';
-    (new individualController())->crear();
+$router->post('/pages/login/actualizarContrasena', function () {
+    
+    require_once __DIR__ . '/pages/login/controller/AuthController.php';
+    (new AuthController())->guardarContrasenaEditada();
+    
 });
 
-$router->post('pages/individual/guardar', function () {
-    require_once __DIR__ . '/pages/individual/controller/individualController.php';
-    (new individualController())->guardar();
-});
+
 
 
 
 $dispatcher = new Dispatcher($router->getData());
 
 try {
+
     $response = $dispatcher->dispatch($method, $uri);
     if ($response !== null) {
         echo $response;
     }
+
 } catch (Phroute\Phroute\Exception\HttpRouteNotFoundException $e) {
+
     http_response_code(404);
     echo "404 - Página no encontrada: /$uri";
+
 } catch (Phroute\Phroute\Exception\HttpMethodNotAllowedException $e) {
+    
     http_response_code(405);
     echo "405 - Método no permitido";
 }

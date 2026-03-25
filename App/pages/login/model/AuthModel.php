@@ -41,4 +41,34 @@ class AuthModel extends Conexion
             ':p' => password_hash($password, PASSWORD_DEFAULT)
         ]);
     }
+
+    public function validarTokenRecuperacion($token) {
+        $db = Conexion::conectar();
+        $ahora = date("Y-m-d H:i:s");
+
+        // Buscamos un usuario que tenga ese token y que la expiración sea mayor a 'ahora'
+        $stmt = $db->prepare("SELECT ID_Usuario,Email FROM usuario 
+                            WHERE ResetearToken = :token 
+                            AND ResetearExpira  > :ahora 
+                            LIMIT 1");
+        $stmt->bindParam(':token', $token);
+        $stmt->bindParam(':ahora', $ahora);
+        $stmt->execute();
+        
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function editarContraseñaUsuario($contraseña,$email){
+
+        $db = Conexion::conectar();
+        $hashContrasena= password_hash($contraseña,PASSWORD_DEFAULT);
+
+        $stmt =$db->prepare('UPDATE Usuario SET Contrasena = :contrasena where Email=:email;');
+        $stmt->execute([
+            ':email'=>$email,
+            ':contrasena'=>$hashContrasena
+        ]);
+
+        
+    }
 }

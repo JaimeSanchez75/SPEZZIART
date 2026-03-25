@@ -8,5 +8,5 @@ document.addEventListener('DOMContentLoaded',function(){
         const id = boton.dataset.id;
         
         modalEditarEtiqueta.querySelector("#etiqueta_id").value = id;
-    })
-})
+    });
+});
