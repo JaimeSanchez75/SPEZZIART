@@ -5,7 +5,10 @@ require_once __DIR__ . '/ComponentesRender.php';
 class FeedView
 {
     private $componentes;
+    
     public function __construct(){$this->componentes = new ComponentesRender();}
+    public function renderRecipeCard($receta)
+    {return $this->componentes->renderRecipeCard($receta);}
     public function render($recetas, $etiquetas, $catActiva = null, $config = null)
     {   $modoOscuro = $config && $config['ModoOscuro'] ? 'dark' : 'light';
         ?>
@@ -114,6 +117,8 @@ class FeedView
             <?php require_once __DIR__ . '/../../../global/navbar/view/NavbarView.php'; ?>
         </body>
         </html>
+        
         <?php
+        
     }
 }

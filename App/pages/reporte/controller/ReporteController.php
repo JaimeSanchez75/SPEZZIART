@@ -50,14 +50,31 @@ class ReporteController
 
     public function reportarComentario()
     {
+    // Log todo lo que llega
+    error_log("=== INICIO reportarComentario ===");
+    error_log("REQUEST_METHOD: " . $_SERVER['REQUEST_METHOD']);
+    error_log("Content-Type: " . ($_SERVER['CONTENT_TYPE'] ?? 'no content-type'));
+    error_log("POST data: " . print_r($_POST, true));
+    
+    // Si POST está vacío, intentar leer del raw input
+    if (empty($_POST)) {
+        $rawInput = file_get_contents('php://input');
+        error_log("Raw input: " . $rawInput);
+        parse_str($rawInput, $parsed);
+        error_log("Parsed raw: " . print_r($parsed, true));
+    }
+    
         $this->verificarAutenticacion();
 
         $idComentario = (int)($_POST['id_comentario'] ?? 0);
         $motivo = trim($_POST['motivo'] ?? '');
         $detalles = trim($_POST['detalles'] ?? '');
 
+    error_log("Variables extraídas: idComentario=$idComentario, motivo=$motivo, detalles=$detalles");
+
         if (!$idComentario || empty($motivo)) {
-            $this->jsonError('Datos incompletos', 400);
+        error_log("VALIDACIÓN FALLIDA: idComentario=$idComentario, motivo='$motivo'");
+        $this->jsonError('Datos incompletos. id_comentario: ' . $idComentario . ', motivo: ' . $motivo, 400);
         }
 
         $motivoCompleto = $motivo;

@@ -184,7 +184,10 @@ $router->group(['before' => 'auth'], function($router)
     require_once __DIR__ . '/pages/individual/controller/individualController.php';
     (new individualController())->index();
     });
-
+    $router->get('pages/individual/ver', function () {
+        require_once __DIR__ . '/pages/individual/controller/individualController.php';
+        (new individualController())->ver();
+    });
     $router->get('pages/individual/crear', function () 
     {
         require_once __DIR__ . '/pages/individual/controller/individualController.php';
