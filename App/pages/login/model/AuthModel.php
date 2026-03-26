@@ -88,7 +88,7 @@ class AuthModel extends Conexion
         
         $expiracion = date("Y-m-d H:i:s", strtotime('+1 hour'));
 
-        $stmt = $db->prepare("UPDATE usuario SET ResetearToken = :token, ResetearExpira = :exp WHERE ID_Usuario = :id");
+        $stmt = $db->prepare("UPDATE Usuario SET ResetearToken = :token, ResetearExpira = :exp WHERE ID_Usuario = :id");
 
         $stmt->bindParam(':token', $token);
         $stmt->bindParam(':exp', $expiracion);

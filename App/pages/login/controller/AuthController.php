@@ -159,7 +159,8 @@ class AuthController
 
         if ($usuario) {
             $token = bin2hex(random_bytes(32));
-            $model->guardarTokenRecuperacion($emailUsuario, $token);
+
+            $model->guardarTokenRecuperacion($usuario['ID_Usuario'], $token);
 
             $enlace = "http://localhost/App/pages/login/resetear/" . $token;
 
