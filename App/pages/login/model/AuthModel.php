@@ -29,6 +29,16 @@ class AuthModel extends Conexion
         return false;
     }
 
+    function obtenerUsuarioPorEmail($email)
+    {
+
+        $db = Conexion::conectar();
+        $stmt = $db->prepare("SELECT ID_Usuario, Nombre,Username,Telefono,Email,EsAdmin,ModoOscuro, ModoFit,NotificacionOn, CuentaPublica FROM usuario WHERE Email = :email");
+        $stmt->bindParam(':email', $email, PDO::PARAM_STR);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
     public function crearUsuario($nombre, $username, $email, $password)
     {
         $db = self::conectar();
@@ -70,5 +80,20 @@ class AuthModel extends Conexion
         ]);
 
         
+    }
+
+    public function guardarTokenRecuperacion($idUsuario, $token)
+    {
+        $db = Conexion::conectar();
+        
+        $expiracion = date("Y-m-d H:i:s", strtotime('+1 hour'));
+
+        $stmt = $db->prepare("UPDATE usuario SET ResetearToken = :token, ResetearExpira = :exp WHERE ID_Usuario = :id");
+
+        $stmt->bindParam(':token', $token);
+        $stmt->bindParam(':exp', $expiracion);
+        $stmt->bindParam(':id', $idUsuario);
+
+        return $stmt->execute();
     }
 }

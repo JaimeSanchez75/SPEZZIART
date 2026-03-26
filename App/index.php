@@ -57,6 +57,10 @@ $router->get('pages/login', function () {
     require_once __DIR__ . '/pages/login/view/LoginView.php';
 });
 
+$router->get('pages/recuperar', function () {
+    require_once __DIR__ . '/pages/login/view/recuperarContraseña.php';
+});
+
 $router->post('auth/login', function () {
     require_once __DIR__ . '/pages/login/controller/AuthController.php';
     (new AuthController())->login();
@@ -300,6 +304,12 @@ $router->post('/pages/login/actualizarContrasena', function () {
 
     require_once __DIR__ . '/pages/login/controller/AuthController.php';
     (new AuthController())->guardarContrasenaEditada();
+});
+
+$router->post('/pages/login/RecuperarCuenta', function () {
+
+    require_once __DIR__ . '/pages/login/controller/AuthController.php';
+    (new AuthController())->resetearContrasena();
 });
 
 
