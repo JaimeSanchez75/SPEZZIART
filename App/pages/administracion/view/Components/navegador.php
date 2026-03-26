@@ -25,7 +25,7 @@
 </nav>
 
 <div class="sidebar-footer mt-auto">
-    <a href="#" class="nav-item logout">
+    <a href="/App/auth/logout" class="nav-item logout">
         <i class="bi bi-box-arrow-left"></i> Cerrar Sesión
     </a>
 </div>
