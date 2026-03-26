@@ -115,8 +115,11 @@ class ReporteController
 
     private function verificarAutenticacion()
     {
-        if (!Auth::check()) {
-            $this->jsonError('No autenticado', 401);
+        if (!Auth::check()) 
+        {
+            http_response_code(401);
+            echo json_encode(['status' => 'error', 'message' => 'Sesión requerida']);
+            exit;
         }
     }
 

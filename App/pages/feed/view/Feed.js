@@ -226,6 +226,7 @@ document.addEventListener('DOMContentLoaded', reinitObserver);
                             </div>
                             <div class="comment-text">${c.Descripcion}</div>
                         </div>
+                        <button class="btn btn-link text-muted" data-bs-toggle="modal" data-bs-target="#reportModal" data-report-type="comentario" data-id="<?= $c['ID_Comentario'] ?>"onclick="if(!window.isLoggedIn) { event.preventDefault(); window.location.href='/App/pages/login'; }"><span class="material-symbols-outlined">flag</span></button>
                     </div>
                 `).join('');
             } 

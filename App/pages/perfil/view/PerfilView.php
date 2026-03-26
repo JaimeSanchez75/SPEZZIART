@@ -1,6 +1,8 @@
 <?php
-class PerfilView {
+class PerfilView 
+{
 public function render($u,$numSeg, $vitrina, $recetas, $idLogueado, $loSigue = false, $config = null) { ?>
+<script>window.isLoggedIn = <?php echo Auth::check() ? 'true' : 'false'; ?>;</script>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -17,7 +19,10 @@ public function render($u,$numSeg, $vitrina, $recetas, $idLogueado, $loSigue = f
         <div class="mb-3">
             <span class="material-symbols-outlined" style="font-size: 80px;">account_circle</span>
         </div>
-        <h2 class="fw-bold mb-0 opacity-75">@<?php echo $u['Nombre']; ?></h2>
+        <span class="d-flex text-center justify-content-center">
+            <h2 class="fw-bold mb-0 opacity-75">@<?php echo $u['Nombre']; ?></h2>
+            <button class="btn btn-link text-muted" data-bs-toggle="modal" data-bs-target="#reportModal" data-report-type="usuario" data-id="<?= $u['ID_Usuario'] ?>"onclick="if(!window.isLoggedIn) { event.preventDefault(); window.location.href='/App/pages/login'; }"><span class="material-symbols-outlined">flag</span></button>
+        </span>
         <div class="d-flex justify-content-center gap-4 mt-3">
             <div><b class="d-block fs-5"><?php echo $numSeg; ?></b> <small>Seguidores</small></div>
             <div><b class="d-block fs-5"><?php echo count($recetas); ?></b> <small>Recetas</small></div>
@@ -34,11 +39,7 @@ public function render($u,$numSeg, $vitrina, $recetas, $idLogueado, $loSigue = f
         </div>
     </div>
 </div>
-
 <script src="/App/pages/perfil/view/GuardaVitrina.js"></script>
-
-
-
 <div class="container my-5">
     <div class="vitrina-card p-4 mb-5">
         <div class="d-flex justify-content-between align-items-center mb-4">
@@ -160,6 +161,6 @@ public function render($u,$numSeg, $vitrina, $recetas, $idLogueado, $loSigue = f
 </div>
 <?php require_once __DIR__ . '/../../../global/navbar/view/NavbarView.php'; ?>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
+<script src="/App/global/report.js"></script>
 <?php }
 }

@@ -97,7 +97,7 @@ class ComponentesRender
                         </div>
                         <div>
                             <button class="btn btn-link text-muted"><span class="material-symbols-outlined cursor-pointer">bookmark</span></button>
-                            <button class="btn btn-link text-muted" data-bs-toggle="modal" data-bs-target="#reportModal" data-report-type="receta" data-id="<?= $receta['ID_Receta'] ?>"><span class="material-symbols-outlined">flag</span></button>
+                            <button class="btn btn-link text-muted" data-bs-toggle="modal" data-bs-target="#reportModal" data-report-type="receta" data-id="<?= $receta['ID_Receta'] ?>"onclick="if(!window.isLoggedIn) { event.preventDefault(); window.location.href='/App/pages/login'; }"><span class="material-symbols-outlined">flag</span></button>
                         </div>
                     </div>
                 </div>
