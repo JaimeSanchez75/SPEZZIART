@@ -2,238 +2,194 @@
 require_once __DIR__ . '/../model/individualModel.php';
 require_once __DIR__ . '/../view/individualView.php';
 
-class individualController {
-
-    private function initSession() {
-        if(session_status() === PHP_SESSION_NONE) session_start();
-        if(!isset($_SESSION['id'])) $_SESSION['id'] = 1;
-    }
-
-    // ---------- LISTADO PRINCIPAL ----------
-    public function index() {
-        $this->initSession();
-        try {
-            $model = new individualModel();
-            $view = new IndividualView();
-
+class individualController 
+{
+    public function index() 
+    {
+        $user = Auth::user();
+        $userId = $user['id'];
+        $model = new individualModel();
+        $view = new IndividualView();
+        try 
+        {
             $busqueda = $_GET['q'] ?? '';
-
-            if (!empty($busqueda)) {
-                $misRecetas = $model->buscarRecetasUsuario($_SESSION['id'], $busqueda);
-                $colecciones = $model->buscarColeccionesUsuario($_SESSION['id'], $busqueda);
-            } else {
-                $misRecetas = $model->getRecetasUsuario($_SESSION['id']);
-                $colecciones = $model->getColeccionesUsuario($_SESSION['id']);
+            if (!empty($busqueda)) 
+            {
+                $misRecetas = $model->buscarRecetasUsuario($userId, $busqueda);
+                $colecciones = $model->buscarColeccionesUsuario($userId, $busqueda);
+            } 
+            else 
+            {
+                $misRecetas = $model->getRecetasUsuario($userId);
+                $colecciones = $model->getColeccionesUsuario($userId);
             }
-
-            $guardadas = [];
-            $etiquetas = [];
+            $guardadas = []; // pendiente de implementar recetas guardadas
             $config = [
-                'ModoOscuro' => $_SESSION['ModoOscuro'] ?? false,
-                'ModoFit' => $_SESSION['ModoFit'] ?? false
+                'ModoOscuro' => $user['ModoOscuro'] ?? false,
+                'ModoFit'    => $user['ModoFit'] ?? false
             ];
-
-            $view->render($misRecetas, $guardadas, $etiquetas, $config, $colecciones, $busqueda);
-
-        } catch (Exception $e) {
-            die("Error en index: " . $e->getMessage());
-        }
+            $view->render($misRecetas, $guardadas, [], $config, $colecciones, $busqueda);
+        } 
+        catch (Exception $e) {die("Error en index: " . $e->getMessage());}
     }
-
     // ---------- CREAR / EDITAR RECETA ----------
-    public function crear() {
-        $this->initSession();
+    public function crear() 
+    {
+        $userId = Auth::id();
         $model = new individualModel();
         $receta = null;
 
-        if (!empty($_GET['id'])) {
-            $receta = $model->getRecetaById((int)$_GET['id']);
+        if (!empty($_GET['id'])) 
+        {
+            $id = (int)$_GET['id'];
+            $receta = $model->getRecetaByIdAndUser($id, $userId);
+            if (!$receta) {die("Receta no encontrada o no tienes permiso para editarla.");}
         }
-
         require_once __DIR__ . '/../view/crearRecetaView.php';
     }
 
     // ---------- GUARDAR RECETA ----------
-    public function guardar() {
-        $this->initSession();
-        try {
+    public function guardar() 
+    {
+        $userId = Auth::id();
+        try 
+        {
             $model = new individualModel();
 
-            $data = [
-                'titulo' => $_POST['titulo'] ?? '',
+            $data = 
+            [
+                'titulo'      => $_POST['titulo'] ?? '',
                 'descripcion' => $_POST['descripcion'] ?? '',
-                'tiempo' => $_POST['tiempo'] ?? 0,
-                'porciones' => $_POST['porciones'] ?? 0,
-                'imagen' => $_POST['imagen'] ?? '',
-                'fit' => isset($_POST['fit']) ? 1 : 0
+                'tiempo'      => $_POST['tiempo'] ?? 0,
+                'porciones'   => $_POST['porciones'] ?? 0,
+                'imagen'      => $_POST['imagen'] ?? '',
+                'fit'         => isset($_POST['fit']) ? 1 : 0
             ];
-
-            if(!empty($_POST['id'])) {
-                $model->actualizarReceta((int)$_POST['id'], $data);
-            } else {
-                $model->crearReceta($_SESSION['id'], $data);
-            }
+            if (!empty($_POST['id'])) 
+            {
+                // Edición: verificar propiedad antes de actualizar
+                $id = (int)$_POST['id'];
+                if (!$model->actualizarReceta($id, $userId, $data)) {die("No tienes permiso para editar esta receta.");}
+            } 
+            else {$model->crearReceta($userId, $data);}
 
             header("Location: /App/pages/individual");
             exit;
-
-        } catch (Exception $e) {
-            die("Error al guardar receta: " . $e->getMessage());
-        }
+        } 
+        catch (Exception $e) {die("Error al guardar receta: " . $e->getMessage());}
     }
-
     // ---------- VER RECETA ----------
-    public function ver() {
-        $this->initSession();
+    public function ver() 
+    {
+        $userId = Auth::id();
         $model = new individualModel();
 
-        if(empty($_GET['id'])) die("Receta no encontrada");
+        if (empty($_GET['id'])) die("Receta no encontrada");
 
-        $receta = $model->getRecetaById((int)$_GET['id']);
-        if(!$receta) die("Receta no existe");
-
+        $receta = $model->getRecetaByIdAndUser((int)$_GET['id'], $userId);
+        if (!$receta) {die("Receta no existe o no tienes permiso para verla.");}
         require_once __DIR__ . '/../view/verRecetaView.php';
     }
 
     // ---------- ELIMINAR RECETA ----------
-    public function eliminar() {
-        $this->initSession();
-        if($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['idReceta'])) {
+    public function eliminar() 
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['idReceta'])) 
+        {
+            $userId = Auth::id();
             $model = new individualModel();
-            $model->eliminarReceta((int)$_POST['idReceta']);
+            $id = (int)$_POST['idReceta'];
+
+            // Verificar propiedad antes de eliminar
+            if (!$model->eliminarReceta($id, $userId)) {die("No tienes permiso para eliminar esta receta.");}
         }
         header("Location: /App/pages/individual");
         exit;
     }
-
     // ---------- CREAR COLECCIÓN ----------
-    public function crearColeccion() {
-        $this->initSession();
-        if($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['nombreColeccion'])) {
+    public function crearColeccion() 
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['nombreColeccion'])) 
+        {
             $model = new individualModel();
-            $model->crearColeccion($_SESSION['id'], $_POST['nombreColeccion'], true);
+            $model->crearColeccion(Auth::id(), $_POST['nombreColeccion'], true);
         }
         header("Location: /App/pages/individual");
         exit;
     }
-
     // ---------- VER COLECCIÓN ----------
-    public function verColeccion() {
-        $this->initSession();
-
-        if(empty($_GET['id'])) die("Colección no encontrada");
+    public function verColeccion() 
+    {
+        $userId = Auth::id();
+        if (empty($_GET['id'])) die("Colección no encontrada");
 
         $model = new individualModel();
         $coleccionId = (int)$_GET['id'];
-
+        // Verificar que la colección pertenece al usuario
+        $coleccion = $model->getColeccionByIdAndUser($coleccionId, $userId);
+        if (!$coleccion) {die("Colección no encontrada o no tienes acceso.");}
         $recetas = $model->getRecetasDeColeccion($coleccionId);
-        $colecciones = $model->getColeccionesUsuario($_SESSION['id']);
-        $coleccion = null;
-
-        foreach($colecciones as $col) {
-            if($col['ID_Coleccion'] == $coleccionId) {
-                $coleccion = $col;
-                break;
-            }
-        }
-
-        if(!$coleccion) die("Colección no encontrada");
-
+        $config = ['ModoOscuro' => Auth::user()['ModoOscuro'] ?? false];
         require_once __DIR__ . '/../view/coleccionView.php';
         $view = new ColeccionView();
-        $config = ['ModoOscuro' => $_SESSION['ModoOscuro'] ?? false];
         $view->render($coleccion, $recetas, $config);
     }
 
     // ---------- AGREGAR RECETA A COLECCIÓN ----------
-    public function agregarReceta() {
-        $this->initSession();
-        if($_SERVER['REQUEST_METHOD'] === 'POST' 
+    public function agregarReceta() 
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' 
             && !empty($_POST['idReceta']) 
-            && !empty($_POST['idColeccion'])) {
+            && !empty($_POST['idColeccion'])) 
+        {
 
+            $userId = Auth::id();
             $model = new individualModel();
-            $model->agregarRecetaAColeccion(
-                (int)$_POST['idReceta'],
-                (int)$_POST['idColeccion']
-            );
+            $idReceta    = (int)$_POST['idReceta'];
+            $idColeccion = (int)$_POST['idColeccion'];
 
-            header("Location: /App/pages/individual/coleccion?id=" . (int)$_POST['idColeccion']);
+            // Verificar que la colección pertenece al usuario
+            if (!$model->getColeccionByIdAndUser($idColeccion, $userId)) {die("No tienes permiso para modificar esta colección.");}
+            $model->agregarRecetaAColeccion($idReceta, $idColeccion);
+            header("Location: /App/pages/individual/coleccion?id=" . $idColeccion);
             exit;
         }
         die("Error: datos incompletos.");
     }
-
     // ---------- ELIMINAR COLECCIÓN ----------
-    public function eliminarColeccion() {
-        $this->initSession();
-        $model = new individualModel();
+    public function eliminarColeccion() 
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['idColeccion'])) 
+        {
+            $userId = Auth::id();
+            $model = new individualModel();
 
-        if($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['idColeccion'])) {
             $idColeccion = (int)$_POST['idColeccion'];
-
             // Validar que la colección pertenece al usuario
-            $colecciones = $model->getColeccionesUsuario($_SESSION['id']);
-            $esPropia = false;
-            foreach($colecciones as $col) {
-                if($col['ID_Coleccion'] === $idColeccion) {
-                    $esPropia = true;
-                    break;
-                }
-            }
-
-            if($esPropia) {
-                // Eliminar coleccion usando transacción segura
-                $resultado = $model->eliminarColeccion($idColeccion);
-
-                if(!$resultado) {
-                    die("Error al eliminar la colección.");
-                }
-            } else {
-                die("No tienes permisos para eliminar esta colección.");
-            }
+            if (!$model->getColeccionByIdAndUser($idColeccion, $userId)) {die("No tienes permisos para eliminar esta colección.");}
+            if (!$model->eliminarColeccion($idColeccion)) {die("Error al eliminar la colección.");}
         }
-
-        // Redirigir siempre al listado principal
         header("Location: /App/pages/individual");
         exit;
     }
-
     // ---------- ELIMINAR RECETA DE COLECCIÓN ----------
-    public function eliminarRecetaDeColeccion() {
-        $this->initSession();
-
-        if($_SERVER['REQUEST_METHOD'] === 'POST' 
+    public function eliminarRecetaDeColeccion() 
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' 
             && !empty($_POST['idReceta']) 
-            && !empty($_POST['idColeccion'])) {
+            && !empty($_POST['idColeccion'])) 
+        {
 
+            $userId = Auth::id();
             $model = new individualModel();
-
-            $idReceta = (int)$_POST['idReceta'];
+            $idReceta    = (int)$_POST['idReceta'];
             $idColeccion = (int)$_POST['idColeccion'];
-
-            // Validar que la colección pertenece al usuario
-            $colecciones = $model->getColeccionesUsuario($_SESSION['id']);
-            $esPropia = false;
-
-            foreach($colecciones as $col) {
-                if($col['ID_Coleccion'] === $idColeccion) {
-                    $esPropia = true;
-                    break;
-                }
-            }
-
-            if($esPropia) {
-                $model->eliminarRecetaDeColeccion($idReceta, $idColeccion);
-            } else {
-                die("No tienes permisos.");
-            }
-
-            // Volver a la colección
+            // Verificar que la colección pertenece al usuario
+            if (!$model->getColeccionByIdAndUser($idColeccion, $userId)) {die("No tienes permisos.");}
+            $model->eliminarRecetaDeColeccion($idReceta, $idColeccion);
             header("Location: /App/pages/individual/coleccion?id=" . $idColeccion);
             exit;
         }
-
         die("Datos incompletos.");
     }
 }

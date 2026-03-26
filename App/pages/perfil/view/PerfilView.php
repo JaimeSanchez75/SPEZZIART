@@ -1,6 +1,8 @@
 <?php
-class PerfilView {
-public function render($u, $vitrina, $recetas, $idLogueado, $loSigue = false, $config = null) { ?>
+class PerfilView 
+{
+public function render($u,$numSeg, $vitrina, $recetas, $idLogueado, $loSigue = false, $config = null) { ?>
+<script>window.isLoggedIn = <?php echo Auth::check() ? 'true' : 'false'; ?>;</script>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -17,9 +19,12 @@ public function render($u, $vitrina, $recetas, $idLogueado, $loSigue = false, $c
         <div class="mb-3">
             <span class="material-symbols-outlined" style="font-size: 80px;">account_circle</span>
         </div>
-        <h2 class="fw-bold mb-0 opacity-75">@<?php echo $u['Nombre']; ?></h2>
+        <span class="d-flex text-center justify-content-center">
+            <h2 class="fw-bold mb-0 opacity-75">@<?php echo $u['Nombre']; ?></h2>
+            <button class="btn btn-link text-muted" data-bs-toggle="modal" data-bs-target="#reportModal" data-report-type="usuario" data-id="<?= $u['ID_Usuario'] ?>"onclick="if(!window.isLoggedIn) { event.preventDefault(); window.location.href='/App/pages/login'; }"><span class="material-symbols-outlined">flag</span></button>
+        </span>
         <div class="d-flex justify-content-center gap-4 mt-3">
-            <div><b class="d-block fs-5"><?php echo $u['Seguidores']; ?></b> <small>Seguidores</small></div>
+            <div><b class="d-block fs-5"><?php echo $numSeg; ?></b> <small>Seguidores</small></div>
             <div><b class="d-block fs-5"><?php echo count($recetas); ?></b> <small>Recetas</small></div>
         </div>
         <div class="mt-3">
@@ -34,11 +39,7 @@ public function render($u, $vitrina, $recetas, $idLogueado, $loSigue = false, $c
         </div>
     </div>
 </div>
-
 <script src="/App/pages/perfil/view/GuardaVitrina.js"></script>
-
-
-
 <div class="container my-5">
     <div class="vitrina-card p-4 mb-5">
         <div class="d-flex justify-content-between align-items-center mb-4">
@@ -129,8 +130,37 @@ public function render($u, $vitrina, $recetas, $idLogueado, $loSigue = false, $c
         </div>
     </div>
 </div>
+<div class="modal fade" id="reportModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="reportModalTitle">Reportar</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="reportForm">
+                    <input type="hidden" name="id" id="reportId">
+                    <input type="hidden" name="type" id="reportType">
+                    <div class="mb-3">
+                        <label class="form-label">Motivo del reporte</label>
+                        <select class="form-select" name="reason" id="reportReason" required>
+                            <option value="">Selecciona un motivo...</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Detalles adicionales (opcional)</label>
+                        <textarea class="form-control" name="details" rows="2" placeholder="Describe el problema con más detalle..."></textarea>
+                    </div>
+                    <div class="alert alert-danger d-none" id="reportError"></div>
+                    <div class="alert alert-success d-none" id="reportSuccess"></div>
+                    <button type="submit" class="btn btn-danger w-100">Enviar reporte</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 <?php require_once __DIR__ . '/../../../global/navbar/view/NavbarView.php'; ?>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
+<script src="/App/global/report.js"></script>
 <?php }
 }

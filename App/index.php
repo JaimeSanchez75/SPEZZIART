@@ -193,7 +193,19 @@ $router->group(['before' => 'auth'], function ($router) {
         require_once __DIR__ . '/pages/feed/controller/FeedController.php';
         (new FeedController())->obtenerComentarios($id);
     });
-    $router->post('pages/perfil/guardar-vitrina', function () {
+    $router->get('api/notificaciones', function() 
+    {
+        require_once __DIR__ . '/pages/feed/controller/FeedController.php';
+        (new FeedController())->obtenerNotificaciones();
+    });
+
+    $router->post('api/notificaciones/leer', function() 
+    {
+        require_once __DIR__ . '/pages/feed/controller/FeedController.php';
+        (new FeedController())->leerNotificaciones();
+    });
+    $router->post('pages/perfil/guardar-vitrina', function() 
+    {
         require_once __DIR__ . '/pages/perfil/controller/PerfilController.php';
         (new PerfilController())->guardarVitrina();
     });
@@ -260,9 +272,19 @@ $router->group(['before' => 'auth'], function ($router) {
         (new individualController())->eliminarColeccion();
     });
 
-    $router->post('pages/individual/coleccion/eliminar-receta', function () {
-        require_once __DIR__ . '/pages/individual/controller/individualController.php';
-        (new individualController())->eliminarRecetaDeColeccion();
+    $router->post('api/reportar/receta', function () {
+        require_once __DIR__ . '/pages/reporte/controller/ReporteController.php';
+        (new ReporteController())->reportarReceta();
+    });
+
+    $router->post('api/reportar/comentario', function () {
+        require_once __DIR__ . '/pages/reporte/controller/ReporteController.php';
+        (new ReporteController())->reportarComentario();
+    });
+
+    $router->post('api/reportar/usuario', function () {
+        require_once __DIR__ . '/pages/reporte/controller/ReporteController.php';
+        (new ReporteController())->reportarUsuario();
     });
 });
 
@@ -271,6 +293,7 @@ $router->get('pages/login/resetear/{token}', function ($token) {
 
     require_once __DIR__ . '/pages/login/controller/AuthController.php';
     (new AuthController())->mostrarFormularioPassword($token);
+   
 });
 
 $router->post('/pages/login/actualizarContrasena', function () {
@@ -278,8 +301,6 @@ $router->post('/pages/login/actualizarContrasena', function () {
     require_once __DIR__ . '/pages/login/controller/AuthController.php';
     (new AuthController())->guardarContrasenaEditada();
 });
-
-
 
 
 $dispatcher = new Dispatcher($router->getData());

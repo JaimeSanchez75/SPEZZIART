@@ -1,9 +1,6 @@
-/* --- Estilos de página --- */
 body{--vino:#8b1e2d; --danger:#8b1e2d; background:#f4f4f4;}
-html, body {height: 100%; overflow: hidden;}
+html, body {height: 100%; overflow: hidden;  background-color: rgb(236, 238, 238);}
 .text-danger {color: var(--danger) !important;}
-
-/* --- Barra de Header --- */
 .header-grid 
 {
     display: flex;
@@ -26,8 +23,6 @@ html, body {height: 100%; overflow: hidden;}
     display: flex;
     justify-content: flex-end;
 }
-
-/* --- Barra de búsqueda --- */
 #search-input 
 {
     background-color: #eee;
@@ -40,8 +35,6 @@ html, body {height: 100%; overflow: hidden;}
     border-color: var(--vino);
     box-shadow: 0 4px 12px rgba(0,0,0,0.08);
 }
-
-/* --- Barra de etiquetas --- */
 .etiquetas-filtro 
 {
   background-color: #f1f1f1; 
@@ -53,8 +46,6 @@ html, body {height: 100%; overflow: hidden;}
   gap: 10px;
   overflow: hidden; 
 }
-
-/* --- Botón de añadir etiqueta --- */
 .btn-add-tag 
 {
     background-color: white;
@@ -70,8 +61,6 @@ html, body {height: 100%; overflow: hidden;}
     border:none;
 }
 .btn-add-tag:hover > .material-symbols-outlined {color: white;}
-
-/* --- Etiquetas seleccionadas --- */
 .chip-active 
 {
     background-color: white !important;
@@ -85,7 +74,6 @@ html, body {height: 100%; overflow: hidden;}
     gap: 8px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.03);
 }
-/* --- Botón eliminar etiqueta --- */
 .chip-active .chip-remove 
 {
     display: flex;
@@ -94,8 +82,6 @@ html, body {height: 100%; overflow: hidden;}
     transition: color 0.2s;
 }
 .chip-active .chip-remove:hover {color: var(--vino);}
-
-/* --- Etiqueta número sobrante --- */
 #extra-chips-badge 
 {
     background-color: #dee2e6 !important;
@@ -103,8 +89,6 @@ html, body {height: 100%; overflow: hidden;}
     font-weight: 600;
     padding: 6px 10px;
 }
-
-/* --- Etiquetas (Chips) que se pueden elegir en el Modal --- */
 .chip-selectable 
 {
     background-color: #f8f9fa;
@@ -122,8 +106,6 @@ html, body {height: 100%; overflow: hidden;}
     cursor: not-allowed;
     pointer-events: none;
 }
-
-/* --- Contenedor principal para el scroll magnético --- */
 #feed-container 
 {
     flex: 1; 
@@ -134,8 +116,6 @@ html, body {height: 100%; overflow: hidden;}
     height: 0; 
 }
 #feed-container::-webkit-scrollbar{display:none;}
-
-/* --- Tarjeta de cada publicación --- */
 .container
 {
     height: calc(100vh - 100px);
@@ -163,6 +143,24 @@ html, body {height: 100%; overflow: hidden;}
     object-fit: cover;
     border-radius: 20px;
 }
+.carousel-column 
+{
+    max-height: 400px;          
+    min-height: 250px;          
+    overflow: hidden;           
+    background-color: #f8f9fa;  
+}
+.carousel-column .carousel,
+.carousel-column .carousel-inner,
+.carousel-column .carousel-item {height: 100%;}
+
+.carousel-column 
+{
+    aspect-ratio: 16 / 9;
+    max-height: none;
+    overflow: hidden;
+}
+
 .username{font-weight:600; font-size:16px;}
 .recipe-title{color:#8b1e2d; font-weight:700;}
 .recipe-image-container 
@@ -191,7 +189,6 @@ html, body {height: 100%; overflow: hidden;}
 }
 .btn-like:active {transform: scale(1.5);}
 .fill-icon {font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;}
-/*Panel de interacciones*/
 .interaction-bar 
 {
     display: flex;
@@ -201,8 +198,6 @@ html, body {height: 100%; overflow: hidden;}
     right: 20px;
     bottom: 40px;
 }
-
-/* --- SECCIÓN COMENTARIOS --- */
 .comments-overlay 
 {
     position: absolute;

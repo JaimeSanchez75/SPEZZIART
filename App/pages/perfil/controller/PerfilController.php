@@ -29,6 +29,7 @@ class PerfilController
         }
 
         $usuario = $this->model->getDatosUsuario($idDestino);
+        $numSeguidores = $this -> model ->getNumSeguidores($idDestino);
         
         if (!$usuario) {
             http_response_code(404);
@@ -47,7 +48,7 @@ class PerfilController
         $config = null; //Tomamos la configuración
         if (Auth::check()) {$config = $this->model->getUserConfig(Auth::id());}
         // Renderizamos la vista
-        $this->view->render($usuario, $vitrina, $recetas, $idLogueado, $loSigue,$config);
+        $this->view->render($usuario, $numSeguidores, $vitrina, $recetas, $idLogueado, $loSigue,$config);
     }
 
     public function guardarVitrina() 

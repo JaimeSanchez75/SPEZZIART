@@ -8,7 +8,7 @@ class UsuariosModel
     {
 
         $db = Conexion::conectar();
-        $stmt = $db->prepare("SELECT ID_Usuario, Nombre,Username,Telefono,Email,EsAdmin,Seguidores,ModoOscuro, ModoFit,NotificacionOn, CuentaPublica FROM usuario");
+        $stmt = $db->prepare("SELECT ID_Usuario, Nombre,Username,Telefono,Email,EsAdmin,ModoOscuro, ModoFit,NotificacionOn, CuentaPublica FROM usuario");
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -17,7 +17,7 @@ class UsuariosModel
     {
 
         $db = Conexion::conectar();
-        $stmt = $db->prepare("SELECT ID_Usuario, Nombre,Username,Telefono,Email,EsAdmin,Seguidores,ModoOscuro, ModoFit,NotificacionOn, CuentaPublica FROM usuario WHERE ID_Usuario = :id");
+        $stmt = $db->prepare("SELECT ID_Usuario, Nombre,Username,Telefono,Email,EsAdmin,ModoOscuro, ModoFit,NotificacionOn, CuentaPublica FROM usuario WHERE ID_Usuario = :id");
         $stmt->bindParam(':id', $idUsuario, PDO::PARAM_INT);
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC);
