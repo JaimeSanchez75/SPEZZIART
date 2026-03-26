@@ -1,9 +1,10 @@
 <?php
 require_once __DIR__ . '/../../../core/auth.php';
 
-class IndividualView {
-    public function render($misRecetas, $guardadas, $etiquetas, $config = null, $colecciones = [], $query = '') {
-        $GLOBALS['colecciones'] = $colecciones; // Para usar en el método privado
+class IndividualView 
+{
+    public function render($misRecetas, $guardadas, $etiquetas, $config = null, $colecciones = [], $query = '') 
+    {   $GLOBALS['colecciones'] = $colecciones; // Para usar en el método privado
         ?>
         <!DOCTYPE html>
         <html lang="es">
@@ -15,10 +16,8 @@ class IndividualView {
             <link rel="stylesheet" href="/App/global/styles/global.css">
             <link rel="stylesheet" href="/App/global/styles/feed.css">
         </head>
-
         <body data-bs-theme="<?= ($config && $config['ModoOscuro']) ? 'dark' : 'light'; ?>">
             <div class="container mt-4">
-
                 <!-- HEADER -->
                 <div class="header-grid mb-4">
                     <div class="header-item item-logo">
@@ -27,53 +26,31 @@ class IndividualView {
                             <span class="ms-2 d-none d-sm-inline text-dark social">| Mis Recetas</span>
                         </h3>
                     </div>
-
                     <div class="header-item item-search">
                         <form method="GET" action="/App/pages/individual" class="position-relative">
                             <span class="material-symbols-outlined position-absolute top-50 start-0 translate-middle-y ms-3 text-muted">search</span>
-                            <input type="text" name="q" id="busquedaRecetas" class="form-control rounded-pill ps-5 border-0 shadow-sm" 
-                                   placeholder="Buscar recetas, listas o ingredientes..." 
-                                   value="<?= htmlspecialchars($query) ?>">
+                            <input type="text" name="q" id="busquedaRecetas" class="form-control rounded-pill ps-5 border-0 shadow-sm" placeholder="Buscar recetas, listas o ingredientes..." value="<?= htmlspecialchars($query) ?>">
                         </form>
                     </div>
                 </div>
-
                 <!-- BOTÓN CREAR RECETA -->
-                <a href="/App/pages/individual/crear" 
-                   class="btn btn-danger rounded-circle position-fixed bottom-0 end-0 m-4 d-flex justify-content-center align-items-center"
-                   style="width:60px; height:60px; font-size:30px;">
-                    +
-                </a>
-
+                <a href="/App/pages/individual/crear" class="btn btn-danger rounded-circle position-fixed bottom-0 end-0 m-4 d-flex justify-content-center align-items-center" style="width:60px; height:60px; font-size:30px;">+</a>
                 <!-- RECETAS -->
                 <h4 class="fw-bold mb-3"><span class="material-symbols-outlined align-middle">menu_book</span> Recetas</h4>
-                <div id="feed-container">
-                    <?php $this->renderLista($misRecetas, true); ?>
-                </div>
-
+                <div id="feed-container"><?php $this->renderLista($misRecetas, true); ?></div>
                 <!-- GUARDADAS (aún sin implementar) -->
                 <h4 class="fw-bold mb-3 mt-5"><span class="material-symbols-outlined align-middle">bookmark</span> Guardadas</h4>
-                <div id="feed-container">
-                    <?php $this->renderLista($guardadas, false); ?>
-                </div>
-
+                <div id="feed-container"><?php $this->renderLista($guardadas, false); ?></div>
                 <!-- COLECCIONES -->
                 <h4 class="fw-bold mt-5"><span class="material-symbols-outlined align-middle">collections_bookmark</span> Mis Colecciones</h4>
-
                 <?php if(!empty($colecciones)): ?>
                     <ul class="list-group mb-3">
                         <?php foreach($colecciones as $col): ?>
                             <li class="list-group-item d-flex justify-content-between align-items-center">
-                                <div>
-                                    <a href="/App/pages/individual/coleccion?id=<?= $col['ID_Coleccion'] ?>" class="text-decoration-none">
-                                        <?= htmlspecialchars($col['Nombre']) ?>
-                                    </a>
-                                </div>
+                                <div><a href="/App/pages/individual/coleccion?id=<?= $col['ID_Coleccion'] ?>" class="text-decoration-none"><?= htmlspecialchars($col['Nombre']) ?></a></div>
                                 <div class="d-flex gap-2">
                                     <!-- Botón eliminar colección -->
-                                    <button class="btn btn-sm btn-link text-danger p-0" data-bs-toggle="modal" data-bs-target="#confirmDeleteColeccionModal" data-id="<?= $col['ID_Coleccion'] ?>">
-                                        <span class="material-symbols-outlined">delete</span>
-                                    </button>
+                                    <button class="btn btn-sm btn-link text-danger p-0" data-bs-toggle="modal" data-bs-target="#confirmDeleteColeccionModal" data-id="<?= $col['ID_Coleccion'] ?>"><span class="material-symbols-outlined">delete</span><button>
                                 </div>
                             </li>
                         <?php endforeach; ?>
@@ -81,17 +58,13 @@ class IndividualView {
                 <?php else: ?>
                     <p class="text-muted">No tienes colecciones aún.</p>
                 <?php endif; ?>
-
                 <!-- FORMULARIO CREAR COLECCIÓN -->
                 <form method="POST" action="/App/pages/individual/crear-coleccion" class="d-flex gap-2 mb-4">
                     <input type="text" name="nombreColeccion" class="form-control form-control-sm" placeholder="Nombre de la colección" required>
                     <button type="submit" class="btn btn-sm btn-danger">Crear colección</button>
                 </form>
-
             </div>
-
             <?php require_once __DIR__ . '/../../../global/navbar/view/NavbarView.php'; ?>
-
             <!-- MODALES -->
             <!-- Modal confirmar eliminar receta -->
             <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-hidden="true">
@@ -110,7 +83,6 @@ class IndividualView {
                     </div>
                 </div>
             </div>
-
             <!-- Modal confirmar eliminar colección -->
             <div class="modal fade" id="confirmDeleteColeccionModal" tabindex="-1" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
@@ -128,41 +100,43 @@ class IndividualView {
                     </div>
                 </div>
             </div>
-
             <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
             <script>
-                document.addEventListener('DOMContentLoaded', function() {
+                document.addEventListener('DOMContentLoaded', function() 
+                {
                     // Buscador
                     const input = document.getElementById('busquedaRecetas');
                     const recetas = document.querySelectorAll('.receta-card');
-                    if (input) {
-                        input.addEventListener('input', function() {
+                    if (input) 
+                    {
+                        input.addEventListener('input', function() 
+                        {
                             const texto = input.value.toLowerCase();
-                            recetas.forEach(card => {
+                            recetas.forEach(card => 
+                            {
                                 const titulo = card.getAttribute('data-titulo');
-                                if (titulo && titulo.includes(texto)) {
-                                    card.style.display = '';
-                                } else {
-                                    card.style.display = 'none';
-                                }
+                                if (titulo && titulo.includes(texto)) {card.style.display = '';} 
+                                else {card.style.display = 'none';}
                             });
                         });
                     }
-
                     // Modal eliminar receta
                     const deleteModal = document.getElementById('confirmDeleteModal');
-                    if (deleteModal) {
-                        deleteModal.addEventListener('show.bs.modal', function(event) {
+                    if (deleteModal) 
+                    {
+                        deleteModal.addEventListener('show.bs.modal', function(event) 
+                        {
                             const button = event.relatedTarget;
                             const idReceta = button.getAttribute('data-id');
                             document.getElementById('modalIdReceta').value = idReceta;
                         });
                     }
-
                     // Modal eliminar colección
                     const deleteColeccionModal = document.getElementById('confirmDeleteColeccionModal');
-                    if (deleteColeccionModal) {
-                        deleteColeccionModal.addEventListener('show.bs.modal', function(event) {
+                    if (deleteColeccionModal) 
+                    {
+                        deleteColeccionModal.addEventListener('show.bs.modal', function(event) 
+                        {
                             const button = event.relatedTarget;
                             const id = button.getAttribute('data-id');
                             document.getElementById('deleteColeccionId').value = id;
@@ -175,12 +149,9 @@ class IndividualView {
         <?php
     }
 
-    private function renderLista($recetas, $mostrarFormAgregar = true) {
-        if (empty($recetas)) {
-            echo "<p class='text-muted ps-2'>No hay recetas aquí todavía.</p>";
-            return;
-        }
-
+    private function renderLista($recetas, $mostrarFormAgregar = true) 
+    {
+        if (empty($recetas)) {echo "<p class='text-muted ps-2'>No hay recetas aquí todavía.</p>"; return;}
         foreach ($recetas as $receta):
             $id = $receta['ID_Receta'];
             $titulo = htmlspecialchars($receta['Titulo']);
@@ -188,7 +159,7 @@ class IndividualView {
             $usuario = htmlspecialchars($receta['Username']);
             $fecha = date('d M', strtotime($receta['FechaCreacion']));
             $imagen = $receta['Imagen'] ?? '';
-        ?>
+            ?>
             <div class="card feed-card mb-4 p-3 border-0 shadow-sm rounded-4 receta-card" data-titulo="<?= strtolower($titulo) ?>">
                 <div class="d-flex justify-content-between align-items-center mb-2">
                     <div class="username text-danger fw-bold">👤 @<?= $usuario ?></div>
@@ -223,9 +194,7 @@ class IndividualView {
                                     <input type="hidden" name="idReceta" value="<?= $id ?>">
                                     <select name="idColeccion" class="form-select form-select-sm" required>
                                         <option value="">Agregar a colección...</option>
-                                        <?php foreach($GLOBALS['colecciones'] as $col): ?>
-                                            <option value="<?= $col['ID_Coleccion'] ?>"><?= htmlspecialchars($col['Nombre']) ?></option>
-                                        <?php endforeach; ?>
+                                        <?php foreach($GLOBALS['colecciones'] as $col): ?><option value="<?= $col['ID_Coleccion'] ?>"><?= htmlspecialchars($col['Nombre']) ?></option><?php endforeach; ?>
                                     </select>
                                     <button type="submit" class="btn btn-sm btn-danger">Agregar</button>
                                 </form>

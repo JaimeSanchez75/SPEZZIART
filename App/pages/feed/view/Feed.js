@@ -144,8 +144,8 @@ document.addEventListener('DOMContentLoaded', reinitObserver);
 {
     async function toggleLike(idReceta, element) 
     {
-        const icon = element.querySelector('.material-symbols-outlined');
-        const count = element.querySelector('span:last-child');
+        const icon = element.querySelector('.like-icon');
+        const count = element.querySelector('.like-count');
 
         try 
         {

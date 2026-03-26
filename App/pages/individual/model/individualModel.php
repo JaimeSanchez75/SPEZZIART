@@ -1,24 +1,14 @@
 <?php
-class individualModel {
-
-    private $pdo;
-
-    public function __construct() {
-        try {
-            $this->pdo = new PDO(
-                "mysql:host=localhost;dbname=SpezziArt;charset=utf8",
-                "appuser",
-                "G7@kP4!zQ9"
-            );
-            $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        } catch (PDOException $e) {
-            die("Error de conexión: " . $e->getMessage());
-        }
-    }
-
+require_once __DIR__ . '/../../../core/db.php';
+class individualModel 
+{
+    private $db;
+    public function __construct(){$this->db = Conexion::conectar();}
     // ================== RECETAS ==================
-    public function getRecetasUsuario($idUsuario) {
-        $stmt = $this->pdo->prepare("
+    public function getRecetasUsuario($idUsuario) 
+    {
+        $stmt = $this->db->prepare
+        ("
             SELECT r.*, u.Username 
             FROM Receta r
             JOIN Usuario u ON r.ID_Creador = u.ID_Usuario
@@ -28,9 +18,10 @@ class individualModel {
         $stmt->execute(['id' => $idUsuario]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
-
-    public function getRecetaById($id) {
-        $stmt = $this->pdo->prepare("
+    public function getRecetaById($id) 
+    {
+        $stmt = $this->db->prepare
+        ("
             SELECT r.*, u.Username
             FROM Receta r
             JOIN Usuario u ON r.ID_Creador = u.ID_Usuario
@@ -38,8 +29,10 @@ class individualModel {
         ");
         $stmt->execute(['id' => $id]);
         $receta = $stmt->fetch(PDO::FETCH_ASSOC);
-        if ($receta) {
-            $stmt = $this->pdo->prepare("
+        if ($receta) 
+        {
+            $stmt = $this->db->prepare
+            ("
                 SELECT i.Nombre
                 FROM Ingrediente i
                 JOIN Receta_Ingrediente ri ON i.ID_Ingrediente = ri.ID_Ingrediente
@@ -50,10 +43,11 @@ class individualModel {
         }
         return $receta;
     }
-
     // Obtener receta solo si pertenece al usuario
-    public function getRecetaByIdAndUser($id, $userId) {
-        $stmt = $this->pdo->prepare("
+    public function getRecetaByIdAndUser($id, $userId)
+    {
+        $stmt = $this->db->prepare
+        ("
             SELECT r.*, u.Username
             FROM Receta r
             JOIN Usuario u ON r.ID_Creador = u.ID_Usuario
@@ -61,8 +55,10 @@ class individualModel {
         ");
         $stmt->execute(['id' => $id, 'userId' => $userId]);
         $receta = $stmt->fetch(PDO::FETCH_ASSOC);
-        if ($receta) {
-            $stmt = $this->pdo->prepare("
+        if ($receta) 
+        {
+            $stmt = $this->db->prepare
+            ("
                 SELECT i.Nombre
                 FROM Ingrediente i
                 JOIN Receta_Ingrediente ri ON i.ID_Ingrediente = ri.ID_Ingrediente
@@ -73,13 +69,15 @@ class individualModel {
         }
         return $receta;
     }
-
-    public function crearReceta($idUsuario, $data) {
-        $stmt = $this->pdo->prepare("
+    public function crearReceta($idUsuario, $data) 
+    {
+        $stmt = $this->db->prepare
+        ("
             INSERT INTO Receta (ID_Creador, Titulo, Descripcion, Imagen, Tiempo, Porciones, EsFit)
             VALUES (:idCreador, :titulo, :descripcion, :imagen, :tiempo, :porciones, :esFit)
         ");
-        $stmt->execute([
+        $stmt->execute
+        ([
             'idCreador' => $idUsuario,
             'titulo' => $data['titulo'],
             'descripcion' => $data['descripcion'],
@@ -88,12 +86,13 @@ class individualModel {
             'porciones' => $data['porciones'] ?? null,
             'esFit' => !empty($data['fit']) ? 1 : 0
         ]);
-        return $this->pdo->lastInsertId();
+        return $this->db->lastInsertId();
     }
-
     // Actualizar receta solo si pertenece al usuario
-    public function actualizarReceta($id, $userId, $data) {
-        $stmt = $this->pdo->prepare("
+    public function actualizarReceta($id, $userId, $data) 
+    {
+        $stmt = $this->db->prepare
+        ("
             UPDATE Receta 
             SET Titulo = :titulo,
                 Descripcion = :descripcion,
@@ -103,7 +102,8 @@ class individualModel {
                 EsFit = :fit
             WHERE ID_Receta = :id AND ID_Creador = :userId
         ");
-        return $stmt->execute([
+        return $stmt->execute
+        ([
             'id' => $id,
             'userId' => $userId,
             'titulo' => $data['titulo'],
@@ -114,43 +114,33 @@ class individualModel {
             'fit' => !empty($data['fit']) ? 1 : 0
         ]);
     }
-
     // Eliminar receta solo si pertenece al usuario
-    public function eliminarReceta($id, $userId) {
-        try {
-            $this->pdo->beginTransaction();
-
+    public function eliminarReceta($id, $userId) 
+    {
+        try 
+        {
+            $this->db->beginTransaction();
             // Verificar que la receta pertenece al usuario
-            $stmt = $this->pdo->prepare("
-                SELECT ID_Receta FROM Receta WHERE ID_Receta = :id AND ID_Creador = :userId
-            ");
+            $stmt = $this->db->prepare("SELECT ID_Receta FROM Receta WHERE ID_Receta = :id AND ID_Creador = :userId");
             $stmt->execute(['id' => $id, 'userId' => $userId]);
-            if (!$stmt->fetch()) {
-                $this->pdo->rollBack();
-                return false;
-            }
-
+            if (!$stmt->fetch()) {$this->db->rollBack(); return false;}
             // Eliminar relaciones
-            $stmt = $this->pdo->prepare("DELETE FROM Coleccion_Receta WHERE ID_Receta = :id");
+            $stmt = $this->db->prepare("DELETE FROM Coleccion_Receta WHERE ID_Receta = :id");
             $stmt->execute(['id' => $id]);
-
             // Eliminar receta
-            $stmt = $this->pdo->prepare("DELETE FROM Receta WHERE ID_Receta = :id");
+            $stmt = $this->db->prepare("DELETE FROM Receta WHERE ID_Receta = :id");
             $stmt->execute(['id' => $id]);
-
-            $this->pdo->commit();
+            $this->db->commit();
             return true;
-
-        } catch (PDOException $e) {
-            $this->pdo->rollBack();
-            return false;
-        }
+        } 
+        catch (PDOException $e) {$this->db->rollBack(); return false;}
     }
-
     // ================== BUSQUEDA ==================
-    public function buscarRecetasUsuario($idUsuario, $busqueda) {
+    public function buscarRecetasUsuario($idUsuario, $busqueda) 
+    {
         $like = "%" . $busqueda . "%";
-        $stmt = $this->pdo->prepare("
+        $stmt = $this->db->prepare
+        ("
             SELECT r.*, u.Username
             FROM Receta r
             JOIN Usuario u ON r.ID_Creador = u.ID_Usuario
@@ -161,10 +151,11 @@ class individualModel {
         $stmt->execute(['idUsuario' => $idUsuario, 'like' => $like]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
-
-    public function buscarColeccionesUsuario($idUsuario, $busqueda) {
+    public function buscarColeccionesUsuario($idUsuario, $busqueda) 
+    {
         $like = "%" . $busqueda . "%";
-        $stmt = $this->pdo->prepare("
+        $stmt = $this->db->prepare
+        ("
             SELECT * 
             FROM Coleccion
             WHERE ID_Creador = :idUsuario
@@ -174,24 +165,27 @@ class individualModel {
         $stmt->execute(['idUsuario' => $idUsuario, 'like' => $like]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
-
     // ================== COLECCIONES ==================
-    public function crearColeccion($idUsuario, $nombre, $esPublica = true) {
+    public function crearColeccion($idUsuario, $nombre, $esPublica = true) 
+    {
         $nombre = trim($nombre);
         if ($nombre === '') return false;
-        $stmt = $this->pdo->prepare("
+        $stmt = $this->db->prepare
+        ("
             INSERT INTO Coleccion (ID_Creador, Nombre, EsPublica)
             VALUES (:idUsuario, :nombre, :esPublica)
         ");
-        return $stmt->execute([
+        return $stmt->execute
+        ([
             'idUsuario' => $idUsuario,
             'nombre' => $nombre,
             'esPublica' => $esPublica ? 1 : 0
         ]);
     }
-
-    public function getColeccionesUsuario($idUsuario) {
-        $stmt = $this->pdo->prepare("
+    public function getColeccionesUsuario($idUsuario) 
+    {
+        $stmt = $this->db->prepare
+        ("
             SELECT * 
             FROM Coleccion
             WHERE ID_Creador = :idUsuario
@@ -200,32 +194,34 @@ class individualModel {
         $stmt->execute(['idUsuario' => $idUsuario]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
-
     // Obtener colección solo si pertenece al usuario
-    public function getColeccionByIdAndUser($idColeccion, $userId) {
-        $stmt = $this->pdo->prepare("
+    public function getColeccionByIdAndUser($idColeccion, $userId) 
+    {
+        $stmt = $this->db->prepare
+        ("
             SELECT * FROM Coleccion
             WHERE ID_Coleccion = :id AND ID_Creador = :userId
         ");
         $stmt->execute(['id' => $idColeccion, 'userId' => $userId]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
-
-    public function agregarRecetaAColeccion($idReceta, $idColeccion) {
+    public function agregarRecetaAColeccion($idReceta, $idColeccion) 
+    {
         if (!$idReceta || !$idColeccion) return false;
-        try {
-            $stmt = $this->pdo->prepare("
+        try 
+        {
+            $stmt = $this->db->prepare
+            ("
                 INSERT IGNORE INTO Coleccion_Receta (ID_Receta, ID_Coleccion)
                 VALUES (:idReceta, :idColeccion)
             ");
             return $stmt->execute(['idReceta' => $idReceta, 'idColeccion' => $idColeccion]);
-        } catch (PDOException $e) {
-            return false;
-        }
+        } 
+        catch (PDOException $e) {return false;}
     }
-
-    public function getRecetasDeColeccion($idColeccion) {
-        $stmt = $this->pdo->prepare("
+    public function getRecetasDeColeccion($idColeccion) 
+    {
+        $stmt = $this->db->prepare("
             SELECT r.*, u.Username
             FROM Receta r
             INNER JOIN Coleccion_Receta cr ON r.ID_Receta = cr.ID_Receta
@@ -237,26 +233,26 @@ class individualModel {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function eliminarRecetaDeColeccion($idReceta, $idColeccion) {
-        $stmt = $this->pdo->prepare("
+    public function eliminarRecetaDeColeccion($idReceta, $idColeccion) 
+    {
+        $stmt = $this->db->prepare("
             DELETE FROM Coleccion_Receta 
             WHERE ID_Receta = :idReceta AND ID_Coleccion = :idColeccion
         ");
         return $stmt->execute(['idReceta' => $idReceta, 'idColeccion' => $idColeccion]);
     }
-
-    public function eliminarColeccion($idColeccion) {
-        try {
-            $this->pdo->beginTransaction();
-            $stmt = $this->pdo->prepare("DELETE FROM Coleccion_Receta WHERE ID_Coleccion = :idColeccion");
+    public function eliminarColeccion($idColeccion) 
+    {
+        try 
+        {
+            $this->db->beginTransaction();
+            $stmt = $this->db->prepare("DELETE FROM Coleccion_Receta WHERE ID_Coleccion = :idColeccion");
             $stmt->execute(['idColeccion' => $idColeccion]);
-            $stmt = $this->pdo->prepare("DELETE FROM Coleccion WHERE ID_Coleccion = :idColeccion");
+            $stmt = $this->db->prepare("DELETE FROM Coleccion WHERE ID_Coleccion = :idColeccion");
             $stmt->execute(['idColeccion' => $idColeccion]);
-            $this->pdo->commit();
+            $this->db->commit();
             return true;
-        } catch (PDOException $e) {
-            $this->pdo->rollBack();
-            return false;
-        }
+        } 
+        catch (PDOException $e) {$this->db->rollBack(); return false;}
     }
 }

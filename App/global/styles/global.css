@@ -1,9 +1,11 @@
 :root 
 {
   --vino: #8B1E2D;  
+  
 }
 body 
 {
+ 
   font-family: 'Poiret One', sans-serif;
   font-size: 18px;
   line-height: 1.7;
