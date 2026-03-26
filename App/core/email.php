@@ -14,12 +14,12 @@ class Email
             $email->isSMTP();
             $email->Host = 'smtp.gmail.com';
             $email->SMTPAuth = true;
-            $email->Username = "2daw1234567@gmail.com";
-            $email->Password = 'snwp bfwo vhpd jqiw';
+            $email->Username = "soportesppeziart@gmail.com";
+            $email->Password = 'rlze ihlp jzns cnry';
             $email->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
             $email->Port = 587;
             $email->CharSet = 'UTF-8';
-            $email->setFrom('2daw1234567@gmail.com', 'Piscina');
+            $email->setFrom('soportesppeziart@gmail.com', 'SPEZZIART');
             $email->addAddress($para, $nombre);
             $email->isHTML(true);
             $email->Subject = $asunto;

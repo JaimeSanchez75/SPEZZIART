@@ -49,7 +49,7 @@ class ReporteController
     }
 
     public function reportarComentario()
-    {
+{
     // Log todo lo que llega
     error_log("=== INICIO reportarComentario ===");
     error_log("REQUEST_METHOD: " . $_SERVER['REQUEST_METHOD']);
@@ -64,18 +64,18 @@ class ReporteController
         error_log("Parsed raw: " . print_r($parsed, true));
     }
     
-        $this->verificarAutenticacion();
+    $this->verificarAutenticacion();
 
-        $idComentario = (int)($_POST['id_comentario'] ?? 0);
-        $motivo = trim($_POST['motivo'] ?? '');
-        $detalles = trim($_POST['detalles'] ?? '');
-
+    $idComentario = (int)($_POST['id_comentario'] ?? 0);
+    $motivo = trim($_POST['motivo'] ?? '');
+    $detalles = trim($_POST['detalles'] ?? '');
+    
     error_log("Variables extraídas: idComentario=$idComentario, motivo=$motivo, detalles=$detalles");
 
-        if (!$idComentario || empty($motivo)) {
+    if (!$idComentario || empty($motivo)) {
         error_log("VALIDACIÓN FALLIDA: idComentario=$idComentario, motivo='$motivo'");
         $this->jsonError('Datos incompletos. id_comentario: ' . $idComentario . ', motivo: ' . $motivo, 400);
-        }
+    }
 
         $motivoCompleto = $motivo;
         if (!empty($detalles)) {

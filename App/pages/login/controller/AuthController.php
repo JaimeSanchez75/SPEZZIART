@@ -110,4 +110,77 @@ class AuthController
         header('Location: /App/pages/feed'); 
         exit;
     }
+
+    public function mostrarFormularioPassword($token) {
+        $auth = new AuthModel();
+        $usuario = $auth->validarTokenRecuperacion($token);
+
+        if (!$usuario) {
+            header('Location: /App/pages/login?error=token_invalido');
+            exit;
+        }
+
+        $datos['token'] = $token;
+
+        require_once __DIR__ . '/../view/resetearContraseña.php';
+    }
+
+    public function guardarContrasenaEditada(){
+        $datos=$_POST['datos'];
+        var_dump($datos);
+
+        if ($datos['contrasena1'] !== $datos['contrasena']) {
+            echo json_encode(['status' => 'error', 'message' => 'Las contraseñas no coinciden']);
+            exit;
+        }
+
+        $auth = new AuthModel();
+
+        $auth->editarContraseñaUsuario($datos['contrasena'],$datos['email']);
+
+        header('Location: /App/pages/login');
+
+    }
+
+    public function resetearContrasena()
+    {
+        header('Content-Type: application/json; charset=UTF-8');
+        
+        $emailUsuario = $_POST['email'] ?? null;
+
+        if (!$emailUsuario) {
+            echo json_encode(['status' => 'error', 'message' => 'ID no proporcionado']);
+            exit;
+        }
+
+        $model = new AuthModel();
+
+        $usuario = $model->obtenerUsuarioPorEmail($emailUsuario);
+
+        if ($usuario) {
+            $token = bin2hex(random_bytes(32));
+            $model->guardarTokenRecuperacion($emailUsuario, $token);
+
+            $enlace = "http://localhost/App/pages/login/resetear/" . $token;
+
+            $asunto = "Restablece tu contraseña - SPEZZIART";
+            $mensaje = "<h1>Hola {$usuario['Nombre']}</h1>
+                        <p>Un administrador ha solicitado el restablecimiento de tu contraseña.</p>
+                        <p>Haz clic en el enlace para elegir una nueva clave (vence en 1 hora):</p>
+                        <a href='$enlace' style='background:#800020; color:white; padding:10px; text-decoration:none;'>Restablecer ahora</a>";
+
+            require_once __DIR__ . '/../../../core/email.php';
+
+
+            if (Email::enviarEmail($usuario['Email'], $usuario['Nombre'], $asunto, $mensaje)) {
+                echo json_encode(['status' => 'success', 'message' => 'Email enviado a ' . $usuario['Email']]);
+                exit;
+            } else {
+                echo json_encode(['status' => 'error', 'message' => 'Error al enviar el correo']);
+                exit;
+            }
+        }
+    }
+
+    
 }

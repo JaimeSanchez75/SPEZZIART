@@ -96,7 +96,7 @@
 
                                 <li>
                         
-                                    <a class="dropdown-item botonResetearContraseña" data-id-usuario="<?= $usuario['ID_Usuario'] ?>    ">
+                                    <a class="dropdown-item botonResetearContraseña" data-id-usuario="<?=$usuario['ID_Usuario']?>">
                                         🔑 Resetear contraseña
                                     </a>
                                 </li>
@@ -157,4 +157,5 @@
     </div>
     
     <script src="assets/buscador.js"></script>
-    <script src="assets/resetearContraseña.js"></script>
+    <script src="assets/resetearContrasena.js"></script>
+   

@@ -10,8 +10,14 @@
     <a href="/App/pages/administracion/usuarios" class="nav-item">
         <i class="bi bi-people"></i> Usuarios & Admins
     </a>
-    <a href="/App/pages/administracion/recetasIngredientes" class="nav-item">
-        <i class="bi bi-journal-bookmark"></i> Recetas & Ingredientes
+    <a href="/App/pages/administracion/recetas" class="nav-item">
+        <i class="bi bi-journal-bookmark"></i> Recetas 
+    </a>
+    <a href="/App/pages/administracion/ingredientes" class="nav-item">
+        <i class="bi bi-egg-fried"></i> Ingredientes
+    </a>
+    <a href="/App/pages/administracion/etiquetas" class="nav-item">
+        <i class="bi bi-bookmark-star"></i> Etiquetas
     </a>
     <a href="/App/pages/administracion/moderacion" class="nav-item">
         <i class="bi bi-check-circle"></i> Moderación Social
@@ -19,7 +25,7 @@
 </nav>
 
 <div class="sidebar-footer mt-auto">
-    <a href="#" class="nav-item logout">
+    <a href="/App/auth/logout" class="nav-item logout">
         <i class="bi bi-box-arrow-left"></i> Cerrar Sesión
     </a>
 </div>

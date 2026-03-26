@@ -39,7 +39,7 @@
                         </div>
 
                         <div class="mt-3">
-                            <a href="#" class="btn btn-link p-0 text-decoration-none olvidado text-danger">¿Olvidaste la contraseña?</a>
+                            <a href="/App/pages/recuperar" class="btn btn-link p-0 text-decoration-none olvidado text-danger">¿Olvidaste la contraseña?</a>
                         </div>
                         <div class="d-flex justify-content-center gap-2 mt-3">
                             <button type="submit" class="btn btn-submit py-2 px-4 w-100">Login</button>

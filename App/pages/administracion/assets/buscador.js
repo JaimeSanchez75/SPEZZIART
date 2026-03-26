@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const filas = Array.from(tabla.querySelectorAll("tbody tr"));
     const paginacion = document.getElementById("paginacionUsuarios");
 
-    const filasPorPagina = 5; // filas por página
+    const filasPorPagina = 5;
     let paginaActual = 1;
 
     function filtrarYMostrar() {
