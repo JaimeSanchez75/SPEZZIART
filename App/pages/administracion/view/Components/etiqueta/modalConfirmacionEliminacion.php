@@ -1,38 +1,49 @@
 <!-- MODAL ELIMINAR ETIQUETA -->
-<div class="modal fade" id="eliminarEtiqueta" tabindex="-1">
+<div class="modal fade" id="modalEliminarEtiqueta" tabindex="-1">
   <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content admin-modal">
+    <div class="modal-content ">
 
-      <div class="modal-body text-center p-4">
+      <div class="modal-header border-0 d-flex justify-content-end p-3">
+          <div class=""><button type="button" class="btn-close texto rounded-circle sombra border p-2 bg-light" data-bs-dismiss="modal" aria-label="Cerrar" ></button></div>
+      </div>
 
-        <div class="delete-icon mb-3">
-          <i class="bi bi-trash"></i>
+      <div class="modal-body text-center p-4 pt-0">
+
+        <div class=" mb-4">
+
+          <i class="bi bi-trash texto-rojo iconos bg-rojoClaro p-3 rounded-3 perfilUsuarioGrande"></i>
+        
         </div>
 
-        <h5 class="mb-2 fw-bold">Eliminar etiqueta</h5>
+        <div>
 
-        <p class="text-muted mb-1">
-          ¿Seguro que deseas eliminar a la etiqueta
-          <strong id="nombreEtiqueta"></strong>?
-        </p>
+          <h5 class="mb-2 fw-bold letraRomana fs-3">Eliminar etiqueta</h5>
 
-        <p class="delete-warning">
-          Esta acción no se puede deshacer.
-        </p>
+          <p class="mb-1 texto">
+            ¿Seguro que deseas eliminar a la etiqueta
+            <strong id="nombreEtiqueta"></strong>?
+          </p>
 
-        <div class="d-flex justify-content-center gap-2 mt-4">
-          <button class="btn-cancel" data-bs-dismiss="modal">
-            Cancelar
-          </button>
+          <p class="text-secondary mb-2 texto">
+            Esta acción no se puede deshacer.
+          </p>
 
-          <button class="btn-delete-user" id="eliminarEtiqueta">
-            Eliminar etiqueta
-          </button>
         </div>
+
+
+      </div>
+      <div class="d-flex justify-content-center gap-2  modal-footer ">
+        
+        <button class="border text-secondary border p-2 bg-white texto rounded-4 px-4" data-bs-dismiss="modal">
+          Cancelar
+        </button>
+
+        <button class="btn-border text-white border p-2 bg-rojo texto rounded-4 px-4" id="eliminarEtiqueta">
+          Eliminar etiqueta
+        </button>
 
       </div>
     </div>
   </div>
 </div>
 
-<script src="assets/etiqueta/eliminarUsuario.js"></script>

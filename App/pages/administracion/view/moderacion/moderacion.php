@@ -6,26 +6,45 @@
         <div>
             <h2 class="fw-bold">Moderacion Social</h2>
             <p class="text-muted mb-0">
-                Verifica y aprueba las recetas enviadas por la comunidad.
+                Verifica los reportes enviados por la comunidad.
             </p>
         </div>
+
         <span class="badge recetas-pendientes">
-            24 Recetas pendientes
+            <?= $pendientes ?> reportes pendientes
         </span>
 
     </div>
 
 
+<?php if(empty($reportes)): ?>
+
+    <div class="alert alert-success">
+        No hay reportes pendientes 
+    </div>
+
+<?php endif; ?>
+
+
+<?php foreach($reportes as $r): ?>
+
+
     <!-- TARJETA -->
-    <div class="card receta-card shadow-sm">
+    <div class="card receta-card shadow-sm mb-4">
 
         <div class="row g-0">
 
             <!-- Imagen -->
             <div class="col-md-3">
-                <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c"
+
+                <?php if(!empty($r['Imagen'])): ?>
+
+                <img src="<?= $r['Imagen'] ?>"
                      class="img-fluid receta-img"
                      alt="receta">
+
+                <?php endif; ?>
+
             </div>
 
 
@@ -37,15 +56,23 @@
 
                     <div>
 
-                        <span class="badge bg-primary">SOCIAL</span>
-                        <small class="text-muted ms-2">Hace 2 horas</small>
+                        <span class="badge bg-danger">
+                            REPORTE
+                        </span>
+
+                        <small class="text-muted ms-2">
+                            <?= date("d/m/Y H:i", strtotime($r['Fecha'])) ?>
+                        </small>
 
                         <h4 class="mt-2 fw-bold">
-                            Salmon al horno con verduras
+                            <?= htmlspecialchars($r['Titulo']) ?>
                         </h4>
 
                         <small class="text-muted">
-                            Enviada por <span class="text-danger fw-semibold">@marina_foodie</span>
+                            Reportado por 
+                            <span class="text-danger fw-semibold">
+                                @<?= htmlspecialchars($r['Reportador']) ?>
+                            </span>
                         </small>
 
                     </div>
@@ -56,52 +83,61 @@
                             Previsualizar
                         </button>
 
-                        <button class="btn btn-outline-secondary btn-sm">
-                             Comentar
-                        </button>
+                    </div>
+
+                </div>
+
+
+                <!-- Descripcion -->
+                <div class="descripcion mt-3">
+
+                    <?= htmlspecialchars($r['Descripcion']) ?>
+
+                </div>
+
+
+                <!-- Motivo -->
+                <div class="mt-3">
+
+                    <strong>Motivo del reporte:</strong>
+
+                    <div class="text-muted">
+
+                        <?= htmlspecialchars($r['Motivo']) ?>
 
                     </div>
 
                 </div>
 
 
-                <!-- Descripci贸n -->
-                <div class="descripcion mt-3">
+    <div class="text-end mt-4">
 
-                    "Esta es mi version favorita del salmon. Es saludable,
-                    rapida y perfecta para una cena ligera despues de un
-                    dia largo de trabajo..."
+    <!-- ACEPTAR REPORTE -->
+    <button 
+        class="btn btn-danger rounded-pill me-2 abrirModal"
+        data-id="<?= $r['ID_Reporte'] ?>"
+        data-receta="<?= $r['ID_Receta'] ?>"
+        data-usuario="<?= $r['UsuarioReportado'] ?? '' ?>"
+    >
+        Aceptar reporte
+    </button>
 
-                </div>
+   <a href="/App/moderacion/marcarRevisado?id=<?= $r['ID_Reporte'] ?>"
+   class="btn btn-success rounded-pill">
+    Marcar como revisado
+</a>
 
-
-                <!-- Info -->
-                <div class="mt-3 text-muted small">
-
-                     8 Ingredientes
-                    <span class="mx-3"> 25 Minutos</span>
-
-                </div>
-
-
-                <!-- Botones -->
-                <div class="text-end mt-4">
-
-                    <button class="btn btn-outline-danger rounded-pill me-2">
-                        Rechazar
-                    </button>
-
-                    <button class="btn btn-aprobar rounded-pill">
-                        Aprobar Publicacion
-                    </button>
-
-                </div>
+</div>
 
             </div>
 
         </div>
 
     </div>
-    
+
+<?php endforeach; ?>
+
 
 </div>
+<?php require_once __DIR__ . '/../components/moderacion/mensajeEmail.php'; ?>
+<script src=assets/moderacion/moderacion.js>
