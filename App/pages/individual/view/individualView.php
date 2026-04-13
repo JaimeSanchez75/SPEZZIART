@@ -155,7 +155,8 @@ class IndividualView
         foreach ($recetas as $receta):
             $id = $receta['ID_Receta'];
             $titulo = htmlspecialchars($receta['Titulo']);
-            $descripcion = htmlspecialchars(substr($receta['Descripcion'] ?? '', 0, 150));
+            $descripcionBase = preg_split('/\n\nPASOS:\n/', (string)($receta['Descripcion'] ?? ''), 2)[0];
+            $descripcion = htmlspecialchars(substr($descripcionBase, 0, 150));
             $usuario = htmlspecialchars($receta['Username']);
             $fecha = date('d M', strtotime($receta['FechaCreacion']));
             $imagen = $receta['Imagen'] ?? '';

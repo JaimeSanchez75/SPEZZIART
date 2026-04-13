@@ -216,7 +216,7 @@ $router->group(['before' => 'auth'], function ($router) {
     $router->post('pages/perfil/seguir/{id:i}', function ($id) {
         require_once __DIR__ . '/pages/perfil/controller/PerfilController.php';
         (new PerfilController())->seguir($id);
-    });
+    }); 
 
     //parte individual
     // ---------- PARTE INDIVIDUAL ----------
@@ -234,10 +234,7 @@ $router->group(['before' => 'auth'], function ($router) {
         (new individualController())->crear();
     });
     
-    $router->get('pages/individual/ver', function () {
-        require_once __DIR__ . '/pages/individual/controller/individualController.php';
-        (new individualController())->ver();
-    });
+   
 
     $router->post('pages/individual/guardar', function () {
         require_once __DIR__ . '/pages/individual/controller/individualController.php';
