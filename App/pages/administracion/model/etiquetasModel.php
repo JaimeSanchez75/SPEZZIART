@@ -12,6 +12,23 @@ class EtiquetasModel{
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+    function existeNombre($nombre,$id=null) {
+        $db = Conexion::conectar();
+        
+        $sql = "SELECT COUNT(*) FROM Etiqueta WHERE Nombre = :nombre";
+        if ($id) {
+            $sql .= " AND ID_Etiqueta != :id";
+        }  
+
+        $stmt = $db->prepare($sql); 
+        $stmt->bindParam(':nombre', $nombre, PDO::PARAM_STR);
+        if ($id) {
+            $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        }
+        $stmt->execute();
+        
+        return $stmt->fetchColumn() > 0;
+    }
 
     function crearEtiqueta($nombreEtiqueta){
 

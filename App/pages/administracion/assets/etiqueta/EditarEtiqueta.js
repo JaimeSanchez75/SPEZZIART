@@ -1,3 +1,4 @@
+"use strict";
 document.addEventListener('DOMContentLoaded',function(){
     const modalEditarEtiqueta = document.getElementById('modalEditarEtiqueta');
 
@@ -6,7 +7,13 @@ document.addEventListener('DOMContentLoaded',function(){
         const boton = event.relatedTarget;
 
         const id = boton.dataset.id;
+
+        document.getElementById('nombreEditar').value = boton.dataset.nombre;
         
         modalEditarEtiqueta.querySelector("#etiqueta_id").value = id;
+        
     });
+
+
+    
 });

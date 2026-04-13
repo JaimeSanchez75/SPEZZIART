@@ -4,10 +4,10 @@ require_once __DIR__ . '/../../../core/db.php';
 
 class IngredientesModel {
 
-    function obtenerIngredientes() {
+    function obtenerIngredientesUsu() {
 
         $db = Conexion::conectar();
-        $stmt = $db->prepare("SELECT * FROM ingrediente");
+        $stmt = $db->prepare("SELECT * FROM ingrediente where ID_Creador is not null");
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -43,6 +43,16 @@ class IngredientesModel {
             ':proteina'=>$datos['proteina'],
             
         ]);
+    }
+
+    function obtenerIngredientesBase(){
+
+        $db = Conexion::conectar();
+        $stmt = $db->prepare("SELECT * FROM ingrediente where ID_Creador is null; ");
+
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+
     }
 
 }
