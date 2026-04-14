@@ -4,11 +4,69 @@ require_once __DIR__ . '/../view/individualView.php';
 
 class individualController 
 {
+    private function separarDescripcionYPasos(?string $contenido): array
+    {
+        $contenido = trim((string)$contenido);
+        if ($contenido === '') {
+            return ['descripcion' => '', 'pasos' => []];
+        }
+
+        $separador = "\n\nPASOS:\n";
+        $posicionSeparador = strrpos($contenido, $separador);
+        if ($posicionSeparador === false) {
+            return ['descripcion' => $contenido, 'pasos' => []];
+        }
+
+        $descripcion = trim(substr($contenido, 0, $posicionSeparador));
+        $bloquePasos = trim(substr($contenido, $posicionSeparador + strlen($separador)));
+        $pasos = [];
+
+        foreach (preg_split('/\R+/', $bloquePasos) as $linea) {
+            $linea = trim($linea);
+            if ($linea === '') {
+                continue;
+            }
+
+            $pasos[] = preg_replace('/^\d+\.\s*/', '', $linea);
+        }
+
+        return ['descripcion' => $descripcion, 'pasos' => $pasos];
+    }
+
+    private function unirDescripcionYPasos(string $descripcion, array $pasos): string
+    {
+        $descripcion = trim($descripcion);
+        $pasosLimpios = [];
+
+        foreach ($pasos as $paso) {
+            $paso = trim((string)$paso);
+            if ($paso !== '') {
+                $pasosLimpios[] = $paso;
+            }
+        }
+
+        if (empty($pasosLimpios)) {
+            return $descripcion;
+        }
+
+        $bloquePasos = [];
+        foreach ($pasosLimpios as $indice => $paso) {
+            $bloquePasos[] = ($indice + 1) . '. ' . $paso;
+        }
+
+        $contenido = implode("\n", $bloquePasos);
+        if ($descripcion === '') {
+            return "PASOS:\n" . $contenido;
+        }
+
+        return $descripcion . "\n\nPASOS:\n" . $contenido;
+    }
+
     public function index() 
     {
         $user = Auth::user();
         $userId = $user['id'];
-        $model = new individualModel();
+        $model = new individualModel(); 
         $view = new IndividualView();
         
         try {
@@ -54,6 +112,10 @@ class individualController
             $receta = $model->getRecetaByIdAndUser($id, $userId);
             if (!$receta) {die("Receta no encontrada o no tienes permiso para editarla.");}
         }
+
+        $contenidoReceta = $this->separarDescripcionYPasos($receta['Descripcion'] ?? '');
+        $descripcionFormulario = $contenidoReceta['descripcion'];
+        $pasosFormulario = !empty($contenidoReceta['pasos']) ? $contenidoReceta['pasos'] : [''];
         require_once __DIR__ . '/../view/crearRecetaView.php';
     }
 
@@ -69,7 +131,10 @@ class individualController
             $data = 
             [
                 'titulo'      => $_POST['titulo'] ?? '',
-                'descripcion' => $_POST['descripcion'] ?? '',
+                'descripcion' => $this->unirDescripcionYPasos(
+                    $_POST['descripcion'] ?? '',
+                    $_POST['pasos'] ?? []
+                ),
                 'tiempo'      => $_POST['tiempo'] ?? 0,
                 'porciones'   => $_POST['porciones'] ?? 0,
                 'imagen'      => $_POST['imagen'] ?? '',
@@ -98,6 +163,9 @@ class individualController
 
         $receta = $model->getRecetaByIdAndUser((int)$_GET['id'], $userId);
         if (!$receta) {die("Receta no existe o no tienes permiso para verla.");}
+        $contenidoReceta = $this->separarDescripcionYPasos($receta['Descripcion'] ?? '');
+        $receta['DescripcionVisible'] = $contenidoReceta['descripcion'];
+        $receta['Pasos'] = $contenidoReceta['pasos'];
         require_once __DIR__ . '/../view/verRecetaView.php';
     }
 
@@ -206,81 +274,5 @@ class individualController
             exit;
         }
         die("Datos incompletos.");
-    }
-    public function misCols()
-    {
-        if (!Auth::check()) {
-            http_response_code(401);
-            echo json_encode(['error' => 'No autorizado']);
-            exit;
-        }
-        $model = new individualModel();
-        $cols = $model->getColeccionesUsuario(Auth::id());
-        echo json_encode($cols);
-    }
-
-    // Obtiene o crea la colección por defecto "Guardadas"
-    private function colDefecto($userId)
-    {
-        $model = new individualModel();
-        $cols = $model->getColeccionesUsuario($userId);
-        foreach ($cols as $c) {
-            if ($c['Nombre'] === 'Guardadas') return $c;
-        }
-        // Crear si no existe
-        $model->crearColeccion($userId, 'Guardadas', false);
-        // Volver a buscar
-        $cols = $model->getColeccionesUsuario($userId);
-        foreach ($cols as $c) {
-            if ($c['Nombre'] === 'Guardadas') return $c;
-        }
-        return null;
-    }
-
-    // Endpoint para guardar desde el feed
-    public function guardarFeed()
-    {
-        csrf_verify();
-        header('Content-Type: application/json');
-        
-        if (!Auth::check()) {
-            echo json_encode(['ok' => false, 'msg' => 'No autorizado']);
-            exit;
-        }
-        
-        $input = json_decode(file_get_contents('php://input'), true);
-        $idReceta = (int)($input['id_receta'] ?? 0);
-        $cols = $input['colecciones'] ?? []; // array de IDs
-        $guardarDefecto = (bool)($input['guardarPorDefecto'] ?? false);
-        
-        if (!$idReceta) {
-            echo json_encode(['ok' => false, 'msg' => 'ID de receta no válido']);
-            exit;
-        }
-        
-        $userId = Auth::id();
-        $model = new individualModel();
-        
-        // Si no seleccionó ninguna colección pero quiere guardar por defecto
-        if (empty($cols) && $guardarDefecto) {
-            $def = $this->colDefecto($userId);
-            if ($def) $cols = [$def['ID_Coleccion']];
-            else {
-                echo json_encode(['ok' => false, 'msg' => 'No se pudo crear la colección por defecto']);
-                exit;
-            }
-        }
-        
-        if (empty($cols)) {
-            echo json_encode(['ok' => false, 'msg' => 'No se seleccionó ninguna colección']);
-            exit;
-        }
-        
-        $res = $model->guardarEnCols($idReceta, $userId, $cols);
-        if ($res['ok']) {
-            echo json_encode(['ok' => true, 'msg' => 'Receta guardada correctamente']);
-        } else {
-            echo json_encode(['ok' => false, 'msg' => $res['msg']]);
-        }
     }
 }

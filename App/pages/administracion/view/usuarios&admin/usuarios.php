@@ -1,161 +1,130 @@
-<div class="d-flex justify-content-between align-items-start mb-4">
-    <div>
-        <h2 class="fw-bold mb-1">Usuarios & Administradores</h2>
-        <p class="text-muted mb-0">Gestiona los accesos y roles de la plataforma.</p>
-    </div>
-    <button class="btn text-white px-4 py-2 rounded-pill"
-        style="background: var(--brand-wine);" data-bs-toggle="modal" data-bs-target="#modalCrearAdmin">
-        <i class="bi bi-person-plus me-2"></i>Nuevo Usuario
-    </button>
-</div>
-
-<!-- Card Principal -->
-<div class="card border-0 rounded-4">
-
-    <!-- Filtros -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-
-        <!-- Buscador -->
-        <div class="input-group w-50">
-            <span class="input-group-text bg-light border-0 rounded-start-pill">
-                <i class="bi bi-search text-muted"></i>
-            </span>
-            <input type="text" class="form-control input border-0 bg-light rounded-end-pill"
-                placeholder="Buscar por nombre o email..." id="buscadorUsuarios">
+<section class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-2">
+        <div>
+            <h2 class="subtitulo letraRomana fw-bold  m-0">Usuarios & Administradores</h2>
+            <p class="texto text-secondary">Gestiona los accesos y roles de la plataforma.</p>
         </div>
-
-        <!-- Select -->
-        <select class="form-select w-auto rounded-pill px-4" id="filtroRoles">
-
-            <option value="todos">Todos los roles</option>
-            <?php foreach ($roles as $rol) { ?>
-                <option value="<?= $rol['EsAdmin'] ?>">
-                    <?php if ($rol['EsAdmin']) { ?>
-                        Administradores
-                    <?php } else { ?>
-                        Usuarios
-                    <?php } ?>
-                </option>
-            <?php } ?>
-
-        </select>
-
+        <button class="text-white px-4 py-2 rounded-pill border-0 bg-rojo texto fw-medium"
+             data-bs-toggle="modal" data-bs-target="#modalCrearAdmin">
+            <i class="bi bi-person-plus me-2"></i>Nuevo Admin
+        </button>
     </div>
 
-    <!-- Tabla -->
-    <div class="table-responsive">
-        <table class="table align-middle" id="tablaUsuarios">
-            <thead class="text-muted small">
-                <tr>
-                    <th>USUARIO</th>
-                    <th>ROL</th>
-                    <th class="text-end">ACCIONES</th>
-                </tr>
-            </thead>
-            <tbody>
+    <!-- Card Principal -->
+    <div class="border-0 rounded-4">
 
-                <!-- Usuario 1 -->
+        <!-- Filtros -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
 
-                <?php foreach ($usuarios as $usuario) { ?>
+            <!-- Buscador -->
+            <div class="input-group w-50 border rounded rounded-4">
+                <span class="input-group-text bg-light border-0 rounded-start-4">
+                    <i class="bi bi-search text-secondary"></i>
+                </span>
+                <input type="text" class="form-control input border-0 bg-light texto rounded-end-4 text-secondary"
+                    placeholder="Buscar por nombre ..." id="buscador">
+            </div>
 
-                    <tr>
-                        <td>
-                            <div class="d-flex align-items-center">
-                                <div class="user-avatar me-3"><?= substr($usuario['Nombre'], 0, 2) ?></div>
-                                <div>
-                                    <div class="fw-semibold"><?= $usuario['Nombre'] ?></div>
-                                    <small class="text-muted">@<?= $usuario['Username'] ?></small>
-                                </div>
-                            </div>
-                        </td>
-                        <td>
-                            <?php if ($usuario['EsAdmin']) { ?>
-                                <i class="bi bi-shield me-2 text-danger"></i>
-                                Administrador
-                            <?php } else { ?>
-                                <i class="bi bi-person me-2 text-primary"></i>
-                                Usuario
-                            <?php } ?>
-                        </td>
-                        <td class="text-end">
-                            <i class="bi bi-trash text-muted me-3" data-bs-toggle="modal" data-bs-target="#eliminarUsuario" data-id="<?= $usuario['ID_Usuario'] ?>" data-nombre="<?= $usuario['Nombre'] ?>"></i>
-                            <i class="bi bi-three-dots-vertical text-muted" data-bs-toggle="dropdown"></i>
-                            <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 rounded-3" data-bs-display="static">
+            <!-- Select -->
+            <select class="form-select w-auto rounded-4 py-2 px-4 border text-secondary texto pe-5 bg-light " id="filtroTabla" data-filtro="rol">
 
-                                <li>
-                                    <a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#perfilModal">
-                                        👤 Ver perfil
-                                    </a>
-                                </li>
-
-                                <li>
-                                    <a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#verDatos" data-nombre="<?php echo $usuario['Nombre'] ?>" data-username="<?php echo $usuario['Username'] ?>" data-email="<?php echo $usuario['Email'] ?>" data-rol="<?php echo ($usuario['EsAdmin']) ? 'Administrador' : 'Usuario'; ?>">
-                                        👁️ Ver datos
-                                    </a>
-                                </li>
-
-                                <li>
-                        
-                                    <a class="dropdown-item botonResetearContraseña" data-id-usuario="<?=$usuario['ID_Usuario']?>">
-                                        🔑 Resetear contraseña
-                                    </a>
-                                </li>
-
-                                <li>
-                                    <hr class="dropdown-divider">
-                                </li>
-
-                                <li>
-                                    <a class="dropdown-item text-danger" href="deshabilitar_usuario.php?id=1">
-                                        🚫 Deshabilitar usuario
-                                    </a>
-                                </li>
-
-                            </ul>
-                        </td>
-                    </tr>
-
-
+                <option value="todos">Todos los roles</option>
+                <?php foreach ($roles as $rol) { ?>
+                    <option value="<?= $rol['EsAdmin'] ?>">
+                        <?php if ($rol['EsAdmin']) { ?>
+                            Administrador
+                        <?php } else { ?>
+                            Usuario
+                        <?php } ?>
+                    </option>
                 <?php } ?>
 
-            </tbody>
-        </table>
+            </select>
 
-        <div>
-            <div>
-
-            </div>
-            <nav aria-label="Page navigation example" class="d-flex justify-content-end mt-4">
-
-                <ul class="pagination pagination-sm rounded-pill shadow-sm" id="paginacionUsuarios">
-
-                    <li class="page-item">
-                        <button class="page-link">Anterior</button>
-                    </li>
-
-                    <li class="page-item active" aria-current="page">
-                        <button class="page-link">1</button>
-                    </li>
-
-                    <li class="page-item">
-                        <button class="page-link">2</button>
-                    </li>
-
-                    <li class="page-item">
-                        <button class="page-link">3</button>
-                    </li>
-
-                    <li class="page-item">
-                        <button class="page-link">Siguiente</button>
-                    </li>
-
-                </ul>
-
-            </nav>
         </div>
-        
+
+        <div id="no-resultados"></div>
+
+        <!-- Tabla -->
+        <div class="">
+            <table class="w-100 rounded-4 overflow-hidden" id="tablaPaginada">
+                <thead class="bg-light text-secondary text-uppercase texto">
+                    <tr >
+                        <th class="py-3 ps-3 " data-ordenacion="string" data-orden="desc">USUARIO <span class="orden"><i class="bi bi-caret-down-fill"></i></span></th>
+                        <th class="py-3">ROL</th>
+                        <th class="py-3 text-end pe-3">ACCIONES</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    <?php foreach ($usuarios as $usuario) { ?>
+
+                        <tr data-nombre="<?= $usuario['EsAdmin'] ?>" class="registroTabla border-bottom align-middle">
+                            <td class="py-2">
+                                <div class="d-flex align-items-center ps-3">
+                                    <div class="circuloPerfil rounded-circle bg-rojo d-flex align-items-center justify-content-center text-white fw-semibold me-3 text-uppercase texto"><?= substr($usuario['Nombre'], 0, 2) ?></div>
+                                    <div>
+                                        <div class="fw-semibold texto" data-buscado="true"><?= $usuario['Nombre'] ?></div>
+                                        <small class="text-secondary textoPequeno" data-buscado="true">@<?= $usuario['Username'] ?></small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="texto">
+                                <?php if ($usuario['EsAdmin']) { ?>
+                                    <i class="bi bi-shield me-2 texto-rojo"></i>
+                                    Administrador
+                                <?php } else { ?>
+                                    <i class="bi bi-person me-2 text-secondary"></i>
+                                    Usuario
+                                <?php } ?>
+                            </td>
+                            <td class="text-end pe-3 ocultaAcciones">
+                                <i class="bi bi-trash text-secondary me-3 cursor-pointer" data-bs-toggle="modal" data-bs-target="#eliminarUsuario" data-id="<?= $usuario['ID_Usuario'] ?>" data-nombre="<?= $usuario['Nombre'] ?>"></i>
+                                <i class="bi bi-three-dots-vertical text-secondary cursor-pointer" data-bs-toggle="dropdown"></i>
+                                <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 rounded-3" data-bs-display="static">
+
+                                    <li>
+                                        <a class="dropdown-item" href="/App/pages/perfil/<?= $usuario['ID_Usuario'] ?>">
+                                            👤 Ver perfil
+                                        </a>
+                                    </li>
+
+                                    <li>
+                                        <a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#verDatos" data-nombre="<?php echo $usuario['Nombre'] ?>" data-username="<?php echo $usuario['Username'] ?>" data-email="<?php echo $usuario['Email'] ?>" data-rol="<?php echo ($usuario['EsAdmin']) ? 'Administrador' : 'Usuario'; ?>">
+                                            👁️ Ver datos
+                                        </a>
+                                    </li>
+
+                                    <li>
+
+                                        <a class="dropdown-item botonResetearContraseña" data-id-usuario="<?= $usuario['ID_Usuario'] ?>">
+                                            🔑 Resetear contraseña
+                                        </a>
+                                    </li>
+
+                                    <li>
+                                        <hr class="dropdown-divider">
+                                    </li>
+
+                                    <li>
+                                        <a class="dropdown-item text-danger" href="deshabilitar_usuario.php?id=1">
+                                            🚫 Deshabilitar usuario
+                                        </a>
+                                    </li>
+
+                                </ul>
+                            </td>
+                        </tr>
+
+
+                    <?php } ?>
+
+                </tbody>
+            </table>
+
+        </div>
     </div>
-    
-    <script src="assets/buscador.js"></script>
-    <script src="assets/resetearContrasena.js"></script>
-   
+</section>
+
+<script src="assets/componentePaginacion.js"></script>
+<script src="assets/resetearContrasena.js"></script>

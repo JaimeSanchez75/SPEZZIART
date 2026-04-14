@@ -16,13 +16,33 @@
                 <input type="hidden" name="id" value="<?= $receta['ID_Receta'] ?? '' ?>">
                 <!-- TITULO -->
                 <div class="mb-3">
-                    <label class="form-label">Título</label>
+                    <label class="form-label">Titulo</label>
                     <input type="text" name="titulo" class="form-control" required value="<?= htmlspecialchars($receta['Titulo'] ?? '') ?>">
                 </div>
                 <!-- DESCRIPCION -->
                 <div class="mb-3">
-                    <label class="form-label">Descripción</label>
-                    <textarea name="descripcion" class="form-control"><?= htmlspecialchars($receta['Descripcion'] ?? '') ?></textarea>
+                    <label class="form-label">Descripcion</label>
+                    <textarea name="descripcion" class="form-control"><?= htmlspecialchars($descripcionFormulario ?? '') ?></textarea>
+                </div>
+                <!-- PASOS -->
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <label class="form-label mb-0">Pasos</label>
+                        <button type="button" class="btn btn-outline-danger btn-sm" id="agregarPaso">+</button>
+                    </div>
+                    <div id="listaPasos">
+                        <?php foreach (($pasosFormulario ?? ['']) as $indice => $paso): ?>
+                            <div class="input-group mb-2 paso-item">
+                                <span class="input-group-text">Paso <?= $indice + 1 ?></span>
+                                <input
+                                    type="text"
+                                    name="pasos[]"
+                                    class="form-control"
+                                    value="<?= htmlspecialchars($paso) ?>"
+                                    placeholder="Describe este paso">
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
                 </div>
                 <!-- TIEMPO + PORCIONES -->
                 <div class="row">
@@ -50,5 +70,37 @@
             </form>
         </div>
     </div>
+
+    <template id="pasoTemplate">
+        <div class="input-group mb-2 paso-item">
+            <span class="input-group-text"></span>
+            <input type="text" name="pasos[]" class="form-control" placeholder="Describe este paso">
+        </div>
+    </template>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const listaPasos = document.getElementById('listaPasos');
+            const agregarPaso = document.getElementById('agregarPaso');
+            const pasoTemplate = document.getElementById('pasoTemplate');
+
+            const renumerarPasos = () => {
+                listaPasos.querySelectorAll('.paso-item').forEach((paso, indice) => {
+                    const etiqueta = paso.querySelector('.input-group-text');
+                    if (etiqueta) {
+                        etiqueta.textContent = `Paso ${indice + 1}`;
+                    }
+                });
+            };
+
+            agregarPaso.addEventListener('click', () => {
+                const nuevoPaso = pasoTemplate.content.firstElementChild.cloneNode(true);
+                listaPasos.appendChild(nuevoPaso);
+                renumerarPasos();
+            });
+
+            renumerarPasos();
+        });
+    </script>
 </body>
 </html>

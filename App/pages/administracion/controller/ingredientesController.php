@@ -7,15 +7,22 @@ class IngredientesController extends AdministracionControllers
 
     public function index()
     {
-        $datos['ingredientes'] = $this->obtenerIngredientes();
-        
-        $this->mostrarAdministracion("ingredientes/ingredientes.php", "Gestión de Ingredientes",$datos);
+        $datos['ingredientesBase'] = $this->obtenerIngredientesBase();
+        $datos['ingredientesUsu'] = $this->obtenerIngredientesUsu();
+
+        $this->mostrarAdministracion("ingredientes/ingredientes.php", "Gestión de Ingredientes", $datos);
     }
 
-    private function obtenerIngredientes()
+    private function obtenerIngredientesBase()
     {
         $objIngrediente = $this->cargarModelo("ingredientesModel");
-        return is_array($objIngrediente->obtenerIngredientes()) ? $objIngrediente->obtenerIngredientes(): [];
+        return is_array($objIngrediente->obtenerIngredientesBase()) ? $objIngrediente->obtenerIngredientesBase(): [];
+    }
+
+    private function obtenerIngredientesUsu()
+    {
+        $objIngrediente = $this->cargarModelo("ingredientesModel");
+        return is_array($objIngrediente->obtenerIngredientesUsu()) ? $objIngrediente->obtenerIngredientesUsu(): [];
     }
 
     public function crearIngrediente(){
@@ -34,6 +41,7 @@ class IngredientesController extends AdministracionControllers
 
         header('Location: /App/pages/administracion/ingredientes?mensaje=true');
     }
+
     function editarIngrediente(){
         $datosPost=$_POST['datos'];
 
@@ -51,5 +59,7 @@ class IngredientesController extends AdministracionControllers
 
         header('Location: /App/pages/administracion/ingredientes?mensaje=true');
     }
+
+    
 
 }

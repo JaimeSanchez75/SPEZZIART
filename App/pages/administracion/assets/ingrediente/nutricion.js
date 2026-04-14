@@ -1,34 +1,74 @@
+(()=>{
+    let currentForm = null;
+    let currentTrigger = null;
+let previousModalElement = null;
 
-let esEditar=false;
+function getHiddenNutritionInputs(form) {
+    return {
+        calorias: form?.querySelector('[name="datos[calorias]"]') || document.getElementById('inputCalorias'),
+        proteina: form?.querySelector('[name="datos[proteina]"]') || document.getElementById('inputProteina'),
+        carbohidratos: form?.querySelector('[name="datos[carbohidratos]"]') || document.getElementById('inputCarbohidratos'),
+        grasas: form?.querySelector('[name="datos[grasas]"]') || document.getElementById('inputGrasas'),
+    };
+}
 
-document.addEventListener('DOMContentLoaded',function(){
+document.addEventListener('DOMContentLoaded', function () {
     const modalNutricion = document.getElementById('modalNutricion');
+    if (!modalNutricion) return;
 
-    modalNutricion.addEventListener('show.bs.modal', function(event){
-        // botón que hizo click el usuario para abrir el modal
-        const boton = event.relatedTarget;
+    modalNutricion.addEventListener('show.bs.modal', function (event) {
+        currentTrigger = event.relatedTarget;
+        previousModalElement = currentTrigger?.closest('.modal');
+        currentForm = currentTrigger?.closest('form');
+        const boton = currentTrigger;
+        const form = currentForm;
 
-        document.getElementById('calorias').value= boton.dataset.calorias || 0;
-        document.getElementById('proteina').value= boton.dataset.proteina || 0;
-        document.getElementById('carbohidratos').value= boton.dataset.carbohidratos || 0;
-        document.getElementById('grasas').value= boton.dataset.grasas || 0;
-        
+        const caloriasValor = boton?.dataset.calorias ?? form?.querySelector('[name="datos[calorias]"]')?.value ?? 0;
+        const proteinaValor = boton?.dataset.proteina ?? form?.querySelector('[name="datos[proteina]"]')?.value ?? 0;
+        const carbohidratosValor = boton?.dataset.carbohidratos ?? form?.querySelector('[name="datos[carbohidratos]"]')?.value ?? 0;
+        const grasasValor = boton?.dataset.grasas ?? form?.querySelector('[name="datos[grasas]"]')?.value ?? 0;
+
+        document.getElementById('calorias').value = caloriasValor;
+        document.getElementById('proteina').value = proteinaValor;
+        document.getElementById('carbohidratos').value = carbohidratosValor;
+        document.getElementById('grasas').value = grasasValor;
+    });
+
+    modalNutricion.addEventListener('hidden.bs.modal', function () {
+        if (previousModalElement) {
+            previousModalElement.dataset.restoreState = 'true';
+            const previousModal = bootstrap.Modal.getOrCreateInstance(previousModalElement);
+            previousModal.show();
+            previousModalElement = null;
+            currentTrigger = null;
+        }
     });
 });
 
-let btnNutricion= document.getElementById('btnNutricion');
+const btnNutricion = document.getElementById('btnGuardarNutricion') || document.getElementById('btnNutricion');
+if (btnNutricion) {
+    btnNutricion.addEventListener('click', function () {
+        
+        const inputs = getHiddenNutritionInputs(currentForm);
+        const calorias = document.getElementById('calorias').value;
+        const proteina = document.getElementById('proteina').value;
+        const carbohidratos = document.getElementById('carbohidratos').value;
+        const grasas = document.getElementById('grasas').value;
 
-btnNutricion.addEventListener('click',function(){
-    document.getElementById('inputCalorias').value = document.getElementById('calorias').value;
-    document.getElementById('inputProteina').value = document.getElementById('proteina').value;
-    document.getElementById('inputCarbohidratos').value = document.getElementById('carbohidratos').value;
-    document.getElementById('inputGrasas').value = document.getElementById('grasas').value;
+        if (inputs.calorias) inputs.calorias.value = calorias;
+        if (inputs.proteina) inputs.proteina.value = proteina;
+        if (inputs.carbohidratos) inputs.carbohidratos.value = carbohidratos;
+        if (inputs.grasas) inputs.grasas.value = grasas;
 
-    const modal = bootstrap.Modal.getInstance(document.getElementById('modalNutricion'));
-    modal.hide();
+        if (currentTrigger) {
+            currentTrigger.dataset.calorias = calorias;
+            currentTrigger.dataset.proteina = proteina;
+            currentTrigger.dataset.carbohidratos = carbohidratos;
+            currentTrigger.dataset.grasas = grasas;
+        }
 
-    const modalCrearIngrediente = new bootstrap.Modal(document.getElementById('modalResumen'));
-    siguienteModal.show();
-
-    
-})
+        const modal = bootstrap.Modal.getInstance(document.getElementById('modalNutricion'));
+        if (modal) modal.hide();
+    });
+}
+})();

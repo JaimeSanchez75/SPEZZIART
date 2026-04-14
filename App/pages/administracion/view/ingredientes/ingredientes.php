@@ -9,6 +9,71 @@
     </button>
 </div>
 
+<div class="nav nav-tabs" id="tablaIngredientes">
+    <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tabIngredientesBase">Base</button>
+    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tabIngredientesUsu">Hechos por usuarios</button>
+</div>
+<div class="tab-content">
+    <div class="tab-pane fade show active text-dark" id="tabIngredientesBase">
+        <?php 
+        foreach($ingredientesBase as $ingrediente){
+        ?>
+
+        <tr>
+            <td>
+                <div class="d-flex align-items-center">
+                    <div class="user-avatar me-3"><?php echo strtoupper(substr($ingrediente['Nombre'], 0, 2)); ?></div>
+                    <div>
+                        <div class="fw-semibold"><?php echo $ingrediente['Nombre']; ?></div>
+
+                    </div>
+                </div>
+            </td>
+            <td>
+                <div class="badge bg-<?php echo $ingrediente['Verificada'] ? 'success' : 'secondary'; ?>"> <?php echo $ingrediente['Verificada'] ? 'Verificada' : 'No verificada'; ?></div>
+                
+            </td>
+            <td class="text-end">
+                <i class="bi bi-pencil me-3 text-muted" data-bs-toggle="modal" data-bs-target="#modalEditarIngrediente" data-id="<?php echo $ingrediente['ID_Ingrediente']?>" data-nombre="<?php echo $ingrediente['Nombre']?>" data-calorias="<?php echo $ingrediente['Calorias']?>" data-proteina="<?php echo $ingrediente['Proteina']?>" data-carbohidratos="<?php echo $ingrediente['Carbohidratos']?>" data-grasas="<?php echo $ingrediente['Grasas']?>" data-modo="editar"></i>
+                <i class="bi bi-trash text-muted"></i>
+            </td>
+        </tr>
+
+        <?php
+        }
+        ?>
+    </div>
+    <div class="tab-pane fade text-primary" id="tabIngredientesUsu">
+        <?php 
+        foreach($ingredientesUsu as $ingrediente){
+        ?>
+
+        <tr>
+            <td>
+                <div class="d-flex align-items-center text-dark">
+                    <div class="user-avatar me-3"><?php echo strtoupper(substr($ingrediente['Nombre'], 0, 2)); ?></div>
+                    <div>
+                        <div class="fw-semibold"><?php echo $ingrediente['Nombre']; ?></div>
+
+                    </div>
+                </div>
+            </td>
+            <td>
+                <div class="badge bg-<?php echo $ingrediente['Verificada'] ? 'success' : 'secondary'; ?>"> <?php echo $ingrediente['Verificada'] ? 'Verificada' : 'No verificada'; ?></div>
+                
+            </td>
+            <td class="text-end">
+                <i class="bi bi-pencil me-3 text-muted" data-bs-toggle="modal" data-bs-target="#modalEditarIngrediente" data-id="<?php echo $ingrediente['ID_Ingrediente']?>" data-nombre="<?php echo $ingrediente['Nombre']?>" data-calorias="<?php echo $ingrediente['Calorias']?>" data-proteina="<?php echo $ingrediente['Proteina']?>" data-carbohidratos="<?php echo $ingrediente['Carbohidratos']?>" data-grasas="<?php echo $ingrediente['Grasas']?>" data-modo="editar"></i>
+                <i class="bi bi-trash text-muted"></i>
+            </td>
+        </tr>
+        
+        <?php
+        }
+        ?>
+    </div>
+</div>
+
 <?php if (empty($ingredientes)) { ?>
 
     <div class="text-center py-5">
@@ -81,4 +146,6 @@
 
     </div>
 <?php } ?>
+
+
 

@@ -50,3 +50,5 @@ document.addEventListener('DOMContentLoaded', () =>
         else {alert(data.error || 'Error en registro');}
     });
 });
+
+

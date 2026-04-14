@@ -5,7 +5,7 @@ class individualModel
     private $db;
     public function __construct(){$this->db = Conexion::conectar();}
     // ================== RECETAS ==================
-    public function getRecetasUsuario($idUsuario) 
+    public function getRecetasUsuario($idUsuario)  
     {
         $stmt = $this->db->prepare
         ("

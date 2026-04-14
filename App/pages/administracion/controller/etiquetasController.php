@@ -26,9 +26,14 @@ class EtiquetasController extends AdministracionControllers {
         }
 
         $objEtiqueta = $this->cargarModelo("etiquetasModel");
+        
+        if($objEtiqueta->existeNombre($nombreEtiqueta)){
+            header('Location: /App/pages/administracion/etiquetas?error=existe');
+            return;
+        }   
         $objEtiqueta->crearEtiqueta($nombreEtiqueta);
 
-        header('Location: /App/pages/administracion/etiquetas?mensaje=true');
+        header('Location: /App/pages/administracion/etiquetas?mensaje=creada');
     }
 
     function editarEtiqueta(){
@@ -42,9 +47,15 @@ class EtiquetasController extends AdministracionControllers {
         }
 
         $objEtiqueta = $this->cargarModelo("etiquetasModel");
+
+        if($objEtiqueta->existeNombre($nombreEtiqueta ,$idEtiqueta)){
+            header('Location: /App/pages/administracion/etiquetas?error=duplicado');
+            return;
+        } 
+
         $objEtiqueta->editarEtiqueta($nombreEtiqueta,$idEtiqueta);
 
-        header('Location: /App/pages/administracion/etiquetas?mensaje=true');
+        header('Location: /App/pages/administracion/etiquetas?mensaje=editada');
     }
 
     function eliminarEtiqueta($id){
@@ -52,7 +63,7 @@ class EtiquetasController extends AdministracionControllers {
         $objEtiqueta = $this->cargarModelo("etiquetasModel");
         $objEtiqueta->eliminarEtiqueta($id);
 
-        header('Location: /App/pages/administracion/etiquetas?mensaje=true');
+        header('Location: /App/pages/administracion/etiquetas?mensaje=eliminada');
 
     }
 }

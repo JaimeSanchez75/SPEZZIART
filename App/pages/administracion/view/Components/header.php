@@ -1,18 +1,17 @@
-<header class="top-navbar ">
-    <div class="search-box">
-        <i class="bi bi-search"></i>
-        <input type="text" placeholder="Buscar usuarios, recetas, eventos...">
+<header class="d-flex justify-content-end align-items-center gap-3 p-3  border-bottom">
+
+    <div class="d-flex align-items-center gap-3">
+        <div class="">
+            <i class="bi bi-bell text-secondary"></i>
+            <span class="notificacion"></span>
+        </div>
+        <div class="d-flex flex-column align-items-end border-start  px-2">
+            <span class="texto fw-semibold"><?php echo $userLogueado['username']; ?></span>
+            <span class="textoPequeno texto-grisClaro"><?php echo strtoupper($userLogueado['role']); ?></span>
+        </div>
+        <div class="bg-rojo text-white rounded-circle d-flex align-items-center justify-content-center circuloPerfil texto fw-bold" >
+            <?php echo strtoupper(substr($userLogueado['username'], 0, 2)) ?>
+        </div>
     </div>
 
-    <div class="user-actions">
-        <div class="notification-bell">
-            <i class="bi bi-bell"></i>
-            <span class="dot"></span>
-        </div>
-        <div class="user-details">
-            <span class="user-name"><?php echo $userLogueado['username']; ?></span>
-            <span class="user-rank"><?php echo strtoupper($userLogueado['role']); ?></span>
-        </div>
-        <div class="user-avatar"><?php echo strtoupper(substr($userLogueado['username'], 0, 2)) ?></div>
-    </div>
 </header>
