@@ -10,31 +10,40 @@ class individualController
         $userId = $user['id'];
         $model = new individualModel();
         $view = new IndividualView();
-        try 
-        {
+        
+        try {
             $busqueda = $_GET['q'] ?? '';
-            if (!empty($busqueda)) 
-            {
+            if (!empty($busqueda)) {
                 $misRecetas = $model->buscarRecetasUsuario($userId, $busqueda);
                 $colecciones = $model->buscarColeccionesUsuario($userId, $busqueda);
-            } 
-            else 
-            {
+            } else {
                 $misRecetas = $model->getRecetasUsuario($userId);
                 $colecciones = $model->getColeccionesUsuario($userId);
             }
-            $guardadas = []; // pendiente de implementar recetas guardadas
+            
+            // ========== NUEVO: Obtener recetas guardadas (colección por defecto) ==========
+            $recetasGuardadas = [];
+            $coleccionDefecto = $this->colDefecto($userId); // llamamos al método auxiliar que ya creamos
+            if ($coleccionDefecto) {
+                $recetasGuardadas = $model->getRecetasDeColeccion($coleccionDefecto['ID_Coleccion']);
+            }
+            // ============================================================================
+            
             $config = [
                 'ModoOscuro' => $user['ModoOscuro'] ?? false,
                 'ModoFit'    => $user['ModoFit'] ?? false
             ];
-            $view->render($misRecetas, $guardadas, [], $config, $colecciones, $busqueda);
-        } 
-        catch (Exception $e) {die("Error en index: " . $e->getMessage());}
+            
+            // PASAMOS $recetasGuardadas en lugar del array vacío que había antes
+            $view->render($misRecetas, $recetasGuardadas, [], $config, $colecciones, $busqueda);
+        } catch (Exception $e) {
+            die("Error en index: " . $e->getMessage());
+        }
     }
     // ---------- CREAR / EDITAR RECETA ----------
     public function crear() 
     {
+        csrf_verify();
         $userId = Auth::id();
         $model = new individualModel();
         $receta = null;
@@ -51,6 +60,7 @@ class individualController
     // ---------- GUARDAR RECETA ----------
     public function guardar() 
     {
+        csrf_verify();
         $userId = Auth::id();
         try 
         {
@@ -94,6 +104,7 @@ class individualController
     // ---------- ELIMINAR RECETA ----------
     public function eliminar() 
     {
+        csrf_verify();
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['idReceta'])) 
         {
             $userId = Auth::id();
@@ -109,6 +120,7 @@ class individualController
     // ---------- CREAR COLECCIÓN ----------
     public function crearColeccion() 
     {
+        csrf_verify();
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['nombreColeccion'])) 
         {
             $model = new individualModel();
@@ -138,6 +150,7 @@ class individualController
     // ---------- AGREGAR RECETA A COLECCIÓN ----------
     public function agregarReceta() 
     {
+        csrf_verify();
         if ($_SERVER['REQUEST_METHOD'] === 'POST' 
             && !empty($_POST['idReceta']) 
             && !empty($_POST['idColeccion'])) 
@@ -159,6 +172,7 @@ class individualController
     // ---------- ELIMINAR COLECCIÓN ----------
     public function eliminarColeccion() 
     {
+        csrf_verify();
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['idColeccion'])) 
         {
             $userId = Auth::id();
@@ -174,7 +188,8 @@ class individualController
     }
     // ---------- ELIMINAR RECETA DE COLECCIÓN ----------
     public function eliminarRecetaDeColeccion() 
-    {
+    {   
+        csrf_verify();
         if ($_SERVER['REQUEST_METHOD'] === 'POST' 
             && !empty($_POST['idReceta']) 
             && !empty($_POST['idColeccion'])) 
@@ -191,5 +206,81 @@ class individualController
             exit;
         }
         die("Datos incompletos.");
+    }
+    public function misCols()
+    {
+        if (!Auth::check()) {
+            http_response_code(401);
+            echo json_encode(['error' => 'No autorizado']);
+            exit;
+        }
+        $model = new individualModel();
+        $cols = $model->getColeccionesUsuario(Auth::id());
+        echo json_encode($cols);
+    }
+
+    // Obtiene o crea la colección por defecto "Guardadas"
+    private function colDefecto($userId)
+    {
+        $model = new individualModel();
+        $cols = $model->getColeccionesUsuario($userId);
+        foreach ($cols as $c) {
+            if ($c['Nombre'] === 'Guardadas') return $c;
+        }
+        // Crear si no existe
+        $model->crearColeccion($userId, 'Guardadas', false);
+        // Volver a buscar
+        $cols = $model->getColeccionesUsuario($userId);
+        foreach ($cols as $c) {
+            if ($c['Nombre'] === 'Guardadas') return $c;
+        }
+        return null;
+    }
+
+    // Endpoint para guardar desde el feed
+    public function guardarFeed()
+    {
+        csrf_verify();
+        header('Content-Type: application/json');
+        
+        if (!Auth::check()) {
+            echo json_encode(['ok' => false, 'msg' => 'No autorizado']);
+            exit;
+        }
+        
+        $input = json_decode(file_get_contents('php://input'), true);
+        $idReceta = (int)($input['id_receta'] ?? 0);
+        $cols = $input['colecciones'] ?? []; // array de IDs
+        $guardarDefecto = (bool)($input['guardarPorDefecto'] ?? false);
+        
+        if (!$idReceta) {
+            echo json_encode(['ok' => false, 'msg' => 'ID de receta no válido']);
+            exit;
+        }
+        
+        $userId = Auth::id();
+        $model = new individualModel();
+        
+        // Si no seleccionó ninguna colección pero quiere guardar por defecto
+        if (empty($cols) && $guardarDefecto) {
+            $def = $this->colDefecto($userId);
+            if ($def) $cols = [$def['ID_Coleccion']];
+            else {
+                echo json_encode(['ok' => false, 'msg' => 'No se pudo crear la colección por defecto']);
+                exit;
+            }
+        }
+        
+        if (empty($cols)) {
+            echo json_encode(['ok' => false, 'msg' => 'No se seleccionó ninguna colección']);
+            exit;
+        }
+        
+        $res = $model->guardarEnCols($idReceta, $userId, $cols);
+        if ($res['ok']) {
+            echo json_encode(['ok' => true, 'msg' => 'Receta guardada correctamente']);
+        } else {
+            echo json_encode(['ok' => false, 'msg' => $res['msg']]);
+        }
     }
 }

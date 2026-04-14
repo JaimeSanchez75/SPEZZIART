@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../../../core/auth.php';
+require_once __DIR__ . '/../../../core/csrfcheck.php'; 
 
 class IndividualView 
 {
@@ -28,6 +29,7 @@ class IndividualView
                     </div>
                     <div class="header-item item-search">
                         <form method="GET" action="/App/pages/individual" class="position-relative">
+                            <input type="hidden" name="csrf_token" value="<?= csrf_token() ?>">
                             <span class="material-symbols-outlined position-absolute top-50 start-0 translate-middle-y ms-3 text-muted">search</span>
                             <input type="text" name="q" id="busquedaRecetas" class="form-control rounded-pill ps-5 border-0 shadow-sm" placeholder="Buscar recetas, listas o ingredientes..." value="<?= htmlspecialchars($query) ?>">
                         </form>
@@ -50,7 +52,7 @@ class IndividualView
                                 <div><a href="/App/pages/individual/coleccion?id=<?= $col['ID_Coleccion'] ?>" class="text-decoration-none"><?= htmlspecialchars($col['Nombre']) ?></a></div>
                                 <div class="d-flex gap-2">
                                     <!-- Botón eliminar colección -->
-                                    <button class="btn btn-sm btn-link text-danger p-0" data-bs-toggle="modal" data-bs-target="#confirmDeleteColeccionModal" data-id="<?= $col['ID_Coleccion'] ?>"><span class="material-symbols-outlined">delete</span><button>
+                                    <button class="btn btn-sm btn-link text-danger p-0" data-bs-toggle="modal" data-bs-target="#confirmDeleteColeccionModal" data-id="<?= $col['ID_Coleccion'] ?>"><span class="material-symbols-outlined">delete</span></button>
                                 </div>
                             </li>
                         <?php endforeach; ?>
@@ -75,6 +77,7 @@ class IndividualView
                             <div class="d-flex justify-content-center gap-2 mt-3">
                                 <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancelar</button>
                                 <form id="deleteRecetaForm" method="POST" action="/App/pages/individual/eliminar">
+                                    <input type="hidden" name="csrf_token" value="<?= csrf_token() ?>">
                                     <input type="hidden" name="idReceta" id="modalIdReceta">
                                     <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
                                 </form>
@@ -88,6 +91,7 @@ class IndividualView
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content">
                         <form method="POST" action="/App/pages/individual/eliminar-coleccion">
+                            <input type="hidden" name="csrf_token" value="<?= csrf_token() ?>">
                             <input type="hidden" name="idColeccion" id="deleteColeccionId">
                             <div class="modal-body text-center">
                                 <p>¿Eliminar esta colección? Se perderán todas las relaciones con recetas.</p>
@@ -191,6 +195,7 @@ class IndividualView
                         <?php if($mostrarFormAgregar && !empty($GLOBALS['colecciones'])): ?>
                             <div class="mt-2">
                                 <form method="POST" action="/App/pages/individual/coleccion/agregar" class="d-flex gap-2">
+                                    <input type="hidden" name="csrf_token" value="<?= csrf_token() ?>">
                                     <input type="hidden" name="idReceta" value="<?= $id ?>">
                                     <select name="idColeccion" class="form-select form-select-sm" required>
                                         <option value="">Agregar a colección...</option>

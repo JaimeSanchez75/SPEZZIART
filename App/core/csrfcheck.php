@@ -8,14 +8,25 @@ function csrf_token(): string
 
 function csrf_verify(): void
 {
-    $postToken = $_POST['csrf_token'] ?? '';
     $sessionToken = $_SESSION['csrf_token'] ?? '';
 
-    if (empty($postToken) || empty($sessionToken) || !hash_equals($sessionToken, $postToken)) 
-    {
-        header('Content-Type: application/json'); // Para que JS lo entienda
+    // 1. Intentar obtener token desde POST normal
+    $requestToken = $_POST['csrf_token'] ?? null;
+
+    // 2. Si no viene por POST, intentar desde JSON (para peticiones fetch)
+    if (!$requestToken) {
+        $raw = file_get_contents('php://input');
+        $data = json_decode($raw, true);
+        if (is_array($data)) {
+            $requestToken = $data['csrf_token'] ?? null;
+        }
+    }
+
+    // 3. Verificar una sola vez
+    if (empty($sessionToken) || empty($requestToken) || !hash_equals($sessionToken, $requestToken)) {
         http_response_code(403);
-        echo json_encode(['error' => 'Token CSRF inválido o sesión caducada. Por favor, recarga la página.']);
+        header('Content-Type: application/json');
+        echo json_encode(['error' => 'Token CSRF inválido o sesión caducada. Recarga la página.']);
         exit;
     }
 }

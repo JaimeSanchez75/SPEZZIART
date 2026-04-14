@@ -76,7 +76,8 @@ document.addEventListener('DOMContentLoaded', function()
     const id = reportId.value;
     const reason = selectReason.value;
     const details = form.querySelector('[name="details"]').value;
-
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    
     if (!reason) 
     {
         errorDiv.textContent = 'Selecciona un motivo';
@@ -86,7 +87,7 @@ document.addEventListener('DOMContentLoaded', function()
 
     errorDiv.classList.add('d-none');
     successDiv.classList.add('d-none');
-
+    
     // Construir el payload
     let url = '';
     let body = {};
@@ -94,17 +95,17 @@ document.addEventListener('DOMContentLoaded', function()
     if (type === 'receta') 
     {
         url = '/App/api/reportar/receta';
-        body = { id_receta: id, motivo: reason, detalles: details };
+        body = { id_receta: id, motivo: reason, detalles: details, csrf_token: csrfToken };
     } 
     else if (type === 'comentario') 
     {
         url = '/App/api/reportar/comentario';
-        body = { id_comentario: id, motivo: reason, detalles: details };
+        body = { id_comentario: id, motivo: reason, detalles: details, csrf_token: csrfToken };
     } 
     else if (type === 'usuario') 
     {
         url = '/App/api/reportar/usuario';
-        body = { id_usuario: id, motivo: reason, detalles: details };
+        body = { id_usuario: id, motivo: reason, detalles: details, csrf_token: csrfToken };
     } 
     else 
     {

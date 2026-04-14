@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/../../../core/csrfcheck.php'; 
 class PerfilView 
 {
 public function render($u,$numSeg, $vitrina, $recetas, $idLogueado, $loSigue = false, $config = null) { ?>
@@ -10,6 +11,7 @@ public function render($u,$numSeg, $vitrina, $recetas, $idLogueado, $loSigue = f
     <title>Perfil de <?php echo $u['Username']; ?> - SpezziArt</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <meta name="csrf-token" content="<?= csrf_token() ?>">
     <link rel="stylesheet" href="/App/global/styles/global.css">
     <link rel="stylesheet" href="/App/global/styles/profile.css">
 </head>
@@ -24,7 +26,7 @@ public function render($u,$numSeg, $vitrina, $recetas, $idLogueado, $loSigue = f
             <button class="btn btn-link text-muted" data-bs-toggle="modal" data-bs-target="#reportModal" data-report-type="usuario" data-id="<?= $u['ID_Usuario'] ?>"onclick="if(!window.isLoggedIn) { event.preventDefault(); window.location.href='/App/pages/login'; }"><span class="material-symbols-outlined">flag</span></button>
         </span>
         <div class="d-flex justify-content-center gap-4 mt-3">
-            <div><b class="d-block fs-5"><?php echo $numSeg; ?></b> <small>Seguidores</small></div>
+            <div><b class="d-block fs-5 seguidores-count"><?php echo $numSeg; ?></b> <small>Seguidores</small></div>
             <div><b class="d-block fs-5"><?php echo count($recetas); ?></b> <small>Recetas</small></div>
         </div>
         <div class="mt-3">
@@ -40,6 +42,7 @@ public function render($u,$numSeg, $vitrina, $recetas, $idLogueado, $loSigue = f
     </div>
 </div>
 <script src="/App/pages/perfil/view/GuardaVitrina.js"></script>
+
 <div class="container my-5">
     <div class="vitrina-card p-4 mb-5">
         <div class="d-flex justify-content-between align-items-center mb-4">
@@ -104,6 +107,7 @@ public function render($u,$numSeg, $vitrina, $recetas, $idLogueado, $loSigue = f
             <div class="modal-body p-4">
                 <p class="text-muted small px-3">Selecciona exactamente 8 logros para mostrar en tu vitrina principal.</p>
                 <form id="formVitrina">
+                    <input type="hidden" name="csrf_token" value="<?= csrf_token() ?>">
                     <div class="row g-3 px-2">
                         <?php 
                         foreach($vitrina as $logro): 
@@ -139,6 +143,7 @@ public function render($u,$numSeg, $vitrina, $recetas, $idLogueado, $loSigue = f
             </div>
             <div class="modal-body">
                 <form id="reportForm">
+                    <input type="hidden" name="csrf_token" value="<?= csrf_token() ?>">
                     <input type="hidden" name="id" id="reportId">
                     <input type="hidden" name="type" id="reportType">
                     <div class="mb-3">
@@ -162,5 +167,6 @@ public function render($u,$numSeg, $vitrina, $recetas, $idLogueado, $loSigue = f
 <?php require_once __DIR__ . '/../../../global/navbar/view/NavbarView.php'; ?>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="/App/global/report.js"></script>
+<script src="/App/pages/perfil/view/Seguimiento.js"></script>
 <?php }
 }

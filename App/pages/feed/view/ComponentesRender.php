@@ -1,24 +1,25 @@
 <?php
+require_once __DIR__ . '/../../../core/csrfcheck.php'; 
 class ComponentesRender
 {
     public function renderRecipeCard($receta)
     {
-        ob_start();
+        ob_start(); /* Renderiza una tarjeta de receta para el feed, con toda su información y acciones */
+
+        // Variables para controlar el estado del like, las imágenes y las etiquetas de la receta
         $likeClass = (isset($receta['DioLike']) && $receta['DioLike']) ? 'text-danger fill-icon' : '';
         $imagenes = !empty($receta['Imagen']) ? explode(',', $receta['Imagen']) : [];
         $idCarousel = "carousel-" . $receta['ID_Receta'];
-        // Etiquetas
         $etiquetasArr = !empty($receta['EtiquetasNombres']) ? explode(',', $receta['EtiquetasNombres']) : [];
         $limiteVisibles = 3;
         $visibles = array_slice($etiquetasArr, 0, $limiteVisibles);
         $ocultas = array_slice($etiquetasArr, $limiteVisibles);
         $totalOcultas = count($ocultas);
         $htmlOcultas = "";
-        foreach ($ocultas as $tag) {$htmlOcultas .= '<span class="badge rounded-pill bg-danger bg-opacity-10 text-danger m-1">#' . htmlspecialchars(trim($tag)) . '</span>';}
-        ?>
+        // Generar el HTML para las etiquetas ocultas (si las hay) que se mostrarán en el popover al hacer clic en "+X"
+        foreach ($ocultas as $tag) {$htmlOcultas .= '<span class="badge rounded-pill bg-danger bg-opacity-10 text-danger m-1">#' . htmlspecialchars(trim($tag)) . '</span>';}?>
         <div class="card feed-card border-0 shadow-sm rounded-4 overflow-hidden bg-white mx-auto recipe-container mb-3" data-id="<?php echo $receta['ID_Receta']; ?>">
             <div class="d-flex flex-column h-100 mb-1">
-                <!-- Cabecera del usuario (solo escritorio) -->
                 <div class="recipe-header d-none d-md-flex align-items-center px-4 border-bottom bg-white py-3">
                     <?php echo $this->renderUserBlock($receta, false); ?>
                 </div>
@@ -86,18 +87,18 @@ class ComponentesRender
                 <div class="recipe-footer d-flex align-items-center px-4 border-top bg-white">
                     <div class="d-flex justify-content-between w-100">
                         <div class="d-flex gap-4">
-                            <div class="d-flex align-items-center gap-2 cursor-pointer" onclick="FeedApp.toggleLike(<?php echo $receta['ID_Receta']; ?>, this)">
+                            <div class="d-flex align-items-center gap-2 cursor-pointer text-danger" onclick="FeedApp.toggleLike(<?php echo $receta['ID_Receta']; ?>, this)">
                                 <button class="btn btn-link"><span class="material-symbols-outlined like-icon <?php echo $likeClass; ?>">favorite</span></button>
                                 <span class="fw-bold small like-count"><?php echo $receta['Megustas'] ?? 0; ?></span>
                             </div>
-                            <div class="d-flex align-items-center gap-2 cursor-pointer" onclick="FeedApp.openComments(<?php echo $receta['ID_Receta']; ?>)">
+                            <div class="d-flex align-items-center gap-2 cursor-pointer text-danger" onclick="FeedApp.openComments(<?php echo $receta['ID_Receta']; ?>)">
                                 <button class="btn btn-link"><span class="material-symbols-outlined">chat_bubble</span></button>
                                 <span class="fw-bold small comment-count-<?php echo $receta['ID_Receta']; ?>"><?php echo $receta['TotalComentarios'] ?? 0; ?></span>
                             </div>
                         </div>
                         <div>
-                            <button class="btn btn-link text-muted"><span class="material-symbols-outlined cursor-pointer">bookmark</span></button>
-                            <button class="btn btn-link text-muted" data-bs-toggle="modal" data-bs-target="#reportModal" data-report-type="receta" data-id="<?= $receta['ID_Receta'] ?>"onclick="if(!window.isLoggedIn) { event.preventDefault(); window.location.href='/App/pages/login'; }"><span class="material-symbols-outlined">flag</span></button>
+                            <button class="btn btn-link text-danger" onclick="if(!window.isLoggedIn) { event.preventDefault(); window.location.href='/App/pages/login'; }" data-bs-toggle="modal" data-bs-target="#saveModal"  data-id="<?php echo $receta['ID_Receta']; ?>"><span class="material-symbols-outlined cursor-pointer">bookmark</span></button>
+                            <button class="btn btn-link text-danger" data-bs-toggle="modal" data-bs-target="#reportModal" data-report-type="receta" data-id="<?= $receta['ID_Receta'] ?>"onclick="if(!window.isLoggedIn) { event.preventDefault(); window.location.href='/App/pages/login'; }"><span class="material-symbols-outlined">flag</span></button>
                         </div>
                     </div>
                 </div>
@@ -172,7 +173,103 @@ class ComponentesRender
                 </div>
             </div>
         </div>
+        <!-- Modal de guardado -->
+        <div class="modal fade" id="saveModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Guardar receta</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="saveForm">
+                            <input type="hidden" name="csrf_token" value="<?= csrf_token() ?>">
+                            <input type="hidden" name="id_receta" id="saveRecipeId">
+                            <div class="mb-3">
+                                <label class="form-label">Selecciona las colecciones</label>
+                                <div id="cols-list" class="border rounded p-2" style="max-height: 200px; overflow-y: auto;">
+                                    <div class="text-muted text-center">Cargando...</div>
+                                </div>
+                            </div>
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" id="guardarDefecto" checked>
+                                <label class="form-check-label" for="guardarDefecto">
+                                    Guardar también en mi colección por defecto (si no seleccionas ninguna)
+                                </label>
+                            </div>
+                            <div class="alert alert-danger d-none" id="saveError"></div>
+                            <div class="alert alert-success d-none" id="saveSuccess"></div>
+                            <button type="submit" class="btn btn-danger w-100">Guardar</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="/App/global/save.js"></script>
         <script src="/App/global/report.js"></script>
         <?php
+    }
+    public function renderRecipeCardGrid($receta)
+    {
+        ob_start();
+        // Variables para controlar el estado del like, las imágenes y las etiquetas de la receta en la vista de grid
+        $likeClass = (isset($receta['DioLike']) && $receta['DioLike']) ? 'text-danger fill-icon' : '';
+        $imagenes = !empty($receta['Imagen']) ? explode(',', $receta['Imagen']) : [];
+        $idCarousel = "carousel-grid-" . $receta['ID_Receta'];
+        $titulo = htmlspecialchars($receta['Titulo']);
+        $usuario = htmlspecialchars($receta['Nombre']);
+        $likes = $receta['Megustas'] ?? 0;
+        $comentarios = $receta['TotalComentarios'] ?? 0;
+        ?>
+        <div class="card feed-card-grid border-0 shadow-sm rounded-4 overflow-hidden bg-white" data-id="<?php echo $receta['ID_Receta']; ?>">
+            <!-- Carrusel / Imagen (cuadrada) -->
+            <div class="grid-img-container">
+                <?php if (!empty($imagenes)): ?>
+                    <div id="<?php echo $idCarousel; ?>" class="carousel slide h-100" data-bs-ride="false">
+                        <div class="carousel-inner h-100">
+                            <?php foreach ($imagenes as $index => $img): ?>
+                                <div class="carousel-item <?php echo $index === 0 ? 'active' : ''; ?> h-100">
+                                    <img src="/App/uploads/<?php echo htmlspecialchars(trim($img)); ?>" 
+                                        class="d-block w-100 h-100 object-fit-cover"
+                                        onerror="this.onerror=null; this.src='/App/uploads/NoImg.jpg';"
+                                        alt="Imagen de receta">
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                        <?php if (count($imagenes) > 1): ?>
+                            <button class="carousel-control-prev" type="button" data-bs-target="#<?php echo $idCarousel; ?>" data-bs-slide="prev">
+                                <span class="carousel-control-prev-icon"></span>
+                            </button>
+                            <button class="carousel-control-next" type="button" data-bs-target="#<?php echo $idCarousel; ?>" data-bs-slide="next">
+                                <span class="carousel-control-next-icon"></span>
+                            </button>
+                        <?php endif; ?>
+                    </div>
+                <?php else: ?>
+                    <img src="/App/uploads/NoImg.jpg" class="d-block w-100 h-100 object-fit-cover" alt="Sin imagen">
+                <?php endif; ?>
+            </div>
+            <!-- Información debajo de la imagen -->
+            <div class="grid-info p-2">
+                <div class="d-flex justify-content-between align-items-center">
+                    <a href="/App/pages/perfil/<?php echo $receta['ID_Creador']; ?>" class="text-decoration-none">
+                        <span class="fw-bold text-dark small">@<?php echo $usuario; ?></span>
+                    </a>
+                    <div class="d-flex gap-2">
+                        <div class="d-flex align-items-center gap-1" onclick="FeedApp.toggleLike(<?php echo $receta['ID_Receta']; ?>, this)">
+                            <span class="material-symbols-outlined like-icon <?php echo $likeClass; ?>" style="font-size: 1.2rem;">favorite</span>
+                            <span class="small like-count"><?php echo $likes; ?></span>
+                        </div>
+                        <div class="d-flex align-items-center gap-1" onclick="FeedApp.openComments(<?php echo $receta['ID_Receta']; ?>)">
+                            <span class="material-symbols-outlined" style="font-size: 1.2rem;">chat_bubble</span>
+                            <span class="small comment-count-<?php echo $receta['ID_Receta']; ?>"><?php echo $comentarios; ?></span>
+                        </div>
+                    </div>
+                </div>
+                <h6 class="fw-bold mt-1 mb-0 text-truncate" title="<?php echo $titulo; ?>"><?php echo $titulo; ?></h6>
+            </div>
+        </div>
+        <?php
+        return ob_get_clean();
     }
 }

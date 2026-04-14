@@ -12,6 +12,7 @@
             <h2 class="mb-4"><?= isset($receta) ? 'Editar receta' : 'Crear receta' ?></h2>
             <form action="/App/pages/individual/guardar" method="POST">
                 <!-- ID OCULTO -->
+                <input type="hidden" name="csrf_token" value="<?= csrf_token() ?>">
                 <input type="hidden" name="id" value="<?= $receta['ID_Receta'] ?? '' ?>">
                 <!-- TITULO -->
                 <div class="mb-3">

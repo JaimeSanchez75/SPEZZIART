@@ -93,7 +93,6 @@ class FeedModel
             $accion = 'added';
             
         }
-
         // Contador
         $stmt = $this->db->prepare("SELECT Megustas FROM Receta WHERE ID_Receta = ?");
         $stmt->execute([$idReceta]);
@@ -145,12 +144,17 @@ class FeedModel
         $sql = "SELECT COUNT(*) FROM Notificacion 
                 WHERE ID_Usuario_Destino = ?
                 AND ID_Usuario_Origen = ?
-                AND Tipo = ?
-                AND ID_Receta <=> ?";
+                AND Tipo = ?";
+        $params = [$destino, $origen, $tipo];
+        if ($idReceta !== null) 
+        {
+            $sql .= " AND ID_Receta = ?";
+            $params[] = $idReceta;
+        } 
+        else { $sql .= " AND ID_Receta IS NULL";}
 
         $stmt = $this->db->prepare($sql);
-        $stmt->execute([$destino, $origen, $tipo, $idReceta]);
-
+        $stmt->execute($params);
         return $stmt->fetchColumn() > 0;
     }
     public function contarNoLeidas($userId)
@@ -182,6 +186,7 @@ class FeedModel
                 VALUES (?, ?, ?, ?, ?, ?)";
 
         $stmt = $this->db->prepare($sql);
+        error_log("DEBUG: like - dueno=$destino, userId=$origen");
         return $stmt->execute(
         [
             $destino,
@@ -205,5 +210,21 @@ class FeedModel
         $stmt->execute([$userId, "%$query%"]);
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    public function eliminarNotificacion($idNotificacion, $userId)
+    {
+        $stmt = $this->db->prepare("DELETE FROM notificaciones WHERE ID_Notificacion = ? AND ID_Usuario = ?");
+        $stmt->execute([$idNotificacion, $userId]);
+        return $stmt->rowCount() > 0;
+    }
+
+    /**
+     * Eliminar todas las notificaciones del usuario
+     */
+    public function limpiarNotificaciones($userId)
+    {
+        $stmt = $this->db->prepare("DELETE FROM notificaciones WHERE ID_Usuario = ?");
+        $stmt->execute([$userId]);
+        return $stmt->rowCount() >= 0; // Siempre es exitoso aunque no hubiera notificaciones
     }
 }

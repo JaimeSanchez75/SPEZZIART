@@ -255,4 +255,33 @@ class individualModel
         } 
         catch (PDOException $e) {$this->db->rollBack(); return false;}
     }
+    public function guardarEnCols($idReceta, $userId, $cols)
+    {
+        if (empty($cols)) return ['ok' => false, 'msg' => 'No se seleccionó ninguna colección'];
+        
+        // Verificar que todas las colecciones pertenecen al usuario
+        $placeholders = implode(',', array_fill(0, count($cols), '?'));
+        $stmt = $this->db->prepare("SELECT ID_Coleccion FROM Coleccion WHERE ID_Creador = ? AND ID_Coleccion IN ($placeholders)");
+        $params = array_merge([$userId], $cols);
+        $stmt->execute($params);
+        $validas = $stmt->fetchAll(PDO::FETCH_COLUMN);
+        $invalidas = array_diff($cols, $validas);
+        if (!empty($invalidas)) {
+            return ['ok' => false, 'msg' => 'Alguna colección no te pertenece'];
+        }
+        
+        $insertados = 0;
+        foreach ($validas as $idCol) {
+            // Evitar duplicados
+            $check = $this->db->prepare("SELECT COUNT(*) FROM Coleccion_Receta WHERE ID_Receta = ? AND ID_Coleccion = ?");
+            $check->execute([$idReceta, $idCol]);
+            if ($check->fetchColumn() > 0) continue;
+            
+            $ins = $this->db->prepare("INSERT INTO Coleccion_Receta (ID_Receta, ID_Coleccion) VALUES (?, ?)");
+            $ins->execute([$idReceta, $idCol]);
+            $insertados++;
+        }
+        
+        return ['ok' => true, 'insertados' => $insertados];
+    }
 }

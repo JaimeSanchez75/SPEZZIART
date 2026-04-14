@@ -172,10 +172,7 @@ class PerfilModel
         }
         $stmt->execute([$idDestino, $idSeguidor]);
         
-        // Actualizar contador  en la tabla Usuario
-        $count = $db->query("SELECT COUNT(*) FROM Usuario_Seguidor WHERE ID_Usuario = $idDestino")->fetchColumn();
-        $upd = $db->prepare("UPDATE Usuario SET Seguidores = ? WHERE ID_Usuario = ?");
-        $upd->execute([$count, $idDestino]);
+        
 
         return $resp;
     }

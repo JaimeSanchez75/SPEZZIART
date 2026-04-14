@@ -4,6 +4,7 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 require_once __DIR__ . '/../model/ReporteModel.php';
 require_once __DIR__ . '/../../../core/auth.php';
+require_once __DIR__ . '/../../../core/csrfcheck.php'; 
 
 class ReporteController
 {
@@ -16,6 +17,7 @@ class ReporteController
 
     public function reportarReceta()
     {
+        csrf_verify();
         error_log("POST: " . print_r($_POST, true));
         $this->verificarAutenticacion();
 
@@ -49,7 +51,8 @@ class ReporteController
     }
 
     public function reportarComentario()
-{
+    {
+    csrf_verify();
     // Log todo lo que llega
     error_log("=== INICIO reportarComentario ===");
     error_log("REQUEST_METHOD: " . $_SERVER['REQUEST_METHOD']);
@@ -100,6 +103,7 @@ class ReporteController
 
     public function reportarUsuario()
     {
+        csrf_verify();
         $this->verificarAutenticacion();
 
         $idUsuarioReportado = (int)($_POST['id_usuario'] ?? 0);
@@ -157,6 +161,7 @@ class ReporteController
 
     private function obtenerCreadorReceta($idReceta)
     {
+        
         $db = Conexion::conectar();
         $stmt = $db->prepare("SELECT ID_Creador FROM Receta WHERE ID_Receta = ?");
         $stmt->execute([$idReceta]);

@@ -48,6 +48,7 @@ class ColeccionView
                             <div class="d-flex justify-content-center gap-2 mt-3">
                                 <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancelar</button>
                                 <form id="deleteForm" method="POST">
+                                    <input type="hidden" name="csrf_token" value="<?= csrf_token() ?>">
                                     <input type="hidden" name="idReceta" id="modalIdReceta">
                                     <input type="hidden" name="idColeccion" id="modalIdColeccion">
                                     <button type="submit" class="btn btn-danger btn-sm">Quitar</button>
@@ -115,7 +116,7 @@ class ColeccionView
                             <!-- EDITAR -->
                             <a href="/App/pages/individual/crear?id=<?= $idReceta ?>"><span class="material-symbols-outlined">edit</span></a>
                             <!-- ELIMINAR DE COLECCIÓN -->
-                            <button type="button" class="btn-icon" data-bs-toggle="modal"data-bs-target="#confirmDeleteModal"data-idreceta="<?= $idReceta ?>"data-idcoleccion="<?= $idColeccion ?>">span class="material-symbols-outlined">delete</span></button>
+                            <button type="button" class="btn-icon" data-bs-toggle="modal"data-bs-target="#confirmDeleteModal"data-idreceta="<?= $idReceta ?>"data-idcoleccion="<?= $idColeccion ?>"><span class="material-symbols-outlined">delete</span></button>
                         </div>
                     </div>
                 </div>

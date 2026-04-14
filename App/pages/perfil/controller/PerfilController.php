@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../model/PerfilModel.php';
 require_once __DIR__ . '/../view/PerfilView.php';
+require_once __DIR__ . '/../../feed/model/FeedModel.php';
 
 class PerfilController 
 {
@@ -53,6 +54,7 @@ class PerfilController
 
     public function guardarVitrina() 
     {
+        csrf_verify();
         header('Content-Type: application/json');
         
         $user = Auth::user();
@@ -78,6 +80,7 @@ class PerfilController
 
     public function seguir($idDestino) 
     {
+        csrf_verify();
         header('Content-Type: application/json');
 
         $user = Auth::user();
@@ -87,7 +90,7 @@ class PerfilController
             return;
         }
 
-        $idLogueado = (int)$user['ID_Usuario'];
+        $idLogueado = (int)$user['id'];
         $idDestino = (int)$idDestino;
 
         if ($idLogueado === $idDestino) 
@@ -97,6 +100,22 @@ class PerfilController
         }
 
         $accion = $this->model->toggleSeguir($idDestino, $idLogueado);
+        if ($accion === 'followed') 
+        {
+            $feedModel = new FeedModel(); 
+            if (!$feedModel->existeNotificacion($idDestino, $idLogueado, 'seguidor')) {
+                $mensaje = "{$user['nombre']} ha comenzado a seguirte";
+                $feedModel->crearNotificacion
+                (
+                    $idDestino,        
+                    $idLogueado,       
+                    $mensaje,
+                    'seguidor',
+                    null,              
+                    null               
+                );
+            }
+        }
         
         echo json_encode(['status' => 'success', 'accion' => $accion]);
     }

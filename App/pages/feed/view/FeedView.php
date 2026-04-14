@@ -1,14 +1,14 @@
 <?php
+require_once __DIR__ . '/../../../core/csrfcheck.php'; 
 require_once __DIR__ . '/../../../core/auth.php';
 require_once __DIR__ . '/ComponentesRender.php';
 
 class FeedView
 {
-    private $componentes;
-    
-    public function __construct(){$this->componentes = new ComponentesRender();}
-    public function renderRecipeCard($receta)
-    {return $this->componentes->renderRecipeCard($receta);}
+    private $componentes; // Instancia de la clase para renderizar componentes comunes
+    public function __construct(){$this->componentes = new ComponentesRender();} // Inyectar la instancia de ComponentesRender
+    public function renderRecipeCard($receta){return $this->componentes->renderRecipeCard($receta);} // Método para renderizar la tarjeta de receta en vista de lista
+    public function renderRecipeCardGrid($receta){return $this->componentes->renderRecipeCardGrid($receta);} // Método para renderizar la tarjeta de receta en vista de cuadrícula
     public function render($recetas, $etiquetas, $catActiva = null, $config = null)
     {   $modoOscuro = $config && $config['ModoOscuro'] ? 'dark' : 'light';
         ?>
@@ -18,6 +18,7 @@ class FeedView
         <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <meta name="csrf-token" content="<?= csrf_token() ?>">
             <title>Spezziart | Social</title>
             <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
             <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
@@ -30,28 +31,35 @@ class FeedView
                 <div class="header-grid mb-4">
                     <div class="header-item item-logo">
                         <h3 class="fw-bold d-flex align-items-center m-0 text-nowrap">
-                            <span class="text-danger" style="letter-spacing: 0.3em;">SPEZZIART</span>
+                            <span class="text-danger logo" style="letter-spacing: 0.3em;">SPEZZIART</span>
                             <span class="ms-2 d-none d-sm-inline text-dark social">| Social</span>
                         </h3>
                     </div>
-                    <div class="header-item item-search">
-                        <div class="position-relative">
+                    <div class="header-item item-search ">
+                        <div class="position-relative w-75 mx-auto">
                             <span class="material-symbols-outlined position-absolute top-50 start-0 translate-middle-y ms-3 text-muted">search</span>
                             <input id="search-input" class="form-control rounded-pill ps-5 border-0 shadow-sm" 
                                 placeholder="Buscar recetas, chefs...">
                         </div>
                     </div>
-                    <div class="header-item item-actions">
+                    <div class="header-item item-actions d-flex gap-2 align-items-center">
+
                         <?php if (Auth::check()): ?>
                             <div class="dropdown">
                                 <button id="campana" class="btn position-relative" data-bs-toggle="dropdown">
                                     <span class="material-symbols-outlined cursor-pointer">notifications</span>
-                                    <span id="contadorNotificaciones" 
-                                        class="position-absolute top-0 start-100 translate-middle badge bg-danger">
-                                    </span>
+                                    <span id="contadorNotificaciones" class="position-absolute top-0 start-100 translate-middle badge bg-danger"></span>
                                 </button>
-                                <div id="dropdownNotificaciones" class="dropdown-menu dropdown-menu-end p-2" style="width:300px;">
-                                    <div class="text-muted text-center">Sin notificaciones</div>
+                                <div id="dropdownNotificaciones" class="dropdown-menu dropdown-menu-end p-2" style="width:320px;">
+                                    <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-2">
+                                        <span class="fw-bold">Notificaciones</span>
+                                        <button id="btn-limpiar-notificaciones" class="btn btn-sm btn-link text-danger p-0" style="font-size:0.8rem;" title="Limpiar todas">
+                                            Limpiar todas
+                                        </button>
+                                    </div>
+                                    <div id="notificaciones-lista" style="max-height:300px; overflow-y:auto;">
+                                        <div class="text-muted text-center">Cargando...</div>
+                                    </div>
                                 </div>
                             </div>
                         <?php else: ?>
@@ -60,24 +68,34 @@ class FeedView
                     </div>
                 </div>
                 <!-- Filtro de etiquetas -->
-                <div class="rounded-pill d-flex align-items-center gap-2 mb-5 flex-wrap etiquetas-filtro">
-                    <button class="btn btn-outline-danger rounded-pill light d-flex align-items-center justify-content-center btn-add-tag" 
-                            data-bs-toggle="modal" data-bs-target="#modalEtiquetas">
-                        <span class="material-symbols-outlined">add</span>
-                    </button>
-                    <div id="chips-wrapper" class="d-flex gap-2 flex-wrap align-items-center"></div>
-                    <span id="extra-chips-badge" class="badge rounded-pill bg-secondary d-none" style="cursor: default;"></span>
+                 <div class="d-flex flex-column flex-md-row gap-2 mb-4 w-100">
+                    <div class="rounded-pill d-flex align-items-center gap-2 flex-wrap etiquetas-filtro flex-grow-1">
+                        <button class="btn btn-outline-danger rounded-pill light d-flex align-items-center justify-content-center btn-add-tag" 
+                                data-bs-toggle="modal" data-bs-target="#modalEtiquetas">
+                            <span class="material-symbols-outlined">add</span>
+                        </button>
+                        <div id="chips-wrapper" class="d-flex gap-2 flex-wrap align-items-center"></div>
+                        <span id="extra-chips-badge" class="badge rounded-pill bg-secondary d-none" style="cursor: default;"></span>
+                    </div>
+                    <!-- Botones de cambio de vista -->
+                    <div id="view-mode-buttons" class="btn-group btn-group-sm align-self-center align-self-md-start" role="group">
+                        <button type="button" class="btn" data-modo="grid2" title="2 columnas">
+                            <span class="material-symbols-outlined">grid_view</span>
+                        </button>
+                        <button type="button" class="btn" data-modo="grid3" title="3 columnas">
+                            <span class="material-symbols-outlined">apps</span>
+                        </button>
+                        <button type="button" class="btn" data-modo="grid4" title="4 columnas">
+                            <span class="material-symbols-outlined">view_quilt</span>
+                        </button>
+                    </div>
                 </div>
-                <!-- Contenedor del feed -->
-                <div id="feed-container">
-                    <?php if (empty($recetas)): ?>
-                        <p class="text-center text-muted">No se encontraron recetas.</p>
-                    <?php else: ?>
-                        <?php foreach ($recetas as $receta): ?><?php echo $this->componentes->renderRecipeCard($receta); ?><?php endforeach; ?>
-                        <div id="infinite-scroll-trigger" style="height: 10px;"></div>
-                    <?php endif; ?>
+                <!-- Contenedor del feed (clase lista por defecto) -->
+                <div id="feed-container" class="lista">
+                    <?php if (empty($recetas)): ?><p class="text-center text-muted">No se encontraron recetas.</p>
+                    <?php else: ?><?php foreach ($recetas as $receta): ?><?php echo $this->componentes->renderRecipeCard($receta); ?><?php endforeach; ?><div id="infinite-scroll-trigger" style="height: 10px;"></div><?php endif; ?>
                 </div>
-                <!-- Overlays de comentarios (uno por receta) -->
+                <!-- Overlays de comentarios -->
                 <div class="comments-overlay d-none" id="comments-overlay">
                     <div class="comments-sheet">
                         <div class="drag-handle"></div>
@@ -95,30 +113,29 @@ class FeedView
                     </div>
                 </div>
             </div>
-            <?php $this->componentes->renderModals($etiquetas); ?>
-            
+            <?php $this->componentes->renderModals($etiquetas);?>
             <!-- Scripts -->
             <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-            <!-- Estado global del feed -->
             <script>
                 window.FeedApp = window.FeedApp || {};
-                FeedApp.state = 
-                {
+                FeedApp.state = {
                     offset: <?php echo count($recetas); ?>,
                     limit: 5,
                     loading: false,
-                    isFull: false,
-                    overlayAbierto: null
+                    isFull: false
                 };
+                window.isLoggedIn = <?php echo Auth::check() ? 'true' : 'false'; ?>;
             </script>
-            <script src="/App/pages/feed/view/feed.js"></script>
-            <script src="/App/pages/feed/view/FiltradoEtiquetas.js"></script>
-            <script src="/App/pages/feed/view/PopUps.js"></script>
+
+            <script src="/App/pages/feed/assets/FeedCore.js"></script>
+            <script src="/App/pages/feed/assets/Scroll.js"></script>
+            <script src="/App/pages/feed/assets/Likes.js"></script>
+            <script src="/App/pages/feed/assets/Comentarios.js"></script>
+            <script src="/App/pages/feed/assets/Filtrado.js"></script>
+            <script src="/App/pages/feed/assets/PopOvers.js"></script>
             <?php require_once __DIR__ . '/../../../global/navbar/view/NavbarView.php'; ?>
         </body>
         </html>
-        
         <?php
-        
     }
-}
+}?>

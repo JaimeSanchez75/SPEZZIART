@@ -233,7 +233,7 @@ $router->group(['before' => 'auth'], function ($router) {
         require_once __DIR__ . '/pages/individual/controller/individualController.php';
         (new individualController())->crear();
     });
-    
+
     $router->get('pages/individual/ver', function () {
         require_once __DIR__ . '/pages/individual/controller/individualController.php';
         (new individualController())->ver();
@@ -269,6 +269,15 @@ $router->group(['before' => 'auth'], function ($router) {
         (new individualController())->verColeccion();
     });
 
+    $router->get('api/colecciones', function() {
+    require_once __DIR__ . '/pages/individual/controller/individualController.php';
+    (new individualController())->misCols();
+    });
+
+    $router->post('api/receta/guardar', function() {
+        require_once __DIR__ . '/pages/individual/controller/individualController.php';
+        (new individualController())->guardarFeed();
+    });
     // Ruta POST para agregar receta a una colección
     $router->post('pages/individual/coleccion/agregar', function () {
         require_once __DIR__ . '/pages/individual/controller/individualController.php';
@@ -293,6 +302,15 @@ $router->group(['before' => 'auth'], function ($router) {
     $router->post('api/reportar/usuario', function () {
         require_once __DIR__ . '/pages/reporte/controller/ReporteController.php';
         (new ReporteController())->reportarUsuario();
+    });
+    $router->delete('api/notificaciones/eliminar/{id:i}', function ($id) {
+        require_once __DIR__ . '/pages/feed/controller/FeedController.php';
+        (new FeedController())->eliminarNotificacion($id);
+    });
+
+    $router->delete('api/notificaciones/limpiar', function () {
+        require_once __DIR__ . '/pages/feed/controller/FeedController.php';
+        (new FeedController())->limpiarNotificaciones();
     });
 });
 

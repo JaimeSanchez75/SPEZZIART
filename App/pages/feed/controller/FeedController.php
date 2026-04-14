@@ -2,19 +2,22 @@
 require_once __DIR__ . '/../model/FeedModel.php';
 require_once __DIR__ . '/../view/FeedView.php';
 require_once __DIR__ . '/../../../core/auth.php';
-
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 class FeedController
 {
-    private $model;
-    private $view;
+    
+    private $model; // Instancia del modelo para interactuar con la base de datos
+    private $view; // Instancia de la vista para renderizar el feed
 
-    public function __construct()
+    public function __construct() // Inicializar el modelo y la vista
     {
         $this->model = new FeedModel();
         $this->view = new FeedView();
     }
 
-    public function index()
+    public function index() // Método principal para mostrar el feed y manejar la lógica de filtrado y búsqueda 
     {
         $userId = Auth::check() ? Auth::id() : null;
         $recetas = $this->model->getPostsFiltrados('', [], 5, 0, $userId);
@@ -26,14 +29,16 @@ class FeedController
 
     public function filtrar()
     {
+        error_log("=== filtrar() called ===");
+        error_log("Session ID: " . session_id());
+        error_log("POST: " . print_r($_POST, true));
+        error_log("Input raw: " . file_get_contents('php://input'));
+        csrf_verify();
         $input = json_decode(file_get_contents('php://input'), true);
-        if ($input) 
-        {
+        if ($input) {
             $etiquetas = $input['etiquetas'] ?? [];
             $busqueda = $input['busqueda'] ?? null;
-        } 
-        else 
-        {
+        } else {
             $etiquetas = $_POST['etiquetas'] ?? [];
             $busqueda = $_POST['busqueda'] ?? null;
         }
@@ -44,46 +49,53 @@ class FeedController
 
         $posts = $this->model->getPostsFiltrados($busqueda, $etiquetas, $limit, $offset, $userId);
 
+        $filtrosActivos = !empty($busqueda) || !empty($etiquetas);
+
         $html = '';
-        foreach ($posts as $receta) {$html .= $this->view->renderRecipeCard($receta);}
+        foreach ($posts as $receta) {
+            if ($filtrosActivos) {
+                // Usar el componente de grid (tarjeta cuadrada)
+                $html .= $this->view->renderRecipeCardGrid($receta);
+            } else {
+                // Usar el componente de lista (normal)
+                $html .= $this->view->renderRecipeCard($receta);
+            }
+        }
 
         header('Content-Type: application/json');
-        echo json_encode(
-        [
+        echo json_encode([
             'html' => $html,
             'count' => count($posts)
         ]);
         exit;
     }
-  
-    public function toggleLike($id)
+
+    public function toggleLike($id) // Método para manejar los likes de las recetas
     {
-        if (!Auth::check()) {
+        csrf_verify();
+        if (!Auth::check()) 
+        {
             http_response_code(401);
             echo json_encode(['status' => 'error']);
             exit;
         }
-
         $userId = Auth::id();
         $resultado = $this->model->toggleLike($id, $userId);
-
         if ($resultado['accion'] === 'added') 
         {
-
             $dueno = $this->model->getCreadorReceta($id);
-
             if ($dueno != $userId) 
             {
                 if (!$this->model->existeNotificacion($dueno, $userId, 'like', $id))
                 {
-                $this->model->crearNotificacion
-                (
-                    $dueno,
-                    $userId,
-                    "le ha gustado tu receta",
-                    "like",
-                    $id
-                );
+                    $this->model->crearNotificacion
+                    (
+                        $dueno,
+                        $userId,
+                        "le ha gustado tu receta",
+                        "like",
+                        $id
+                    );
                 }
             }
         }
@@ -113,6 +125,7 @@ class FeedController
 
     public function postearComentario()
     {
+        csrf_verify();
         if (!Auth::check()) 
         {
             http_response_code(401);
@@ -179,7 +192,9 @@ class FeedController
     }
     public function buscarIngredientes()
     {
-        if (!Auth::check()) {
+        csrf_verify();
+        if (!Auth::check()) 
+        {
             http_response_code(401);
             exit;
         }
@@ -190,5 +205,52 @@ class FeedController
         $resultados = $this->model->buscarIngredientes($query, $userId);
 
         echo json_encode($resultados);
+    }
+    /**
+ * Eliminar una notificación por ID (solo si pertenece al usuario autenticado)
+ */
+public function eliminarNotificacion($id)
+{
+    if (!Auth::check()) {
+        http_response_code(401);
+        echo json_encode(['status' => 'error', 'message' => 'No autorizado']);
+        exit;
+    }
+
+    $userId = Auth::id();
+    $model = new FeedModel();
+    $result = $model->eliminarNotificacion($id, $userId);
+
+    if ($result) {
+        echo json_encode(['status' => 'success']);
+    } else {
+        http_response_code(404);
+        echo json_encode(['status' => 'error', 'message' => 'Notificación no encontrada o no pertenece al usuario']);
+    }
+    exit;
+}
+
+/**
+ * Eliminar todas las notificaciones del usuario autenticado
+ */
+    public function limpiarNotificaciones()
+    {
+        if (!Auth::check()) {
+            http_response_code(401);
+            echo json_encode(['status' => 'error', 'message' => 'No autorizado']);
+            exit;
+        }
+
+        $userId = Auth::id();
+        $model = new FeedModel();
+        $result = $model->limpiarNotificaciones($userId);
+
+        if ($result) {
+            echo json_encode(['status' => 'success']);
+        } else {
+            http_response_code(500);
+            echo json_encode(['status' => 'error', 'message' => 'Error al eliminar notificaciones']);
+        }
+        exit;
     }
 }
