@@ -1,0 +1,1 @@
+document.getElementById('btn-volver')?.addEventListener('click',()=> window.history.back());

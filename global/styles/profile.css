@@ -1,0 +1,256 @@
+/* Perfil conserva su banner; el resto se apoya en el sistema visual de Administracion. */
+.perfil-page {
+    color: var(--text-primary);
+    padding-bottom: 7rem;
+}
+
+[data-bs-theme="dark"] .perfil-page {
+    background-color: var(--bg-body);
+}
+
+.header-perfil {
+    background-size: cover;
+    background-position: center;
+    color: #fff;
+    padding: 10px 0;
+}
+
+.avatar-container {
+    cursor: pointer;
+}
+
+.avatar-container img,
+.avatar-container div {
+    transition: transform .2s ease, box-shadow .2s ease;
+}
+
+.avatar-container:hover img,
+.avatar-container:hover div {
+    transform: scale(1.02);
+}
+
+.edit-name-btn,
+.edit-avatar-btn,
+.edit-banner-btn {
+    opacity: .92;
+    transition: opacity .2s ease, transform .2s ease, background-color .2s ease, color .2s ease;
+}
+
+.edit-name-btn:hover,
+.edit-avatar-btn:hover,
+.edit-banner-btn:hover {
+    opacity: 1;
+    transform: translateY(-1px);
+    color: var(--vino) !important;
+}
+
+.header-perfil .edit-avatar-btn i {
+    color: inherit;
+}
+
+.header-perfil .edit-avatar-btn:hover {
+    background-color: var(--vino-claro) !important;
+    border-color: var(--vino) !important;
+}
+
+[data-bs-theme="dark"] .header-perfil .edit-avatar-btn.bg-white {
+    background-color: var(--bg-card) !important;
+    color: var(--text-primary) !important;
+    border: 1px solid var(--border-color) !important;
+}
+
+[data-bs-theme="dark"] .header-perfil .edit-avatar-btn:hover {
+    background-color: var(--vino-claro) !important;
+    color: var(--vino-light) !important;
+    border-color: var(--vino-light) !important;
+}
+
+.perfil-content .vitrina-card {
+    background-color: var(--bg-card) !important;
+    border-color: var(--border-color) !important;
+    color: var(--text-primary);
+}
+
+.perfil-content .vitrina-card {
+    transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease, background-color .2s ease;
+}
+
+.banner-preview {
+    position: relative;
+    overflow: hidden;
+    border-color: var(--border-color) !important;
+    background-color: var(--bg-card);
+}
+
+.lock-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, .5);
+    color: #fff;
+    font-size: 2rem;
+}
+
+.banner-card:not(.bloqueado) {
+    cursor: pointer;
+}
+
+/* Botones sobre el banner (Seguir, Siguiendo, Solicitud enviada, Cambiar banner) */
+.btn-banner-action {
+    border: none !important;
+    color: #fff !important;
+    background: var(--vino) !important;
+    transition: background 0.2s ease;
+}
+.btn-banner-action:hover:not(:disabled) {
+    background: var(--vino-light) !important;
+}
+.btn-banner-action:disabled {
+    opacity: 0.7;
+    cursor: default;
+}
+
+.perfil-modal {
+    --perfil-navbar-space: 6.75rem;
+    padding-bottom: var(--perfil-navbar-space);
+}
+
+.perfil-page.modal-open .bottom-nav {
+    z-index: 1040 !important;
+}
+
+.perfil-modal .modal-dialog {
+    height: calc(100dvh - var(--perfil-navbar-space) - 1rem);
+    max-height: calc(100dvh - var(--perfil-navbar-space) - 1rem);
+    margin-top: .5rem;
+    margin-bottom: calc(var(--perfil-navbar-space) + .5rem);
+}
+
+.perfil-modal .modal-content {
+    max-height: calc(100dvh - var(--perfil-navbar-space) - 1rem);
+    display: flex;
+    background-color: var(--bg-card);
+    border-color: var(--border-color) !important;
+}
+
+.perfil-modal .modal-header,
+.perfil-modal .modal-footer {
+    flex-shrink: 0;
+    background-color: var(--bg-card);
+}
+
+.perfil-modal .modal-body {
+    min-height: 0;
+    overflow-y: auto;
+}
+
+.perfil-modal .modal-footer {
+    gap: .5rem;
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 768px) {
+    .header-perfil h2 {
+        font-size: 1.3rem;
+    }
+
+    /* Reduce el exceso de padding vertical del banner en tablet/móvil */
+    .profile-header-content {
+        padding-top: 2rem !important;
+        padding-bottom: 2rem !important;
+    }
+
+    /* Stats más compactos */
+    .profile-stats {
+        gap: 1.5rem !important;
+    }
+
+    /* Recetas: 2 columnas en tablet en lugar de esperar a md */
+    .perfil-content .row > .col-xl-4.col-md-6 {
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+}
+
+@media (max-width: 576px) {
+    /* Header del banner aún más compacto */
+    .profile-header-content {
+        padding-top: 1.25rem !important;
+        padding-bottom: 1.25rem !important;
+    }
+
+    /* Stats: valores más pequeños */
+    .profile-stats .h4 {
+        font-size: 1.1rem !important;
+    }
+    .profile-stats .small {
+        font-size: 0.7rem !important;
+    }
+
+    /* Fila del nombre: mejor alineación en muy pequeños */
+    .profile-name-row {
+        gap: 0.4rem !important;
+    }
+
+    /* Botones del header (Seguir / Cambiar banner) full-width en móvil */
+    .profile-header-content .rounded-4.px-4 {
+        padding-left: 1.5rem !important;
+        padding-right: 1.5rem !important;
+    }
+
+    /* Vitrina de logros: 2 col siempre, texto más compacto */
+    .vitrina-card .col-6 {
+        padding: 0.4rem;
+    }
+    .vitrina-card .logro-card .p-3 {
+        padding: 0.5rem !important;
+    }
+    .vitrina-card .logro-card .small {
+        font-size: 0.65rem;
+    }
+
+    /* Recetas: 1 columna en móvil */
+    .perfil-content .row > .col-xl-4.col-md-6 {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 425px) {
+    .header-perfil h2 {
+        font-size: 1rem !important;
+    }
+
+    .avatar-container img,
+    .avatar-container div {
+        width: 70px !important;
+        height: 70px !important;
+    }
+
+    .edit-avatar-btn {
+        width: 24px !important;
+        height: 24px !important;
+        bottom: 0 !important;
+        right: 0 !important;
+    }
+
+    .perfil-modal {
+        --perfil-navbar-space: 6rem;
+    }
+
+    .perfil-modal .modal-footer {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .perfil-modal .modal-footer .me-auto {
+        margin-right: 0 !important;
+    }
+
+    .perfil-modal .modal-footer .btn,
+    .perfil-modal .modal-footer button {
+        width: 100%;
+    }
+}

@@ -1,0 +1,428 @@
+
+body{
+    background-color: #c6c6c60c;
+}
+.text-danger  { color: var(--danger) !important; }
+.fill-icon    { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+.icono-relleno{ font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+
+/* ========== ANIMACIONES ========== */
+@keyframes aparecerTarjeta
+{
+    0%   { opacity: 0; transform: translateY(20px) scale(0.98); }
+    100% { opacity: 1; transform: translateY(0)    scale(1);    }
+}
+
+.container
+{
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
+}
+
+.feed-header
+{
+    flex-shrink: 0;
+    height: auto;
+    margin-bottom: 0 !important;
+    padding: 8px 0;
+}
+
+
+#feed-container
+{
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scroll-snap-type: y mandatory;
+    scroll-behavior: smooth;
+    scroll-padding: 0;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: contain;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    padding: 0;
+    margin: 0;
+}
+#feed-container::-webkit-scrollbar { display: none; }
+
+/* ============================================================
+   TARJETA DE RECETA (.tarjeta-receta)
+   El elemento exterior es el "viewport" de snap: ocupa el 100%
+   de la pantalla del contenedor y NO tiene estilo visual.
+   Su padding interno deja margen para que se vea el borde y la
+   sombra del cuerpo visible que va dentro.
+   ============================================================ */
+#feed-container > .tarjeta-receta
+{
+    flex: 0 0 100%;
+    width: 100%;
+    height: 100%;
+    min-height: 100%;
+    max-height: 100%;
+    margin: 0 !important;
+    padding: 16px;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    animation: aparecerTarjeta 0.4s cubic-bezier(0.23, 1, 0.32, 1) both;
+}
+
+/* ============================================================
+   CUERPO VISIBLE DE LA TARJETA (.row.g-0)
+   Es el rectángulo blanco con borde + sombra. Llena el espacio
+   interior de .tarjeta-receta y organiza imagen + info + footer.
+   ============================================================ */
+#feed-container > .tarjeta-receta > .row.g-0
+{
+    flex: 1 1 auto;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    margin: 0 !important;
+    background: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 20px;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.14),
+                0 4px 10px rgba(0, 0, 0, 0.06);
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: 5fr 7fr;
+    grid-template-rows: 1fr auto;
+    grid-template-areas:
+        "imagen info"
+        "acciones acciones";
+}
+
+/* Columna de imagen */
+#feed-container > .tarjeta-receta > .row.g-0 > .col-lg-5
+{
+    grid-area: imagen;
+    width: 100% !important;
+    max-width: none !important;
+    min-height: 0;
+    height: 100%;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    padding: 0 !important;
+}
+
+/* Columna de información */
+#feed-container > .tarjeta-receta > .row.g-0 > .col-lg-7
+{
+    grid-area: info;
+    width: 100% !important;
+    max-width: none !important;
+    min-height: 0;
+    height: 100%;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    padding: 0 !important;
+}
+
+/* Barra inferior de acciones (like, comentar, guardar, reportar) */
+#feed-container > .tarjeta-receta > .row.g-0 > .col-12
+{
+    grid-area: acciones;
+    width: 100% !important;
+    max-width: none !important;
+    border-top: 1px solid rgba(0, 0, 0, 0.06);
+    background: #fff;
+}
+
+/* Carousel de imágenes ocupa toda la columna */
+#feed-container > .tarjeta-receta .carousel,
+#feed-container > .tarjeta-receta .carousel-inner,
+#feed-container > .tarjeta-receta .carousel-item
+{
+    height: 100%;
+}
+#feed-container > .tarjeta-receta .carousel-item img
+{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* Caja interna con scroll propio cuando el texto desborda */
+#feed-container > .tarjeta-receta .p-4.d-flex.flex-column.h-100
+{
+    flex: 1 1 auto;
+    min-height: 0;
+    height: 100%;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+#feed-container > .tarjeta-receta .p-4.d-flex.flex-column.h-100::-webkit-scrollbar { width: 4px; }
+#feed-container > .tarjeta-receta .p-4.d-flex.flex-column.h-100::-webkit-scrollbar-thumb
+{
+    background: #ccc;
+    border-radius: 10px;
+}
+
+/* Trigger del infinite scroll: no participa en el snap */
+#infinite-scroll-trigger
+{
+    scroll-snap-align: none;
+    flex: 0 0 auto;
+    padding: 1.25rem 0 2rem;
+    text-align: center;
+}
+
+.feed-end-message
+{
+    width: 100%;
+    min-height: 72px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.feed-scroll-status
+{
+    position: fixed;
+    left: 50%;
+    bottom: calc(112px + env(safe-area-inset-bottom, 0px));
+    transform: translateX(-50%);
+    z-index: 2000;
+    pointer-events: none;
+    max-width: min(90vw, 420px);
+    padding: 0.75rem 1rem;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.94);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.16);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ========== CABECERA DE PÁGINA ========== */
+.notis { z-index: 1000; }
+
+/* ========== NOTIFICACIONES (dropdown) ========== */
+.notificacion-item { position: relative; }
+.notificacion-item .btn-eliminar-notificacion
+{
+    position: absolute;
+    top: 50%;
+    right: 8px;
+    transform: translateY(-50%);
+    opacity: 0;
+    transition: opacity 0.2s;
+    background: transparent;
+    border: none;
+    color: #999;
+    font-size: 1.2rem;
+    padding: 0 4px;
+    cursor: pointer;
+}
+.notificacion-item:hover .btn-eliminar-notificacion { opacity: 1; }
+.notificacion-item .btn-eliminar-notificacion:hover { color: var(--vino); }
+
+/* ============================================================
+   MODO OSCURO
+   ============================================================ */
+[data-bs-theme="dark"]
+{
+    background-color: #171717 !important;
+    --card-bg: #1a1a1a;
+    --field-bg: #171717;
+    --border-soft: #2a2a2a;
+    --accent-orange: #f3b109;
+}
+[data-bs-theme="dark"] html  { background-color: #121212 !important; }
+[data-bs-theme="dark"] body  { background-color: #121212 !important; height: 100%; }
+[data-bs-theme="dark"] .lista{ background-color: #121212 !important; }
+[data-bs-theme="dark"] .bg-white { background-color: #1a1a1a !important; }
+[data-bs-theme="dark"] .bg-light { background-color: #242424 !important; }
+
+[data-bs-theme="dark"] #feed-container > .tarjeta-receta > .row.g-0
+{
+    background-color: var(--card-bg) !important;
+    border: 1px solid var(--border-soft) !important;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.55),
+                0 4px 10px rgba(0, 0, 0, 0.35);
+                
+}
+[data-bs-theme="dark"] #feed-container > .tarjeta-receta > .row.g-0 > .col-12
+{
+    background: var(--card-bg);
+    border-top-color: var(--border-soft);
+}
+
+[data-bs-theme="dark"] .feed-scroll-status
+{
+    background: rgba(26, 26, 26, 0.96);
+    border-color: var(--border-soft);
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.5);
+}
+
+[data-bs-theme="dark"] .modal-content
+{
+    background-color: var(--card-bg) !important;
+    border: 2px solid var(--border-soft);
+}
+
+[data-bs-theme="dark"] .material-symbols-outlined { color: var(--bs-body-color); }
+[data-bs-theme="dark"] .social { color: white !important; }
+
+/* Badges con fondo rojo + texto rojo → ilegibles en modo oscuro. Se pasan a blanco */
+
+
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+
+/* --- Móvil / tablet pequeño: imagen arriba, info en medio, acciones abajo --- */
+@media (max-width: 991.98px)
+{
+    #feed-container > .tarjeta-receta
+    {
+        padding: 10px;
+    }
+
+    #feed-container > .tarjeta-receta > .row.g-0
+    {
+        display: grid;
+        grid-template-columns: 1fr;
+        grid-template-rows: 38% 1fr auto;
+        grid-template-areas:
+            "imagen"
+            "info"
+            "acciones";
+        border-radius: 18px;
+    }
+
+    #feed-container > .tarjeta-receta > .row.g-0 > .col-lg-5
+    {
+        grid-area: imagen;
+    }
+    #feed-container > .tarjeta-receta > .row.g-0 > .col-lg-7
+    {
+        grid-area: info;
+    }
+    #feed-container > .tarjeta-receta > .row.g-0 > .col-12
+    {
+        grid-area: acciones;
+    }
+
+    /* Padding interno más compacto */
+    #feed-container > .tarjeta-receta .p-4 { padding: 0.75rem !important; }
+    #feed-container > .tarjeta-receta .titulo { font-size: 1.1rem; line-height: 1.2; }
+    #feed-container > .tarjeta-receta .badge  { font-size: 0.65rem; padding: 0.3rem 0.6rem !important; }
+    /* Acciones más compactas en móvil */
+    #feed-container > .tarjeta-receta > .row.g-0 > .col-12 .px-5
+    {
+        padding-left: 0.75rem !important;
+        padding-right: 0.75rem !important;
+    }
+    #feed-container > .tarjeta-receta > .row.g-0 > .col-12 .py-3
+    {
+        padding-top: 0.5rem !important;
+        padding-bottom: 0.5rem !important;
+    }
+}
+
+/* --- Móvil estándar --- */
+@media (max-width: 767.98px)
+{
+    .container
+    {
+        padding-top: env(safe-area-inset-top, 0px);
+        padding-bottom: calc(70px + env(safe-area-inset-bottom, 0px)) !important;
+        padding-left: 6px !important;
+        padding-right: 6px !important;
+    }
+
+    #feed-container > .tarjeta-receta
+    {
+        padding: 8px;
+    }
+    #feed-container > .tarjeta-receta > .row.g-0
+    {
+        grid-template-rows: 35% 1fr auto;
+        border-radius: 16px;
+    }
+}
+
+/* --- Móviles muy pequeños --- */
+@media (max-width: 400px)
+{
+    .container
+    {
+        padding-left: 4px !important;
+        padding-right: 4px !important;
+    }
+    #feed-container > .tarjeta-receta { padding: 6px; }
+    #feed-container > .tarjeta-receta > .row.g-0 { border-radius: 14px; }
+}
+
+/* --- Pantallas muy bajas (móvil horizontal): info más compacta --- */
+@media (max-height: 600px)
+{
+    #feed-container > .tarjeta-receta .p-4 { padding: 0.4rem !important; }
+    #feed-container > .tarjeta-receta > .row.g-0 > .col-12 .py-3
+    {
+        padding-top: 0.25rem !important;
+        padding-bottom: 0.25rem !important;
+    }
+}
+
+/* --- Comentarios más amplios en escritorio --- */
+
+/* --- Cabecera responsive (móvil) --- */
+@media (max-width: 576px) {
+    .cabecera-page {
+        flex-wrap: nowrap;
+        gap: 0.75rem !important;
+    }
+    .cabecera-page .cabecera-left {
+        min-width: 0;
+        gap: 0.75rem !important;
+    }
+    .cabecera-page .cabecera-text {
+        min-width: 0;
+    }
+    .cabecera-page .cabecera-subtitulo {
+        display: none;
+    }
+    .cabecera-page .cabecera-titulo {
+        font-size: 1.6rem !important;
+    }
+    .cabecera-page .cabecera-sep {
+        font-size: 1.4rem !important;
+    }
+    .cabecera-page .cabecera-icono {
+        width: 58px !important;
+        height: 58px !important;
+        font-size: 1.25rem !important;
+        padding: 0.7rem !important;
+    }
+    .cabecera-page #campana i,
+    .cabecera-page a[href*="configuracion"] i {
+        font-size: 1.1rem !important;
+    }
+    .cabecera-page .d-flex.gap-3.align-items-center.flex-shrink-0 {
+        gap: 0.5rem !important;
+    }
+}

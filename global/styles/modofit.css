@@ -1,0 +1,45 @@
+.grafica{
+    position:relative;
+    width:100%;
+    max-width:180px;
+    aspect-ratio:1/1;
+    margin:auto;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+/* canvas responsive */
+.grafica canvas{
+    width:100% !important;
+    height:100% !important;
+}
+
+/* personaje base */
+.fit-character{
+    position:absolute;
+    pointer-events:none;
+    object-fit:contain;
+    opacity:.95;
+    transition:.25s ease;
+}
+
+/* PROTEIN */
+.protein-char{
+    width:clamp(90px, 90%, 170px);
+    left:-56%;
+}
+
+/* CARBS */
+.carbs-char{
+    width:clamp(90px, 90%, 170px);
+    left:-48%;
+	bottom:10%;
+}
+
+/* FAT */
+.fat-char{
+   width:clamp(90px, 90%, 170px);
+    left:-30%;
+top:35%;
+}

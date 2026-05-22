@@ -1,0 +1,58 @@
+/* ── Responsive de la página de Configuración ── */
+
+/* Tabs: scroll horizontal en móvil para que no rompan el layout */
+.adminTabs {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+}
+.adminTabs::-webkit-scrollbar { display: none; }
+.adminTabs .nav-link {
+    white-space: nowrap;
+}
+
+/* En pantallas pequeñas, el select de tema ocupa todo el ancho */
+@media (max-width: 576px) {
+    main.container { padding-left: 0.75rem !important; padding-right: 0.75rem !important; }
+    section.sombra { padding: 1rem !important; }
+
+    /* config-item apila icono+texto arriba, control abajo */
+    .config-item {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+    }
+    .config-item > .d-flex { width: 100%; }
+    .config-item select.form-select,
+    .config-item .form-check {
+        align-self: flex-end;
+    }
+    .config-item select.form-select { width: 100% !important; }
+    .config-item .form-check { margin-top: 0.25rem; }
+
+    /* El botón de guardar también full-width */
+    .config-action { width: 100%; }
+    .text-end { text-align: left !important; }
+
+    /* Alert de los términos más compacta */
+    .config-item.border.rounded-4.p-3 { padding: 0.75rem !important; }
+}
+
+@media (max-width: 400px) {
+    .adminTabs .nav-link { padding: 0.4rem 0.7rem; font-size: 0.8rem; }
+}
+
+/* Cabecera responsive */
+@media (max-width: 576px) {
+    .cabecera-page { flex-wrap: nowrap; gap: 0.75rem; }
+    .cabecera-page .cabecera-text { min-width: 0; }
+    .cabecera-page .cabecera-subtitulo { display: none; }
+    .cabecera-page .cabecera-titulo { font-size: 1.6rem !important; }
+    .cabecera-page .cabecera-sep { font-size: 1.4rem !important; }
+    .cabecera-page .cabecera-icono {
+        width: 58px !important;
+        height: 58px !important;
+        font-size: 1.25rem !important;
+        padding: 0.7rem !important;
+    }
+}

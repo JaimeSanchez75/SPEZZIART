@@ -1,0 +1,102 @@
+
+
+.bottom-nav {
+    position: fixed;
+    bottom: 0.75rem;
+    left: 50%;
+    transform: translateX(-50%) !important;
+    z-index: 99999999;
+    width: min(860px, calc(100vw - 4rem));
+    max-width: calc(100vw - 1rem);
+    padding-left: clamp(1rem, 2vw, 1.75rem) !important;
+    padding-right: clamp(1rem, 2vw, 1.75rem) !important;
+    padding-top: 0.55rem !important;
+    padding-bottom: 0.55rem !important;
+    gap: clamp(0.5rem, 1.4vw, 1.5rem) !important;
+    justify-content: space-between !important;
+    box-sizing: border-box;
+}
+/* kill the excessive Bootstrap margins on first/last nav items */
+.bottom-nav > li.ms-5  { margin-left:  0 !important; }
+.bottom-nav > li.me-5  { margin-right: 0 !important; }
+.bottom-nav > li.ms-auto { margin-left: auto !important; }
+.bottom-nav > li {
+    flex: 1 1 0;
+    min-width: 0;
+}
+
+.bottom-nav .nav-link,
+.bottom-nav a {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    text-align: center;
+}
+
+.bottom-nav .textoPequeno {
+    font-size: 0.72rem;
+    line-height: 1.1;
+    white-space: nowrap;
+}
+.bottom-nav p {
+    margin: 0;
+}
+
+.bottom-nav a
+{
+    color:white;
+    text-decoration:none;
+}
+.nav-item
+{
+    list-style: none;
+}
+/* Iconos */
+
+.material-symbols-outlined 
+{
+  font-variation-settings:
+  'FILL' 0,
+  'wght' 400,
+  'GRAD' 0,
+  'opsz' 24
+  'SIZE' 30;
+  color: #5D0E07;
+  font-size: 30px;
+}
+
+@media (max-width: 767.98px) {
+    .bottom-nav {
+        width: calc(100vw - 0.35rem);
+        max-width: calc(100vw - 0.35rem);
+        bottom: 0.25rem;
+        padding-left: 0.65rem !important;
+        padding-right: 0.65rem !important;
+        padding-top: 0.72rem !important;
+        padding-bottom: 0.72rem !important;
+        gap: 0.35rem !important;
+        border-radius: 1.5rem !important;
+    }
+
+    .bottom-nav .textoPequeno {
+        font-size: 0.62rem;
+    }
+
+    .bottom-nav .material-symbols-outlined {
+        font-size: 1.45rem;
+    }
+}
+
+@media (min-width: 992px) {
+    .bottom-nav {
+        width: min(735px, calc(100vw - 9.5rem));
+        padding-left: clamp(0.95rem, 1.2vw, 1.2rem) !important;
+        padding-right: clamp(0.95rem, 1.2vw, 1.2rem) !important;
+        gap: clamp(0.3rem, 0.75vw, 0.75rem) !important;
+    }
+}
+
+/* Modales por encima del navbar */
+

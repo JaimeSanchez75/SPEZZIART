@@ -1,0 +1,142 @@
+/* Búsqueda: solo estructura de grid/responsive. La estética viene de styles.css. */
+.busqueda-shell {
+    max-width: 1180px;
+}
+
+.search-controls-wrapper {
+    margin-bottom: 1.5rem;
+}
+
+.search-bar-row {
+    width: 100%;
+    margin-bottom: .75rem;
+}
+
+.filters-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: .75rem;
+}
+
+.filters-group {
+    display: flex;
+    flex: 1 1 auto;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: .5rem;
+    min-width: 0;
+}
+
+.cols-selector-group {
+    flex-shrink: 0;
+}
+
+.grid-container {
+    display: grid;
+    gap: 1.5rem;
+    min-height: 400px;
+}
+
+.grid-1 { grid-template-columns: repeat(1, minmax(0, 1fr)); }
+.grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.grid-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+.full-width-message {
+    grid-column: 1 / -1;
+    text-align: center;
+}
+
+#saveModal,
+#reportModal {
+    z-index: 1070 !important;
+}
+
+@media (min-width: 992px) {
+    .search-controls-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+    }
+
+    .search-bar-row {
+        flex: 2 1 300px;
+        margin-bottom: 0;
+    }
+
+    .filters-row {
+        flex: 3 1 auto;
+        margin-bottom: 0;
+    }
+}
+
+/* Tablet (md → lg): 2 columnas fijas, sin selector de grid */
+@media (max-width: 991.98px) {
+    .cols-selector-group {
+        display: none !important;
+    }
+
+    .grid-1,
+    .grid-2,
+    .grid-3,
+    .grid-4 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+/* Móvil (<md): 1 columna */
+@media (max-width: 767.98px) {
+    .grid-1,
+    .grid-2,
+    .grid-3,
+    .grid-4 {
+        grid-template-columns: repeat(1, minmax(0, 1fr));
+    }
+
+    .filters-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .grid-container {
+        gap: 1rem;
+    }
+}
+
+@media (max-width: 399.98px) {
+    .grid-container {
+        gap: .8rem;
+    }
+}
+
+/* --- Cabecera responsive (móvil) --- */
+@media (max-width: 576px) {
+    .cabecera-page {
+        flex-wrap: nowrap;
+        gap: 0.75rem !important;
+    }
+    .cabecera-page .cabecera-left {
+        min-width: 0;
+        gap: 0.75rem !important;
+    }
+    .cabecera-page .cabecera-text {
+        min-width: 0;
+    }
+    .cabecera-page .cabecera-subtitulo {
+        display: none;
+    }
+    .cabecera-page .cabecera-titulo {
+        font-size: 1.6rem !important;
+    }
+    .cabecera-page .cabecera-sep {
+        font-size: 1.4rem !important;
+    }
+    .cabecera-page .cabecera-icono {
+        width: 58px !important;
+        height: 58px !important;
+        font-size: 1.25rem !important;
+        padding: 0.7rem !important;
+    }
+}

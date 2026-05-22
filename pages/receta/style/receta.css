@@ -1,0 +1,769 @@
+/* ========== MODAL DE RECETA ========== */
+
+/* Wider dialog — overrides modal-xl (1140px) */
+.recipe-modal-dialog {
+    max-width: min(1540px, 98vw) !important;
+    max-height: 90vh !important;
+}
+
+/* Forzar z-index alto para que no lo tape ningún overlay del feed */
+#recipeModal {
+    z-index: 1060 !important;
+}
+
+/* Cabecera: fina, sin borde */
+.recipe-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--bs-body-bg);
+    border-bottom: 1px solid var(--bs-border-color) !important;
+    min-height: 52px;
+}
+
+.recipe-modal-header__label {
+    letter-spacing: 0.01em;
+}
+
+/* Botón cierre */
+.recipe-modal-close {
+    flex-shrink: 0;
+    opacity: 1 !important;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+.recipe-modal-close:hover {
+    background-color: var(--vino-claro, #f7e6e9) !important;
+    border-color: var(--vino, #5d0a1a) !important;
+    opacity: 1 !important;
+}
+[data-bs-theme="dark"] .recipe-modal-close {
+    background-color: var(--bg-card, #1e1e1e) !important;
+    border-color: var(--border-color, #2d2d2d) !important;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23e6e6e6'%3E%3Cpath d='M.293.293a1 1 0 011.414 0L8 6.586 14.293.293a1 1 0 111.414 1.414L9.414 8l6.293 6.293a1 1 0 01-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 01-1.414-1.414L6.586 8 .293 1.707a1 1 0 010-1.414z'/%3E%3C/svg%3E") !important;
+    filter: none !important;
+}
+[data-bs-theme="dark"] .recipe-modal-close:hover {
+    background-color: var(--vino-claro, #3a1a22) !important;
+    border-color: var(--vino-light, #a52a3a) !important;
+}
+
+/* Modal body: no overflow propio — el layout interno lo gestiona */
+#recipeModal .modal-body {
+    padding: 0 !important;
+    overflow: hidden !important;
+    height: calc(90vh - 52px);
+    display: flex !important;
+}
+
+/* Responsive: fullscreen en móvil */
+@media (max-width: 767.98px) {
+    .recipe-modal-dialog {
+        margin: 0 !important;
+        max-width: 100% !important;
+        max-height: 100% !important;
+        height: 100% !important;
+    }
+    #recipeModal .modal-content.recipe-modal-content {
+        height: 100% !important;
+        border-radius: 0 !important;
+    }
+    #recipeModal .modal-body {
+        height: calc(100dvh - 52px);
+    }
+}
+
+/* recipeModalContent llena el body */
+#recipeModalContent {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    display: flex;
+}
+
+/* ========== LAYOUT INTERNO: contenido + sidebar ========== */
+#modalRecetaUnica {
+    --recipe-accent: #5d0a1a;
+    --recipe-accent-soft: rgba(93, 10, 26, 0.10);
+    --recipe-border: rgba(93, 10, 26, 0.08);
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    overflow: hidden;
+}
+[data-bs-theme="dark"] #modalRecetaUnica {
+    --recipe-accent: #a52a3a;
+    --recipe-accent-soft: rgba(93, 10, 26, 0.25);
+    --recipe-border: rgba(255, 255, 255, 0.08);
+}
+
+/* Contenido principal: scrollable */
+#modalRecetaUnica > .container-fluid {
+    flex: 1;
+    min-width: 0;
+    overflow-y: auto;
+    height: 100%;
+    display: block !important;
+    padding-inline: clamp(0.75rem, 1.2vw, 1.25rem);
+}
+
+/* Quitar el padding-right inline que inyecta receta.js */
+#modalRecetaUnica .container-fluid > .row > .col-12 {
+    padding-right: clamp(1.25rem, 2vw, 2.5rem) !important;
+    padding-left: clamp(1.25rem, 2vw, 2.5rem) !important;
+    width: 100%;
+    margin-right: 0;
+    box-sizing: border-box;
+}
+
+/* Barra lateral de acciones */
+#modalRecetaUnica .modal-sidebar {
+    width: 68px;
+    min-width: 68px;
+    height: 100%;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0.5rem;
+    padding: 1.25rem 0.5rem;
+    border-left: 1px solid var(--bs-border-color);
+    background: var(--bs-body-bg);
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+/* Botones del sidebar */
+#modalRecetaUnica .modal-sidebar .btn {
+    width: 48px;
+    height: 48px;
+    padding: 0;
+    border-radius: 14px;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    border: 1px solid var(--bs-border-color);
+    background: var(--bs-body-bg);
+    color: var(--bs-body-color);
+    font-size: 0;           /* hide Bootstrap size inheritance */
+    transition: background 0.18s, border-color 0.18s, color 0.18s;
+}
+#modalRecetaUnica .modal-sidebar .btn .material-symbols-outlined {
+    font-size: 20px;
+    line-height: 1;
+}
+#modalRecetaUnica .modal-sidebar .btn .small,
+#modalRecetaUnica .modal-sidebar .btn span.small {
+    font-size: 0.65rem;
+    line-height: 1;
+}
+#modalRecetaUnica .modal-sidebar .like-btn:hover,
+#modalRecetaUnica .modal-sidebar .like-btn:focus {
+    background: rgba(166, 61, 87, 0.08) !important;
+    border-color: var(--recipe-accent) !important;
+    color: var(--recipe-accent) !important;
+}
+#modalRecetaUnica .modal-sidebar .btn-outline-danger {
+    border-color: var(--bs-border-color);
+    color: var(--recipe-accent);
+}
+#modalRecetaUnica .modal-sidebar .btn-outline-secondary {
+    color: var(--bs-secondary-color);
+}
+#modalRecetaUnica .modal-sidebar .btn-outline-secondary:hover {
+    background: var(--bs-tertiary-bg) !important;
+    border-color: var(--bs-border-color) !important;
+    color: var(--bs-body-color) !important;
+}
+
+/* Mobile sidebar: horizontal at bottom */
+@media (max-width: 767.98px) {
+    #modalRecetaUnica {
+        flex-direction: column;
+    }
+    #modalRecetaUnica > .container-fluid {
+        flex: 1;
+        min-height: 0;
+    }
+    #modalRecetaUnica .modal-sidebar {
+        width: 100%;
+        min-width: unset;
+        height: auto;
+        flex-direction: row !important;
+        justify-content: center;
+        gap: 0.75rem;
+        padding: 0.75rem 1rem;
+        border-left: none;
+        border-top: 1px solid var(--bs-border-color);
+        overflow: visible;
+    }
+}
+
+/* ========== CONTENIDO DE LA RECETA ========== */
+
+#modalRecetaUnica .glass-card {
+    border-radius: 0;
+    overflow: visible;
+    background-color: transparent;
+    color: var(--bs-body-color);
+    border: none;
+    box-shadow: none !important;
+    max-width: none;
+    margin-left: auto;
+    margin-right: 0;
+    width: 100%;
+}
+
+/* ── Overview: imagen + info ── */
+#modalRecetaUnica .recipe-overview {
+    display: grid;
+    grid-template-columns: minmax(260px, 320px) minmax(0, 1fr);
+    gap: clamp(1.25rem, 2vw, 2rem);
+    align-items: start;
+    margin-bottom: 2rem;
+}
+#modalRecetaUnica .recipe-media {
+    position: sticky;
+    top: 0;
+    width: 100%;
+    max-width: 320px;
+}
+#modalRecetaUnica .recipe-overview > div:last-child {
+    min-width: 0;
+    width: 100%;
+}
+
+/* Imagen: cuadrada, sombra, sin borde */
+#modalRecetaUnica .recipe-img-frame {
+    border-radius: 22px;
+    overflow: hidden;
+    border: none;
+    background: var(--bs-tertiary-bg);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.20);
+}
+#modalRecetaUnica .recipe-img {
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    width: 100%;
+    display: block;
+    transition: transform 0.35s ease;
+}
+#modalRecetaUnica .recipe-img:hover {
+    transform: scale(1.03);
+}
+
+/* ── Hero: título + fit badge ── */
+#modalRecetaUnica .recipe-hero {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 0;
+    flex-wrap: wrap;
+}
+#modalRecetaUnica .recipe-hero > div:first-child {
+    min-width: 0;
+    flex: 1 1 0;
+}
+#modalRecetaUnica .recipe-hero h2 {
+    font-size: clamp(1.4rem, 1.2rem + 0.65vw, 2rem);
+    font-weight: 800;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    word-break: break-word;
+    overflow-wrap: break-word;
+}
+
+
+/* ── Meta pills ── */
+#modalRecetaUnica .recipe-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 12px;
+}
+#modalRecetaUnica .recipe-meta-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 12px;
+    border-radius: 999px;
+    background: var(--bs-tertiary-bg);
+    border: 1px solid var(--bs-border-color);
+    color: var(--bs-secondary-color);
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+#modalRecetaUnica .recipe-meta-pill .material-symbols-outlined {
+    font-size: 15px;
+    color: var(--recipe-accent);
+}
+
+/* Author avatar */
+#modalRecetaUnica .recipe-author-avatar {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+    border: 1px solid var(--bs-border-color);
+}
+#modalRecetaUnica .recipe-author-initial {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--recipe-accent-soft);
+    color: var(--recipe-accent);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 0.72rem;
+    flex-shrink: 0;
+}
+
+/* ── Fit badge ── */
+#modalRecetaUnica .recipe-fit-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-weight: 800;
+    font-size: 0.78rem;
+    background: #198754;
+    color: #fff;
+    white-space: nowrap;
+    letter-spacing: 0.05em;
+    box-shadow: 0 3px 8px rgba(25, 135, 84, 0.35);
+    flex-shrink: 0;
+    align-self: flex-start;
+}
+
+/* ── Tags ── */
+#modalRecetaUnica .recipe-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 12px;
+}
+#modalRecetaUnica .recipe-tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 12px;
+    border-radius: 999px;
+    background: var(--recipe-accent-soft);
+    border: 1px solid var(--recipe-border);
+    color: var(--recipe-accent);
+    font-weight: 600;
+    font-size: 0.78rem;
+    transition: background 0.15s ease;
+}
+#modalRecetaUnica .recipe-tag:hover {
+    background: rgba(93, 10, 26, 0.16);
+}
+[data-bs-theme="dark"] #modalRecetaUnica .recipe-tag:hover {
+    background: rgba(93, 10, 26, 0.30);
+}
+
+/* ── Títulos de sección: línea lateral vino ── */
+#modalRecetaUnica .section-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 14px;
+    letter-spacing: 0;
+    text-transform: none;
+    color: var(--bs-body-color);
+    padding-left: 12px;
+    border-left: 3px solid var(--recipe-accent);
+    line-height: 1.4;
+}
+
+/* ── Cajas de nutrición ── */
+#modalRecetaUnica .nutrition-box {
+    background: var(--bs-tertiary-bg);
+    border: 1px solid var(--bs-border-color);
+    border-top: 3px solid var(--recipe-accent);
+    border-radius: 14px;
+    padding: 0.9rem 1rem;
+    height: 100%;
+    transition: box-shadow 0.15s ease;
+}
+#modalRecetaUnica .nutrition-box:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+#modalRecetaUnica .nutrition-box .text-muted {
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 4px;
+    display: block;
+}
+#modalRecetaUnica .nutrition-value {
+    font-size: clamp(1rem, 0.9rem + 0.3vw, 1.2rem);
+    font-weight: 800;
+    line-height: 1.1;
+    white-space: nowrap;
+    color: var(--recipe-accent);
+}
+
+/* ── Contenedores de sección: sin caja, solo espaciado ── */
+#modalRecetaUnica .description-card,
+#modalRecetaUnica .steps-card,
+#modalRecetaUnica .ingredients-card {
+    border-radius: 0;
+    border: none;
+    background: transparent;
+    padding: 0;
+}
+
+/* ── Descripción: borde lateral sutil ── */
+#modalRecetaUnica .description-card p {
+    font-size: 0.95rem;
+    line-height: 1.75;
+    color: var(--bs-secondary-color);
+    border-left: 3px solid var(--bs-border-color);
+    padding-left: 14px;
+    margin: 0;
+}
+
+/* ── Pasos: línea conectora + números en outline ── */
+#modalRecetaUnica .steps-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    position: relative;
+    padding-left: 2px;
+}
+
+#modalRecetaUnica .step-card {
+    display: flex;
+    gap: 14px;
+    padding: 10px 10px 10px 0;
+    border-radius: 0;
+    border: none;
+    background: transparent;
+    font-size: 0.92rem;
+    line-height: 1.6;
+    align-items: flex-start;
+    transition: background 0.15s ease;
+    border-radius: 10px;
+}
+#modalRecetaUnica .step-card:hover {
+    background: var(--recipe-accent-soft);
+    padding-left: 8px;
+    padding-right: 8px;
+}
+#modalRecetaUnica .step-number {
+    min-width: 34px;
+    height: 34px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: transparent;
+    border: 2px solid var(--recipe-accent);
+    color: var(--recipe-accent);
+    font-weight: 800;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+/* ── Galería de fotos ── */
+#modalRecetaUnica .recipe-gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 10px;
+}
+#modalRecetaUnica .recipe-gallery-card {
+    border-radius: 16px;
+    overflow: hidden;
+    border: none;
+    background: var(--bs-tertiary-bg);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.10);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+#modalRecetaUnica .recipe-gallery-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.16);
+}
+#modalRecetaUnica .recipe-gallery-thumb {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    display: block;
+}
+
+/* ── Ingredientes: tarjetas con hover ── */
+#modalRecetaUnica .ingredients-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 10px;
+    align-items: start;
+}
+#modalRecetaUnica .ingredient-card {
+    border-radius: 14px;
+    border: 1px solid var(--bs-border-color);
+    background: var(--bs-body-bg);
+    padding: 12px 14px;
+    box-shadow: none;
+    min-width: 0;
+    transition: box-shadow 0.15s ease, border-color 0.15s ease;
+}
+#modalRecetaUnica .ingredient-card:hover {
+    box-shadow: 0 4px 14px rgba(0,0,0,0.09);
+    border-color: var(--recipe-accent);
+}
+#modalRecetaUnica .ingredient-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 0;
+}
+#modalRecetaUnica .ingredient-name {
+    font-weight: 700;
+    font-size: 0.9rem;
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+#modalRecetaUnica .ingredient-qty {
+    white-space: nowrap;
+    border-radius: 999px;
+    padding: 3px 10px;
+    background: var(--recipe-accent-soft);
+    color: var(--recipe-accent);
+    font-size: 0.78rem;
+    font-weight: 700;
+    border: 1px solid var(--recipe-border);
+}
+
+/* Toggle nutrición */
+#modalRecetaUnica .ingredient-nutrition-toggle {
+    margin-top: 6px;
+    border-radius: 0;
+    border: none;
+    background: transparent;
+    overflow: hidden;
+}
+#modalRecetaUnica .ingredient-nutrition-toggle summary {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    padding: 2px 0;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--bs-secondary-color);
+    user-select: none;
+}
+#modalRecetaUnica .ingredient-nutrition-toggle summary .material-symbols-outlined {
+    transition: transform 0.2s ease;
+    font-size: 14px;
+    color: var(--recipe-accent);
+}
+#modalRecetaUnica .ingredient-nutrition-toggle[open] summary .material-symbols-outlined {
+    transform: rotate(180deg);
+}
+#modalRecetaUnica .ingredient-nutrition-body {
+    padding: 8px 0 0;
+}
+#modalRecetaUnica .ingredient-macros {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6px;
+}
+#modalRecetaUnica .macro-chip {
+    border-radius: 10px;
+    padding: 5px 7px;
+    background: var(--bs-tertiary-bg);
+    border: 1px solid var(--bs-border-color);
+    text-align: center;
+    min-width: 0;
+    overflow: hidden;
+}
+#modalRecetaUnica .macro-chip-label {
+    font-size: 0.58rem;
+    color: var(--bs-secondary-color);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 2px;
+    line-height: 1.1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+#modalRecetaUnica .macro-chip-value {
+    font-weight: 700;
+    font-size: 0.75rem;
+    line-height: 1.2;
+    color: var(--recipe-accent);
+}
+
+/* Reset Bootstrap containers */
+#modalRecetaUnica .container-fluid .container {
+    height: auto !important;
+    display: block !important;
+    overflow: visible !important;
+    padding-bottom: 0 !important;
+    max-width: none !important;
+    margin-left: auto !important;
+    margin-right: 0 !important;
+}
+
+@media (min-width: 992px) {
+    #modalRecetaUnica .recipe-modal-main {
+        padding-right: 2rem !important;
+        padding-left: 2rem !important;
+    }
+    #modalRecetaUnica .card-body {
+        padding-inline: clamp(1.5rem, 2vw, 2.25rem) !important;
+    }
+    #modalRecetaUnica .glass-card {
+        width: 100%;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    #modalRecetaUnica .recipe-hero + .row {
+        --bs-gutter-x: 0.85rem;
+    }
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 991.98px) {
+    #modalRecetaUnica > .container-fluid { padding-inline: 0; }
+    #modalRecetaUnica .container-fluid .container {
+        margin-left: auto !important;
+        margin-right: auto !important;
+    }
+    #modalRecetaUnica .recipe-overview {
+        grid-template-columns: 1fr;
+        max-width: 100%;
+    }
+    #modalRecetaUnica .recipe-media {
+        position: static;
+        max-width: 100%;
+    }
+    #modalRecetaUnica .recipe-img {
+        aspect-ratio: 16 / 9;
+        max-height: 300px;
+    }
+    #modalRecetaUnica .glass-card {
+        max-width: 100%;
+        margin-right: auto;
+        width: 100%;
+    }
+    #modalRecetaUnica .container-fluid > .row > .col-12 {
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+        width: 100%;
+        margin-right: 0;
+    }
+    #modalRecetaUnica .recipe-modal-main {
+        padding-right: 1rem !important;
+        padding-left: 1rem !important;
+    }
+    #modalRecetaUnica .card-body { padding: 0 !important; }
+
+}
+
+@media (max-width: 767.98px) {
+    #modalRecetaUnica > .container-fluid { padding-inline: 0; width: 100%; }
+    #modalRecetaUnica .container-fluid > .row {
+        justify-content: center;
+        width: 100%;
+        margin-inline: 0 !important;
+    }
+    #modalRecetaUnica .container-fluid > .row > .col-12 {
+        display: flex;
+        justify-content: center;
+        flex: 0 0 100%;
+        max-width: 100%;
+        padding-left: 0.85rem !important;
+        padding-right: 0.85rem !important;
+        padding-top: 0.35rem !important;
+        width: 100%;
+        margin-right: 0;
+    }
+    #modalRecetaUnica .recipe-modal-main {
+        padding-right: 0.85rem !important;
+        padding-left: 0.85rem !important;
+    }
+    #modalRecetaUnica .card-body { padding: 0 !important; width: 100%; }
+    #modalRecetaUnica .glass-card {
+        width: 100%;
+        max-width: 100%;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    #modalRecetaUnica .nutrition-box,
+    #modalRecetaUnica .description-card,
+    #modalRecetaUnica .steps-card,
+    #modalRecetaUnica .ingredients-card { width: 100%; }
+    #modalRecetaUnica .recipe-overview > aside,
+    #modalRecetaUnica .recipe-overview > div,
+    #modalRecetaUnica .recipe-overview,
+    #modalRecetaUnica .description-card,
+    #modalRecetaUnica .steps-card,
+    #modalRecetaUnica .ingredients-card {
+        width: 100%;
+        max-width: 100%;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    #modalRecetaUnica .recipe-hero { flex-direction: column; }
+    #modalRecetaUnica .recipe-overview { gap: 1rem; }
+    #modalRecetaUnica .ingredients-grid { grid-template-columns: 1fr; }
+    #modalRecetaUnica .nutrition-value { white-space: normal; }
+    #modalRecetaUnica .modal-sidebar { margin-bottom: 4.75rem; }
+    #modalRecetaUnica .ingredient-macros {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+/* ========== DARK MODE ========== */
+[data-bs-theme="dark"] .recipe-modal-content {
+    background-color: #111111 !important;
+    border-color: #222222 !important;
+}
+[data-bs-theme="dark"] .recipe-modal-header {
+    background: #111111 !important;
+    border-bottom-color: #2a2a2a !important;
+}
+[data-bs-theme="dark"] #modalRecetaUnica > .container-fluid { background: #111111; }
+[data-bs-theme="dark"] #modalRecetaUnica .modal-sidebar {
+    background: #111111 !important;
+    border-left-color: #2a2a2a !important;
+}
+[data-bs-theme="dark"] #modalRecetaUnica .glass-card { background-color: #111111 !important; }
+[data-bs-theme="dark"] #modalRecetaUnica .nutrition-box {
+    background: #1c1c1c !important;
+    border-color: #2a2a2a !important;
+    border-top-color: var(--recipe-accent) !important;
+}
+[data-bs-theme="dark"] #modalRecetaUnica .ingredient-card {
+    background: #1c1c1c !important;
+    border-color: #2a2a2a !important;
+}
+[data-bs-theme="dark"] #modalRecetaUnica .ingredient-card:hover {
+    border-color: var(--recipe-accent) !important;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.35) !important;
+}
+[data-bs-theme="dark"] #modalRecetaUnica .macro-chip {
+    background: #222222 !important;
+    border-color: #333333 !important;
+}
+[data-bs-theme="dark"] #modalRecetaUnica .modal-sidebar .btn {
+    background: #1c1c1c !important;
+    border-color: #2a2a2a !important;
+}
+[data-bs-theme="dark"] #modalRecetaUnica .recipe-img-frame {
+    box-shadow: 0 12px 32px rgba(0,0,0,0.55);
+}
+[data-bs-theme="dark"] #modalRecetaUnica .recipe-gallery-card {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+}
